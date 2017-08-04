@@ -43,6 +43,7 @@ return array(
          'timeout' => '7200',
        ),
      ),
+     'messages'=>array('basePath'=>Yiibase::getPathOfAlias('ygin.messages')),
      'db' => array(
        'nullConversion' => PDO::NULL_EMPTY_STRING,
      ),
@@ -62,6 +63,7 @@ return array(
            'subject' => 'Ошибка на сайте ('.$errorSubjectHost.')',
            'enabled' => YII_DEBUG == false,
          ),
+
          'mailErrorLog' => array(  // ошибки при отправке почты
            'class' => 'DaFileLogRoute',
            'categories'=>'application.sendMail.error',
