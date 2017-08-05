@@ -34,7 +34,7 @@ class ActionViewColumn extends ActionColumn
                 ObjectUrlRule::PARAM_OBJECT_INSTANCE,
                 ObjectUrlRule::PARAM_SYSTEM_MODULE,
             ));
-            $contentCell = CHtml::link('<i></i>', $url, array('title' => 'Просмотр свойств'));
+            $contentCell = CHtml::link('<i></i>', $url, array('title' => 'Просмотр свойств','class' => 'js-view-model'));
             $this->htmlOptions = array('class' => 'col-ref action-view');
         } else {
             $this->htmlOptions = array('class' => 'col-ref action-view-no', 'title' => 'Просмотр не доступен');
