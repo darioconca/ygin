@@ -5,14 +5,18 @@
 Yii::app()->controller->registerJsFile('ygin_visual_element.js', 'backend.assets.js');
 
 $countList = count($visualElementArray);
-if ($countList < 1) return false;
+if ($countList < 1) {
+    return false;
+}
 
 $addCaption = " (создание)";
-if ($model->getIdInstance() != null) $addCaption = " (Id=" . $model->getIdInstance() . ")";
+if ($model->getIdInstance() != null) {
+    $addCaption = " (Id=" . $model->getIdInstance() . ")";
+}
 Yii::app()->controller->caption = Yii::app()->backend->objectView->getName() . $addCaption;
 
 $controller = Yii::app()->controller;
-$form = $controller->beginWidget('backend.widgets.BackendActiveForm', array(
+$form = $controller->beginWidget('backend.models.BackendActiveForm', array(
     'id' => 'aMainForm',
     'enableAjaxValidation' => false,
     'enableClientValidation' => true,
@@ -53,12 +57,12 @@ echo $form->errorSummary($model,
      <div class="modal-content">
        <div class="modal-header">
          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-         <h3>Ошибка при заполнении формы</h3>
+         <h3>' . Yii::t('backend', 'Form error') . '</h3>
        </div>
        <div class="modal-body">',
     '    </div>
        <div class="modal-footer">
-         <button class="btn btn-default" data-dismiss="modal">Закрыть</button>
+         <button class="btn btn-default" data-dismiss="modal">' . Yii::t('backend', 'Close') . '</button>
        </div>
      </div><!-- /.modal-content -->
    </div><!-- /.modal-dialog -->',
@@ -78,34 +82,35 @@ echo $form->errorSummary($model,
                 $readOnlyInstance = false;
             }
             $visualElement->form = $form;
-            // Обработка необязательных, дополнительных полей.
             if (!$visualElement->isAdditional()) {
                 $isBaseParamExists = true;
                 $visualElement->run();
+            } else {
+                $isAdditionalParamExists = true;
             }
         }
-        foreach ($visualElementArray AS $visualElement) {
-            if ($visualElement->isAdditional()) {
-                if ($isAdditionalParamExists == false) {
-                    $isAdditionalParamExists = true;
-                    if ($isBaseParamExists) {
-                        echo '<div class="additional-property-container">
-                    <a class="btn btn-default" onclick="$(this).next().slideToggle(); return false;"><i class="glyphicon glyphicon-chevron-down"></i> Дополнительные характеристики</a>
-                    <div class="additional-property-list">' . "\n";
-                    }
-                }
-                $visualElement->run();
-            }
-        }
+        // Обработка необязательных, дополнительных полей.
+        if ($isAdditionalParamExists) { ?>
+            <div class="additional-property-container">
+                <a class="btn btn-default" onclick="$(this).next().slideToggle(); return false;">
+                    <i class="glyphicon glyphicon-chevron-down"></i> <?= Yii::t('backend', 'Additional'); ?>
+                </a>
 
-        if ($isAdditionalParamExists && $isBaseParamExists) {
-            echo "  </div><!-- .additional-property-list -->
-          </div><!-- .additional-property-container -->\n";
-        }
+                <div class="additional-property-list">
+                    <?php
+                    foreach ($visualElementArray AS $visualElement) {
+                        if ($visualElement->isAdditional()) {
+                            $visualElement->run();
+                        }
+                    } ?>
+                </div>
+            </div>
+        <?php }
+
         Yii::app()->controller->layout = $layout;
 
         ?>
-        <div class="form-actions <?= isset($truncateView) ? 'hidden' : ''; ?>" >
+        <div class="form-actions <?= isset($truncateView) ? 'hidden' : ''; ?>">
             <div class="bar">
                 <?php
                 $link = Yii::app()->request->url;
@@ -113,7 +118,7 @@ echo $form->errorSummary($model,
                     array(),
                     array(ObjectUrlRule::PARAM_OBJECT_INSTANCE, ObjectUrlRule::PARAM_ACTION_VIEW, ObjectUrlRule::PARAM_SYSTEM_MODULE));
                 if ($readOnlyInstance) {
-                    echo CHtml::link('Вернуться', $backLink, array('class' => 'btn btn-default'));
+                    echo CHtml::link(Yii::t('backend', 'Return'), $backLink, array('class' => 'btn btn-default'));
                 } else {
                     // Обработка кнопок
                     Yii::app()->clientScript->registerScript('admin.form.init', '
@@ -149,21 +154,24 @@ echo $form->errorSummary($model,
                     <input type="hidden" name="submit_form" value="1" autocomplete="off">
                     <div class="btn-group dropup">
                         <a class="btn btn-success btn-save" id="saveAndCloseButton" title="Ctrl+Enter"
-                           data-action="2"><i class="glyphicon glyphicon-ok icon-white"></i> <?= Yii::t('backend', 'Save and quit'); ?>
+                           data-action="2"><i
+                                class="glyphicon glyphicon-ok icon-white"></i> <?= Yii::t('backend', 'Save and quit'); ?>
                             <i class="glyphicon glyphicon-share-alt icon-white"></i></a>
                         <a class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a id="saveAndNewButton" class="btn-save" title="Ctrl+Alt+Enter" data-action="5"
-                                   href="#"><i class="glyphicon glyphicon-ok"></i> <?= Yii::t('backend', 'Save and add'); ?>
+                                   href="#"><i
+                                        class="glyphicon glyphicon-ok"></i> <?= Yii::t('backend', 'Save and add'); ?>
                                     <i class="glyphicon glyphicon-plus"></i></a></li>
                             <!--             <li><a id="saveAsNew" class="btn-save" data-action="6" href="#"><i class="glyphicon glyphicon-ok"></i> Сохранить как новое <i class="glyphicon glyphicon-file"></i></a></li>  -->
                         </ul>
                     </div>
                     &nbsp;&nbsp;
                     <a class="btn btn-success btn-save" id="acceptButton" title="Ctrl+Shift+Enter" data-action="3"><i
-                            class="glyphicon glyphicon-ok icon-white"></i> <?= Yii::t('backend', 'Save'); ?></a>&nbsp;&nbsp;
+                            class="glyphicon glyphicon-ok icon-white"></i> <?= Yii::t('backend', 'Save'); ?>
+                    </a>&nbsp;&nbsp;
                     <?php /* if ($idFormInstance != null && $copyInstance) { ?><button class="btn btn-default" id="saveAsNewButton" data-action="4"><i class="glyphicon glyphicon-asterisk"></i> Сохранить как новый</button>&nbsp;&nbsp;<?php } */ ?>
                     <a class="btn btn-danger" id="cancelButton" title="Ctrl+Esc" href="<?php echo $backLink ?>"><i
                             class="glyphicon glyphicon-remove icon-white"></i> <?= Yii::t('backend', 'Cancel'); ?></a>
