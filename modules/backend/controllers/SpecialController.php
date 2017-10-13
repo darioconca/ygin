@@ -3,7 +3,7 @@
 class SpecialController extends DaObjectController
 {
     /**
-     * коды операций сброса кеша
+     * РєРѕРґС‹ РѕРїРµСЂР°С†РёР№ СЃР±СЂРѕСЃР° РєРµС€Р°
      */
     const CLEAR_CACHE_COMPONENT = 1;
     const CLEAR_CACHE_PREVIEWS = 2;
@@ -61,10 +61,10 @@ class SpecialController extends DaObjectController
                     $errorsCount = count($errors);
                     $successCount = $queriesCount - $errorsCount;
 
-                    echo "<p>Выполнено {$successCount} из {$queriesCount} запросов</p>";
-                    echo "<p>Затронуто рядов: {$affected}</p>";
+                    echo "<p>Р’С‹РїРѕР»РЅРµРЅРѕ {$successCount} РёР· {$queriesCount} Р·Р°РїСЂРѕСЃРѕРІ</p>";
+                    echo "<p>Р—Р°С‚СЂРѕРЅСѓС‚Рѕ СЂСЏРґРѕРІ: {$affected}</p>";
                     if ($errorsCount > 0) {
-                        echo "<h3>Ошибки:</h3>";
+                        echo "<h3>РћС€РёР±РєРё:</h3>";
                         echo '<ul><li>' . implode('</li><li>', $errors) . '</ul>';
                     }
                 }
@@ -72,8 +72,12 @@ class SpecialController extends DaObjectController
                 echo '<div class="alert alert-danger">'.$e->getMessage().'</div>';
             }
             return;
+            //
         }
-        $this->render('sql', array());
+        //
+        if ( !isset($_POST['sql']) ){
+            $this->render('sql', array());
+        }
     }
 
     public function actionClearCache()

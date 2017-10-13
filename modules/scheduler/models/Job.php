@@ -17,9 +17,13 @@
  * @property integer $priority
  * @property integer $start_date
  * @property integer $max_second_process
+ *
+ * @property integer $failures_max_count
  */
 class Job extends DaActiveRecord {
 
+
+  const DEFAULT_MAX_COUNT_FAILURES = 10000;
   const ID_OBJECT = 51;
   protected $idObject = self::ID_OBJECT;
 
@@ -68,13 +72,25 @@ class Job extends DaActiveRecord {
       ),
     );
   }
-  
+
+  /*
   public function available($maxFailures, $time) {
     $a = $this->tableAlias;
     $this->dbCriteria->mergeWith(array(
       'condition' => "$a.start_date IS NULL AND $a.active=1 AND $a.failures < :FAILURES
                       AND ($a.next_start_date IS NULL OR $a.next_start_date < :TIME)",
       'params' => array(':FAILURES' => $maxFailures, ':TIME' => $time),
+    ));
+    return $this;
+  }
+  */
+  public function available($maxFailures, $time) {
+    $a = $this->tableAlias;
+    $this->dbCriteria->mergeWith(array(
+        'condition' => "$a.start_date IS NULL AND $a.active=1
+                      AND ($a.next_start_date IS NULL OR $a.next_start_date < :TIME)
+                      AND $a.failures < :FAILURES",
+        'params' => array(':FAILURES' => $maxFailures, ':TIME' => $time),
     ));
     return $this;
   }
@@ -90,6 +106,7 @@ class Job extends DaActiveRecord {
       'last_start_date' => 'Last Start Date',
       'next_start_date' => 'Next Start Date',
       'failures' => 'Failures',
+      'failures_max_count' => 'Максимальное количество ошибок',
       'name' => 'Name',
       'class_name' => 'Class Name',
       'active' => 'Active',

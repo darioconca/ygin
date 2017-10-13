@@ -154,9 +154,16 @@ class File extends DaActiveRecord
 
     public function deleteChildFile()
     {
+        $deletedAll = true;
         $files = $this->childs;
-        foreach ($files AS $f)
-            $f->delete();
+        foreach ($files AS $file){
+            if ( $file->delete() ){
+                //
+            }else{
+                $deletedAll = false;
+            }
+        }
+        return $deletedAll;
     }
 
 
@@ -266,7 +273,9 @@ class File extends DaActiveRecord
         // если размеры меньше, то не увеличиваем
         $img = new ImageUtils();
         $a = $img->info($fotobig);
-        if (!$a) return null;
+        if (!$a) {
+            return null;
+        }
         if (($w > 0) && ($a['width'] <= $w) && (empty($cropType))) {
             $w = 0;
         }
@@ -282,7 +291,7 @@ class File extends DaActiveRecord
         $img = new ImageUtils();
         // нужно ли проверять размер превью
         $needResize = false;
-        if (file_exists($previewAfter)) {
+        if ( file_exists($previewAfter) ) {
             if ($resize) {
                 $prevInfo = $img->info($previewAfter);
                 if (!$prevInfo) return null;
@@ -382,7 +391,7 @@ class File extends DaActiveRecord
             if ($h == null || !is_numeric($h) || $h < 0) {
                 $h = 0;
             }
-            self::$_maxWidth = intval($w);
+            self::$_maxWidth  = intval($w);
             self::$_maxHeight = intval($h);
             self::$_initSize = true;
         }
@@ -398,11 +407,11 @@ class File extends DaActiveRecord
 
         // если размеры меньше
         $img = new ImageUtils();
-        $a = $img->info($path);
-        if ($a['width'] <= $w) {
+        $imgInfo = $img->info($path);
+        if ($imgInfo['width'] <= $w) {
             $w = 0;
         }
-        if ($a['height'] <= $h) {
+        if ($imgInfo['height'] <= $h) {
             $h = 0;
         }
 
@@ -410,7 +419,7 @@ class File extends DaActiveRecord
             return false;
         }
 
-        if (!$img->open($path)) {
+        if ( !$img->open($path) ) {
             return false;
         }
 
@@ -466,7 +475,7 @@ class File extends DaActiveRecord
     public function getSize()
     {
         $size = null;
-        if (file_exists($this->getFilePath(true))) {
+        if ( file_exists($this->getFilePath(true)) ) {
             $size = filesize($this->getFilePath(true));
         }
         return $size;

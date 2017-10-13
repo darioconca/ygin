@@ -4,18 +4,18 @@
 $this->registerCssFile('news.css');
 
 if ($this->getModule()->showCategories) {
-  $this->renderPartial('/_categories', array('categories' => $categories, 'activeCategory' => $category));
+    $this->renderPartial('/_categories', array('categories' => $categories, 'activeCategory' => $category));
 }
 
 ?>
 <div class="b-news-list">
-<?php foreach ($news as $model): ?>
-<?php $this->renderPartial('/_list_item', array('model' => $model)); ?>
-<?php endforeach; ?>
+    <?php foreach ($news as $model){
+        $this->renderPartial('/_list_item', array('model' => $model));
+    } ?>
 </div>
 
-<?php  $this->widget('LinkPagerWidget', array(
-  'pages' => $pages,
+<?php $this->widget('LinkPagerWidget', array(
+    'pages' => $pages,
 )); ?>
 
 

@@ -22,13 +22,11 @@ class NewsController extends Controller {
       $categories = NewsCategory::model()->findAll(array('order' => 'seq'));
     }
 
-    $count = News::model()->count($criteria);
-    
-    $pages = new CPagination($count);
+    $news = News::model()->findAll($criteria);
+
+    $pages = new CPagination( count($news) );
     $pages->pageSize = $newsModule->itemsCountPerPage;
     $pages->applyLimit($criteria);
-    
-    $news = News::model()->findAll($criteria);
 
     $this->render('/index', array(
       'news' => $news,  // список новостей

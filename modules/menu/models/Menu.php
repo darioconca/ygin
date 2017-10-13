@@ -23,6 +23,8 @@
  * @property integer $removable
  * @property integer $image
  */
+//@todo auto update option
+//@todo date create
 class Menu extends DaActiveRecord implements ISearchable
 {
 
@@ -39,6 +41,11 @@ class Menu extends DaActiveRecord implements ISearchable
     const GO_TO_SHOW_BLANK = 4;
     const SHOW_INCLUDED_ITEMS_AFTER_CONTENT = 5;
     const SHOW_INCLUDED_ITEMS_BEFORE_CONTENT = 6;
+
+    const IS_VISIBLE = 1;
+    const NO_VISIBLE = 0;
+    const IS_REMOVABLE = 1;
+    const NO_REMOVABLE = 0;
 
 
     /**
@@ -152,12 +159,12 @@ class Menu extends DaActiveRecord implements ISearchable
 
     public function getIsVisible()
     {
-        return $this->visible == 1;
+        return $this->visible == self::IS_VISIBLE;
     }
 
     public function setVisible($bool)
     {
-        $this->visible = ($bool ? 1 : 0);
+        $this->visible = ($bool ? self::IS_VISIBLE : self::NO_VISIBLE);
     }
 
     public function setName($name)
@@ -176,12 +183,12 @@ class Menu extends DaActiveRecord implements ISearchable
      */
     public function isRemovable()
     {
-        return ($this->removable == 1);
+        return ($this->removable == self::IS_REMOVABLE);
     }
 
     public function setRemovable($value)
     {
-        $this->removable = ($value ? 1 : 0);
+        $this->removable = ($value ? self::IS_REMOVABLE : self::NO_REMOVABLE);
     }
 
     public static function getAll()
@@ -361,7 +368,9 @@ class Menu extends DaActiveRecord implements ISearchable
             } else {
                 // получаем дефолтный шаблон модулей
                 $idTemplate = SiteModuleTemplate::getIdDefaultTemplate();
-                if ($idTemplate == null) return $this->_modules;
+                if ($idTemplate == null) {
+                    return $this->_modules;
+                }
             }
         }
 
@@ -383,7 +392,9 @@ class Menu extends DaActiveRecord implements ISearchable
         $result = array();
         $modules = $this->getModules($idTemplate);
         foreach ($modules AS $module) {
-            if ($module->place->place == $place) $result[] = $module;
+            if ($module->place->place == $place) {
+                $result[] = $module;
+            }
         }
         return $result;
     }
@@ -394,7 +405,9 @@ class Menu extends DaActiveRecord implements ISearchable
      */
     public function getCountModule($place = null)
     {
-        if ($place == null) return count($this->getModules());
+        if ($place == null) {
+            return count($this->getModules());
+        }
         return count($this->getModulesByPlace($place));
     }
 
@@ -458,6 +471,17 @@ class Menu extends DaActiveRecord implements ISearchable
     {
         return array(
             'class' => 'menu.backend.MenuEventHandler',
+        );
+    }
+
+    public function scopes(){
+        return array(
+            'showed' => array(
+                'condition' => 'visible ='.self::IS_VISIBLE,
+            ),
+            'external' => array(
+                'condition' => 'external_link IS NOT NULL'
+            ),
         );
     }
 

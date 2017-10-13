@@ -31,23 +31,33 @@ foreach ($places AS $place) {
 <div id="modulesSeqPlace">
     <div class="col-lg-6">
         <div id="placeNonVisible" class="b-widget-place well affix">
-            <h4>Не используемые модули</h4>
+            <h4>Неиспользуемые модули</h4>
+            <div>
             <ul>
                 <?php
                 // Если остались модули, которые не видны
                 $position = 0;
-                foreach ($modules AS $m) {
-                    $id = $m->getIdInstance();
+                foreach ($modules AS $module) {
+                    $id = $module->getIdInstance();
                     if (!in_array($id, $currentIdModules)) {
                         $position++;
+                        $isVisible = $module->is_visible ? '' : 'opacity-50';
+                        //todo
+                        $moduleViewUrl = Yii::app()->createUrl(BackendModule::ROUTE_INSTANCE_VIEW,array(
+                            ObjectUrlRule::PARAM_OBJECT_INSTANCE => $id,
+                            ObjectUrlRule::PARAM_OBJECT          => 103, //page
+                            ObjectUrlRule::PARAM_OBJECT_VIEW     => 57,
+                        ));
+                        $moduleViewLink = $moduleViewUrl ? "<a target='_BLANK' href='{$moduleViewUrl}' class='pull-right label-link glyphicon glyphicon-link'></a>" : '';
                         echo "<li id='module_{$id}'>
                                 <input type='hidden' value='' name='mod_{$id}_seq' class='contSeq'>
                                 <input type='hidden' value='' name='mod_{$id}_plc' class='contDid''>
-                                <span class='label label-danger'><sup>{$position}</sup> {$m->name}</span>
+                                <span class='label label-danger {$isVisible}'><sup>{$position}</sup> {$module->name} {$moduleViewLink}</span>
                               </li>";
                     }
                 } ?>
             </ul>
+            </div>
         </div>
     </div>
     <div class="col-lg-6">
@@ -68,16 +78,28 @@ foreach ($places AS $place) {
                 $id = $v->id_module;
                 $i++;
                 $module = $collection->itemAt($id);
+                //
+                $isVisible = $module->is_visible ? '' : 'opacity-50';
+
+                //todo
+                $moduleViewUrl = Yii::app()->createUrl(BackendModule::ROUTE_INSTANCE_VIEW,array(
+                    ObjectUrlRule::PARAM_OBJECT_INSTANCE => $id,
+                    ObjectUrlRule::PARAM_OBJECT          => 103, //page
+                    ObjectUrlRule::PARAM_OBJECT_VIEW     => 57,
+                ));
+                $moduleViewLink = $moduleViewUrl ? "<a target='_BLANK' href='{$moduleViewUrl}' class='pull-right label-link glyphicon glyphicon-link'></a>" : '';
+                //
                 $placeItems .= "<li id='module_{$id}'>
                       <input type='hidden' value='{$v->sequence}' name='mod_{$id}_seq' class='contSeq'>
                       <input type='hidden' value='{$v->place}' name='mod_{$id}_plc' class='contDid'>
-                      <span class='label label-success'><sup>{$i}</sup> {$module->name}</span>
+                      <span class='label label-success {$isVisible}'><sup>{$i}</sup> {$module->name} {$moduleViewLink}</span>
                     </li>";
             }
         }
+        $collapseId = 'js-widget-place-'.$idModulePlace;
         echo "<div class='b-widget-place well' id='place_{$idModulePlace}' >
-                  <h4>{$placeName} [id={$idModulePlace}]</h4>
-                  <ul>{$placeItems}</ul>
+                  <h4 data-toggle='collapse' data-target='#{$collapseId}' class='cur-pointer'>{$placeName} [id={$idModulePlace}]</h4>
+                  <div id='{$collapseId}' class='collapse in'><ul>{$placeItems}</ul></div>
               </div>";
     } ?>
     </div>

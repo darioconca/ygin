@@ -7,6 +7,29 @@
 .digitalAgeTable th i.adr {background-position:0 -43px}
 .digitalAgeTable td {vertical-align:top; width:30%; padding:0 10px}
 
+.opacity-50{
+  opacity: 0.5;
+}
+
+.opacity-25{
+  opacity:0.75;
+}
+
+.label-link,
+.label-link:hover,
+.label-link:link,
+.label-link:focus,
+.label-link:visited
+{
+  color: #FFF;
+}
+.label-link:hover{
+  text-decoration: none;
+}
+
+.cur-pointer{
+  cursor: pointer;
+}
 
 
 
@@ -150,7 +173,11 @@
 */
 .b-instance-edit-form .additional-property-container {border:1px solid #ddd; padding:10px}
 .b-instance-edit-form .additional-property-list {display:none; margin-top:20px}
-.b-instance-edit-form .field-php-script {border-left:1px solid #ddd}
+.b-instance-edit-form .field-php-script {
+  /*
+  border-left:1px solid #ddd
+  */
+}
 
 /* File list upload form */
 .b-instance-edit-form .field-file-list-upload .progress {margin-bottom:0}
@@ -233,7 +260,7 @@ br.label-message {display:block; line-height: 0; float:left}
 
 
 #yii-debug-toolbar-switcher {top:55px !important}
-.b-toolbar {padding:0 10px}
+.b-toolbar {padding:0 6px}
 .b-toolbar .btn-group {margin-right:10px}
 
 

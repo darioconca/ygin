@@ -16,7 +16,7 @@ abstract class DaObjectController extends DaBackendController
             }
             if (!Yii::app()->authManager->checkObject(DaDbAuthManager::OPERATION_LIST, Yii::app()->user->id, $object->id_object)) {
                 // нет прав
-                throw new CHttpException(403);
+                throw new CHttpException(HttpCode::FORBIDDEN);
             }
             $objectView = Yii::app()->backend->objectView;
             if ($objectView != null) {

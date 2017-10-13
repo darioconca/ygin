@@ -27,11 +27,13 @@
               id="sqlId"><?php echo HU::post('sql') ?></textarea>
     <p>
         <br>
-        <?= CHtml::ajaxSubmitButton('Обработать', '', array(
+        <?= CHtml::ajaxSubmitButton(Yii::t('backend','Run SQL'), '', array(
             'type'   => 'POST',
             'update' => '#sqlResult',
+        ),array(
+            'class'  => 'btn btn-default',
         )); ?>
-        <br>
+        <br><br>
     </p>
 </form>
 <script language="javascript">
