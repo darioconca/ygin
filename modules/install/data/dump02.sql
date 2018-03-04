@@ -731,7 +731,7 @@ INSERT INTO `da_object_parameters` (`id_object`, `id_parameter`, `id_parameter_t
 ('ygin.menu', '10', 6, 12, NULL, 'При отсутствии контента:', 'go_to_type', '33', '1', 1, NULL, 0, 0, 0, 0, 0, 'Определяет действия в случае отсутствия содержимого раздела, но наличия вложенных разделов или загруженных файлов'),
 ('ygin.menu', '11', 8, 22, NULL, 'Картинка для раздела', 'image', '1', NULL, 0, NULL, 0, 0, 0, 0, 1, NULL),
 ('ygin.menu', '127', 2, 3, NULL, 'Название в адресной строке', 'alias', NULL, NULL, 0, NULL, 1, 0, 0, 0, 0, 'Обязательно на английском языке. Необходимо для формирования человекопонятных URLов.'),
-('ygin.menu', '15', 7, 13, NULL, 'Набор модулей', 'id_module_template', '101', 'SiteModuleTemplate::getIdDefaultTemplate();', 0, NULL, 0, 0, 0, 0, 1, NULL),
+('ygin.menu', '15', 7, 13, NULL, 'Набор модулей', 'id_module_template', '101', 'SiteModuleTemplate::getDefaultTemplateId();', 0, NULL, 0, 0, 0, 0, 1, NULL),
 ('ygin.menu', '152', 2, 16, NULL, '<title>', 'title_teg', NULL, NULL, 0, NULL, 0, 0, 1, 1, 1, 'При отсутствии значения, заполняется автоматически заголовком раздела'),
 ('ygin.menu', '153', 2, 18, NULL, '<meta name="description">', 'meta_description', NULL, NULL, 0, NULL, 0, 0, 1, 0, 1, NULL),
 ('ygin.menu', '154', 2, 17, NULL, '<meta name="keywords">', 'meta_keywords', NULL, NULL, 0, NULL, 0, 0, 1, 1, 1, NULL),

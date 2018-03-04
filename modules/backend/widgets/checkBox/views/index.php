@@ -6,11 +6,11 @@
 
 echo '<div class="checkbox">';
 if ($this->label === null) {
-  echo $form->checkBox($model, $attributeName);
+    echo $form->checkBox($model, $attributeName);
 } else {
-  echo '
+    echo '
   <label>
-    '.$form->checkBox($model, $attributeName).' '.$this->label.'
+    ' . $form->checkBox($model, $attributeName) . ' ' . $this->label . '
   </label>
 ';
 }

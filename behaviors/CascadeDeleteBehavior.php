@@ -40,12 +40,12 @@ class CascadeDeleteBehavior extends CActiveRecordBehavior
         }
         return true;
     }
-    
+
     /**
      * Cascade delete relations
-     * 
-     * @param array $relation
-     * @param array $params 
+     * @param $relation
+     * @param $params
+     * @throws CException
      */
     protected function _deleteByParams($relation, $params)
     {

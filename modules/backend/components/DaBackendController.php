@@ -21,7 +21,12 @@ abstract class DaBackendController extends DaWebController
     public function addSticker(MessageEvent $event)
     {
         if (!Yii::app()->request->isAjaxRequest) {
-            $options = array('text' => $event->message, 'type' => $event->type, 'sticked' => $event->sticked, 'time' => $event->time * 1000);
+            $options = array(
+                'text'      => $event->message,
+                'type'      => $event->type,
+                'sticked'   => $event->sticked,
+                'time'      => $event->time * 1000
+            );
             $this->_counter++;
             Yii::app()->clientScript->registerScript('backend.sticker_' . $this->_counter, '$.daSticker(' . CJavaScript::encode($options) . ');', CClientScript::POS_READY);
         }
@@ -34,6 +39,7 @@ abstract class DaBackendController extends DaWebController
             $loginPage = ($this->getModule() != null && $this->getModule()->getId() == 'user' && $this->getId() == 'user' && $action->getId() == 'login');
             if (!Yii::app()->user->checkAccess('showAdminPanel')) {
                 if (!$loginPage) {
+                    //@todo
                     $errorPage = ($this->getModule() == null && $this->getId() == 'static' && $action->getId() == 'error');
                     $logoutPage = ($this->getModule() != null && $this->getModule()->getId() == 'user' && $this->getId() == 'user' && $action->getId() == 'logout');
                     if (Yii::app()->user->isGuest && !Yii::app()->request->isAjaxRequest && $action->getId() != 'captcha') {
@@ -41,7 +47,7 @@ abstract class DaBackendController extends DaWebController
                         Yii::app()->user->loginRequired();
                     } else if (!$errorPage && !$logoutPage) {
                         $link = CHtml::link('авторизоваться заново', Yii::app()->createUrl('logout'));
-                        throw new CHttpException(httpCode::FORBIDDEN, '<div style="text-align: center;" class="alert alert-danger col-lg-7">Доступ к странице запрещен, попробуйте ' . $link . '.</div>');
+                        throw new CHttpException(httpCode::FORBIDDEN, "<div class='text-center alert alert-danger col-lg-7''>Доступ к странице запрещен, попробуйте {$link}</div>");
                     }
                 } else {
                     if (Yii::app()->user->returnUrl == '/') {

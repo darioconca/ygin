@@ -18,9 +18,9 @@ class SchedulerCommand extends CConsoleCommand
     {
         $msg = "Планировщик {webroot} с задачей {name} не отработал. Ошибок {failures}.";
         $msg = strtr($msg, array(
-            '{webroot}' => Yii::getPathOfAlias('webroot'),
-            '{name}' => $name,
-            '{failures}' => $failures,
+            '{webroot}'     => Yii::getPathOfAlias('webroot'),
+            '{name}'        => $name,
+            '{failures}'    => $failures,
         ));
         Yii::log($msg, CLogger::LEVEL_ERROR, 'PlanCommand');
     }
@@ -48,11 +48,11 @@ class SchedulerCommand extends CConsoleCommand
              * @var Job $job
              */
             Yii::log(strtr($msg, array(
-                '{webroot}' => Yii::getPathOfAlias('webroot'),
-                '{name}' => $job->name,
-                '{id}' => $job->id_job,
-                '{time}' => date('d.m.Y H:i:s', $job->start_date),
-                '{failures}' => $job->failures,
+                '{webroot}'     => Yii::getPathOfAlias('webroot'),
+                '{name}'        => $job->name,
+                '{id}'          => $job->id_job,
+                '{time}'        => date('d.m.Y H:i:s', $job->start_date),
+                '{failures}'    => $job->failures,
             )), CLogger::LEVEL_ERROR, 'PlanCommand');
             $job->start_date = null;
             $job->update(array('start_date'));
@@ -81,7 +81,9 @@ class SchedulerCommand extends CConsoleCommand
                     ->available(self::MAX_COUNT_FAILURES, $time)
                     ->find($candidateCriteria);
                 //Нет задач, выходим
-                if ($curJob === null) break;
+                if ($curJob === null) {
+                    break;
+                }
             } catch (CDbException $e) {
                 //Если запись залочена другой транзакцией, то пропускаем
                 if ($e->getCode() == self::ERROR_CODE_LOCK_WAIT_TIMEOUT) {
@@ -97,8 +99,9 @@ class SchedulerCommand extends CConsoleCommand
                 continue;
             }
             //Если достигли максимального количества ошибок, исключаем эту задачу
-            $maxCountFailures = empty($curJob->failures_max_count) ? Job::DEFAULT_MAX_COUNT_FAILURES : $curJob->failures_max_count;
-            if ($curJob->failures == $maxCountFailures) {
+            //@todo
+            $maxCountFailures = isset($curJob->failures_max_count) ? $curJob->failures_max_count : Job::DEFAULT_MAX_COUNT_FAILURES;
+            if ($curJob->failures >= $maxCountFailures) {
                 $transaction->rollback();
                 $candidateCriteria->addCondition('t.id_job != ' . $curJob->id_job);
                 $this->log($curJob->name, $curJob->failures);

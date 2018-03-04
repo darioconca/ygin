@@ -11,6 +11,12 @@ class BackendActiveForm extends CActiveForm
         return $html;
     }
 
+    /**
+     * @param CModel $model
+     * @param string $attribute
+     * @param array $htmlOptions
+     * @return string
+     */
     public function textField($model, $attribute, $htmlOptions = array())
     {
         if ($model->isAttributeRequired($attribute)) {
@@ -19,6 +25,12 @@ class BackendActiveForm extends CActiveForm
         return parent::textField($model, $attribute, $htmlOptions);
     }
 
+    /**
+     * @param CModel $model
+     * @param string $attribute
+     * @param array $htmlOptions
+     * @return string
+     */
     public function textArea($model, $attribute, $htmlOptions = array())
     {
         if ($model->isAttributeRequired($attribute)) {
@@ -27,6 +39,12 @@ class BackendActiveForm extends CActiveForm
         return parent::textArea($model, $attribute, $htmlOptions);
     }
 
+    /**
+     * @param CModel $model
+     * @param string $attribute
+     * @param array $htmlOptions
+     * @return string
+     */
     public function checkBox($model, $attribute, $htmlOptions = array())
     {
         if ($model->isAttributeRequired($attribute)) {
@@ -35,6 +53,13 @@ class BackendActiveForm extends CActiveForm
         return parent::checkBox($model, $attribute, $htmlOptions);
     }
 
+    /**
+     * @param CModel $model
+     * @param string $attribute
+     * @param array $data
+     * @param array $htmlOptions
+     * @return string
+     */
     public function dropDownList($model, $attribute, $data, $htmlOptions = array())
     {
         if ($model->isAttributeRequired($attribute)) {

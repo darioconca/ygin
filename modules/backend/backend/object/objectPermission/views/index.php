@@ -9,40 +9,44 @@
 $idObject = $model->getIdInstance();
 
 $permissions = array(
-  DaDbAuthManager::OPERATION_VIEW => 'Видимость',
-  DaDbAuthManager::OPERATION_EDIT    => 'Изменение',
-  DaDbAuthManager::OPERATION_DELETE  => 'Удаление',
-  DaDbAuthManager::OPERATION_CREATE  => 'Создание'
+    DaDbAuthManager::OPERATION_VIEW => 'Видимость',
+    DaDbAuthManager::OPERATION_EDIT => 'Изменение',
+    DaDbAuthManager::OPERATION_DELETE => 'Удаление',
+    DaDbAuthManager::OPERATION_CREATE => 'Создание'
 );
 $roles = Yii::app()->authManager->getAuthItems(CAuthItem::TYPE_ROLE);
-echo '<table cellpadding="0" cellspacing="0" class="table table-striped table-bordered table-condensed">
-            <thead><tr>
-              <th>Роли пользователя</th>';
-foreach ($permissions as $perm) {
-  echo '<th>'.$perm.'</th>';
-}
-echo '</tr></thead>
-            <tbody>';
-foreach ($roles as $roleName => $role) {
-  /**
-   * @var CAuthItem $role
-   */
-  echo '<tr><td>'.$role->getDescription().'</td>';
-  foreach ($permissions as $permId => $perm) {
-    $chbxId    = $roleName."-".$permId;
-    $checked   = null;
+?>
+<table cellpadding="0" cellspacing="0" class="table table-striped table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th>Роли пользователя</th>
+            <?php foreach ($permissions as $permission) {
+                echo "<th>{$permission}</th>";
+            } ?>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($roles as $roleName => $role) {
+        /**
+         * @var CAuthItem $role
+         */
+        echo '<tr><td>' . $role->getDescription() . '</td>';
+        foreach ($permissions as $permId => $permission) {
+            $chbxId = $roleName . "-" . $permId;
+            $checked = null;
 
-    $op = Yii::app()->authManager->getAuthItemObject($permId, $idObject);
-    if ($op != null && Yii::app()->authManager->hasItemChild($roleName, $op->getName()) ) {
-      $checked = ' checked="checked"';
-    }
-    echo '<td style="text-align:center" onclick="if (typeof(disableCheckedSwitch) != \'undefined\' && disableCheckedSwitch == 1) {disableCheckedSwitch = 2; } else { $(this).children().attr(\'checked\', $(this).children().attr(\'checked\') == true ? \'\' : \'checked\')}"><input type="checkbox" name="setPermission[]" value="'.$chbxId.'" '.$checked.' onclick="disableCheckedSwitch=1"></td>';
-  }
-  echo '</tr>';
-}
-echo '  </tbody>
-            </table>';
+            $operation = Yii::app()->authManager->getAuthItemObject($permId, $idObject);
+            if ($operation != null && Yii::app()->authManager->hasItemChild($roleName, $operation->getName())) {
+                $checked = ' checked="checked"';
+            }
+            echo '<td class="text-center" onclick="if (typeof(disableCheckedSwitch) != \'undefined\' && disableCheckedSwitch == 1) {disableCheckedSwitch = 2; } else { $(this).children().attr(\'checked\', $(this).children().attr(\'checked\') == true ? \'\' : \'checked\')}"><input type="checkbox" name="setPermission[]" value="' . $chbxId . '" ' . $checked . ' onclick="disableCheckedSwitch=1"></td>';
+        }
+        echo '</tr>';
+    } ?>
+    </tbody>
+</table>
 
+<?php
 return;
 /*
 // Доступность объекта в разрезе Доменов

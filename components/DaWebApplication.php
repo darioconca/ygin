@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__).'/BaseApplication.php';
+require_once dirname(__FILE__) . '/BaseApplication.php';
 
 /**
  * DaWebApplication
@@ -9,8 +9,9 @@ require_once dirname(__FILE__).'/BaseApplication.php';
  * @property DaDomain $domain
  * @property DaMenu $menu
  */
-class DaWebApplication extends BaseApplication {
+class DaWebApplication extends BaseApplication
+{
 
-  public $isFrontend = true;
-  
+    public $isFrontend = true;
+
 }

@@ -17,7 +17,7 @@ class BooleanColumn extends BaseColumn
         $idObject = $this->object->id_object;
         $idObjectParameter = $this->objectParameter->getIdParameter();
         $okEdit = false;
-        foreach ($data AS $instance) { //check edit permissions
+        foreach ($data as $instance) { //check edit permissions
             $idInstance = $instance->getIdInstance();
             if (Yii::app()->authManager->checkObjectParameter($userId, $idObject, $idInstance, $idObjectParameter)) {
                 $this->_permission[$idInstance] = true;

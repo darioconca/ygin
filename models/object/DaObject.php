@@ -58,6 +58,9 @@ class DaObject extends DaActiveRecord
         return $this->name;
     }
 
+    /**
+     * @return string
+     */
     public function getOrderBy()
     {
         $order = '';
@@ -143,7 +146,7 @@ class DaObject extends DaActiveRecord
             return null;
         }
         $params = $this->parameters;
-        foreach ($params AS $param) {
+        foreach ($params as $param) {
             if ($param->getFieldName() == $fieldName) {
                 return $param;
             }
@@ -158,7 +161,7 @@ class DaObject extends DaActiveRecord
     public function getParameterObjectByIdParameter($idParameter)
     {
         $params = $this->parameters;
-        foreach ($params AS $param) {
+        foreach ($params as $param) {
             if ($param->getIdParameter() == $idParameter) {
                 return $param;
             }
@@ -193,7 +196,7 @@ class DaObject extends DaActiveRecord
     public function registerYiiEventHandler($controller = null)
     {
         if ($this->_isEventHandlerRegister) {
-            return;
+            return false;
         }
         if ($controller == null) {
             $controller = Yii::app()->controller;
@@ -204,22 +207,28 @@ class DaObject extends DaActiveRecord
         }
         Yii::createComponent($config, $controller, $this->id_object);
         $this->_isEventHandlerRegister = true;
+        return true;
     }
 
-    public function getFieldByType($type, $all = false)
+    /**
+     * @param $type
+     * @param bool|false $returnAll
+     * @return array|null
+     */
+    public function getFieldByType($type, $returnAll = false)
     {
         $params = $this->parameters;
         $result = array();
-        foreach ($params AS $param) {
+        foreach ($params as $param) {
             if ($param->getType() == $type) {
-                if ($all) {
+                if ($returnAll) {
                     $result[] = $param->getFieldName();
                 } else {
                     return $param->getFieldName();
                 }
             }
         }
-        return ($all ? $result : null);
+        return ($returnAll ? $result : null);
     }
 
     public function isProcessDeleteChild()
@@ -227,38 +236,44 @@ class DaObject extends DaActiveRecord
         return false;
     }
 
+    /**
+     * @param bool|false $html
+     * @return string
+     */
     public function getCreateTableSql($html = false)
     {
         $sql = "";
-        if ($this->id_object != null && $this->table_name != null && $this->object_type != self::OBJECT_TYPE_CONTROLLER) {
+        if (
+            $this->id_object != null &&
+            $this->table_name != null &&
+            $this->object_type != self::OBJECT_TYPE_CONTROLLER
+        ) {
             // Сооружаем sql-запрос
             $props = $this->parameters;
             $primary = '';
-            $text_sql = array();
-            foreach ($props AS $prop) {
-                $type = $prop->getType();
-                $name = $prop->getFieldName();
-
-                $type_var = DataType::getSqlType($type);
-                if ($type_var == null) {
+            $textSql = array();
+            foreach ($props as $prop) {
+                $fieldType = $prop->getType();
+                $fieldTypeSql = DataType::getSqlType($fieldType);
+                if ($fieldTypeSql == null) {
                     continue;
                 }
-
-                $null = ($prop->isRequired()) ? "NOT NULL" : "NULL";
-                $default = "";
+                $fieldDefaultValue = "";
+                $fieldName = $prop->getFieldName();
+                $fieldAcceptNull = $prop->isRequired() ? "NOT NULL" : "NULL";
                 if ($prop->getDefaultValue() != null) {
-                    $default = "default '" . $prop->getDefaultValue() . "'";
+                    $fieldDefaultValue = "DEFAULT '{$prop->getDefaultValue()}'";
                 }
 
-                if ($type == DataType::PRIMARY_KEY) {
-                    $primary = "PRIMARY KEY(`{$name}`)";
-                    $default .= ' AUTO_INCREMENT';
+                if ($fieldType == DataType::PRIMARY_KEY) {
+                    $primary = "PRIMARY KEY(`{$fieldName}`)";
+                    $fieldDefaultValue .= ' AUTO_INCREMENT';
                 }
 
-                $text_sql[] = trim("`{$name}` {$type_var} {$null} {$default}");
+                $textSql[] = trim("`{$fieldName}` {$fieldTypeSql} {$fieldAcceptNull} {$fieldDefaultValue}");
             }
 
-            if (count($text_sql)) {
+            if (count($textSql)) {
                 $table = $this->table_name;
                 if (is_numeric($table)) {
                     $obParent = DaObject::getById($table);
@@ -269,7 +284,7 @@ class DaObject extends DaActiveRecord
                     $htmlStr = "<br/>";
                 }
                 $sql = "CREATE TABLE IF NOT EXISTS `{$table}` (" . $htmlStr . "
-                   " . implode(", " . $htmlStr, $text_sql) . ($primary != '' ? " ," . $htmlStr . "
+                   " . implode(", " . $htmlStr, $textSql) . ($primary != '' ? " ," . $htmlStr . "
                    $primary" : '') . $htmlStr . "
                    ) ENGINE = InnoDB COMMENT=" . $this->dbConnection->quoteValue($this->name) . ";";
             }
@@ -355,7 +370,9 @@ class DaObject extends DaActiveRecord
                         Yii::app()->db->createCommand($sql)->execute();
                         $report .= $sql;
                     }
-                    if (Yii::app()->isBackend) Yii::app()->addMessage('Выполнено ' . $report, BackendApplication::MESSAGE_TYPE_SUCCESS, true);
+                    if (Yii::app()->isBackend) {
+                        Yii::app()->addMessage("Выполнено {$report}", BackendApplication::MESSAGE_TYPE_SUCCESS, true);
+                    }
                 }
             }
         }

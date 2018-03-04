@@ -99,7 +99,7 @@ class EngineController extends DaBackendController
             $objectParameter->id_parameter_type = DataType::OBJECT;
             $objectParameter->add_parameter = Reference::ID_OBJECT;
             $objectParameter->not_null = 1;
-        } else if ($paramType == DataType::FILE || $paramType == DataType::FILES) {
+        } else if ($paramType == DataType::FILE || $paramType == DataType::FILE_LIST) {
             $objectParameter->id_parameter_type = DataType::OBJECT;
             $objectParameter->add_parameter = FileType::ID_OBJECT;
             $objectParameter->not_null = 0;
@@ -122,9 +122,13 @@ class EngineController extends DaBackendController
         $query = HU::post('query');
         $idObject = HU::post('idObject');
 
+        $idCaptionField = null;
         $object = DaObject::getById($idObject);
-        $idCaptionField = ($object == null ? null : $object->id_field_caption);
-        if ($idCaptionField == null) return json_encode(array());
+        if ( $object !== null ){
+            $idCaptionField = $object->id_field_caption;
+        }else{
+            return json_encode(array());
+        }
 
         $parameter = $object->getParameterObjectByIdParameter($idCaptionField);
         $captionField = $parameter->getFieldName();
@@ -150,13 +154,18 @@ class EngineController extends DaBackendController
         echo json_encode($result);
     }
 
+    /**
+     * @param null $menu
+     * @param int $tab
+     * @return array
+     */
     private function getMenu($menu = null, $tab = 0)
     {
-        $array = array();
+        $array      = array();
         $arrayLinks = array();
 
         $menuChild = $menu->getChild();
-        foreach ($menuChild AS $a) {
+        foreach ($menuChild as $menuItem) {
             $tabber = "";
             if ($tab % 4 == 0) {
                 $tabber = '+&nbsp;';
@@ -165,8 +174,10 @@ class EngineController extends DaBackendController
             }
 
             // имя
-            if ($tab > 0) $tabber = str_repeat('&nbsp;', $tab - 1) . $tabber;
-            $name = $a->getName();
+            if ($tab > 0) {
+                $tabber = str_repeat('&nbsp;', $tab - 1) . $tabber;
+            }
+            $name = $menuItem->getName();
             $name = htmlspecialchars($name);
             if (mb_strlen($name) > 80) {
                 $name = mb_substr($name, 0, 80) . '...';
@@ -175,11 +186,11 @@ class EngineController extends DaBackendController
 
             // ссылка
             Yii::app()->urlManager->frontendMode = true;
-            $arrayLinks[] = $a->getUrl();
+            $arrayLinks[] = $menuItem->getUrl();
             Yii::app()->urlManager->frontendMode = false;
             // потомки
-            if ($a->isChildExists()) {
-                list($array1, $arrayLinks1) = $this->getMenu($a, $tab + 2);
+            if ($menuItem->isChildExists()) {
+                list($array1, $arrayLinks1) = $this->getMenu($menuItem, $tab + 2);
                 $array = array_merge($array, $array1);
                 $arrayLinks = array_merge($arrayLinks, $arrayLinks1);
             }

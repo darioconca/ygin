@@ -344,11 +344,11 @@ class FileUploadAction extends CAction
         $oldFile = null;
         $formModel = $this->getFormModel();
         $attributes = array(
-            'id_object' => $formModel->objectId,
-            'id_instance' => $formModel->instanceId,
-            'id_parameter' => $formModel->parameterId,
-            'id_tmp' => $formModel->tmpId,
-            'id_parent_file' => null,
+            'id_object'         => $formModel->objectId,
+            'id_instance'       => $formModel->instanceId,
+            'id_parameter'      => $formModel->parameterId,
+            'id_tmp'            => $formModel->tmpId,
+            'id_parent_file'    => null,
         );
         if ($this->multiple === false) {
             $oldFile = File::model()->findByAttributes($attributes);
@@ -363,8 +363,14 @@ class FileUploadAction extends CAction
         return $oldFile;
     }
 
+    /**
+     * get new copy file name
+     * @param $filePath
+     * @return string
+     */
     protected function getCopyFileName($filePath)
     {
+        //@todo взять из либ
         $path = HFile::getDir($filePath);
         $files = (file_exists($path) ? HFile::findFiles($path) : array());
         $files = array_flip($files);
@@ -375,6 +381,7 @@ class FileUploadAction extends CAction
         do {
             $copyFileName = $file . '(' . (++$i) . ').' . $ext;
         } while (array_key_exists($copyFileName, $files));
+
         return $copyFileName;
     }
 
@@ -414,16 +421,19 @@ class FileUploadAction extends CAction
         return $filePath;
     }
 
+    /**
+     * @return array
+     */
     protected function getUploadResponse()
     {
         $uploadedFile = $this->getFormModel()->{$this->fileAttribute};
         $savedFile = $this->savedFile;
         $response = array(
-            "name" => $this->fileName,
-            "type" => $uploadedFile->getType(),
-            "size" => $uploadedFile->getSize(),
-            "url" => $savedFile->getUrlPath(),
-            "fileId" => $savedFile->id_file,
+            "name"      => $this->fileName,
+            "type"      => $uploadedFile->getType(),
+            "size"      => $uploadedFile->getSize(),
+            "url"       => $savedFile->getUrlPath(),
+            "fileId"    => $savedFile->id_file,
         );
         if ($savedFile->getIsImage() && $this->createThumb) {
             $paramsNames = array('width', 'height', 'postfix', 'cropType', 'quality', 'resize');
@@ -441,13 +451,15 @@ class FileUploadAction extends CAction
         if ($this->enableDeleting && !$objectParameter->not_null) {
             $response = array_merge($response, array(
                 "delete_url" => $this->getController()->createUrl($this->getId(), array(
-                    "_method" => "delete",
-                    "fileId" => $savedFile->id_file,
+                    "_method"   => "delete",
+                    "fileId"    => $savedFile->id_file,
                 )),
                 "delete_type" => "POST"
             ));
         }
-        return array('files' => array($response));
+        return array(
+            'files' => array($response)
+        );
     }
 
     public function getDeleteResponse()

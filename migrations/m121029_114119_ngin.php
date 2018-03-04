@@ -3,7 +3,7 @@
 class m121029_114119_ngin extends CDbMigration {
   public function safeUp() {
     
-    $this->execute("UPDATE `da_object_parameters` SET `default_value` = 'SiteModuleTemplate::getIdDefaultTemplate();' WHERE `da_object_parameters`.`id_object` =100 AND `da_object_parameters`.`id_parameter` =15 LIMIT 1");
+    $this->execute("UPDATE `da_object_parameters` SET `default_value` = 'SiteModuleTemplate::getDefaultTemplateId();' WHERE `da_object_parameters`.`id_object` =100 AND `da_object_parameters`.`id_parameter` =15 LIMIT 1");
 
     $path = dirname(__FILE__)."/../../assets/";
     HFile::removeDirectoryRecursive($path, false);

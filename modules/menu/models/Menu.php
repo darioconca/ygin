@@ -89,6 +89,10 @@ class Menu extends DaActiveRecord implements ISearchable
                 'order' => 'id_parent DESC, sequence ASC',
                 'idParentField' => 'id_parent',
             ),
+            'activeStatus' => array(
+                'class'             => 'ActiveStatusBehavior',
+                'statusProperty'    => 'visible',
+            ),
         );
     }
 
@@ -137,11 +141,17 @@ class Menu extends DaActiveRecord implements ISearchable
         );
     }
 
+    /**
+     * @return string
+     */
     public function getSearchTitle()
     {
         return $this->getCaption();
     }
 
+    /**
+     * @return string
+     */
     public function getSearchUrl()
     {
         return $this->getUrl();
@@ -297,9 +307,15 @@ class Menu extends DaActiveRecord implements ISearchable
 
         //Статический раздел
         $url = $this->getStaticUrl();
-        if ($url == '') $url = '/';
-        if ($url == '/') return $url;
-        $result = Yii::app()->createUrl(MenuModule::ROUTE_STATIC_MENU, array(MenuModule::ROUTE_STATIC_MENU_PARAM => $url));
+        if ($url == '') {
+            $url = '/';
+        }
+        if ($url == '/') {
+            return $url;
+        }
+        $result = Yii::app()->createUrl(MenuModule::ROUTE_STATIC_MENU, array(
+            MenuModule::ROUTE_STATIC_MENU_PARAM => $url
+        ));
         return $result;
     }
 
@@ -367,7 +383,7 @@ class Menu extends DaActiveRecord implements ISearchable
                 return $this->_modules;
             } else {
                 // получаем дефолтный шаблон модулей
-                $idTemplate = SiteModuleTemplate::getIdDefaultTemplate();
+                $idTemplate = SiteModuleTemplate::getDefaultTemplateId();
                 if ($idTemplate == null) {
                     return $this->_modules;
                 }
@@ -375,7 +391,10 @@ class Menu extends DaActiveRecord implements ISearchable
         }
 
         $this->_modules = SiteModule::model()->with(array(
-            'place' => array('condition' => 'place.id_module_template=:id_template', 'params' => array('id_template' => $idTemplate)),
+            'place' => array(
+                'condition' => 'place.id_module_template=:id_template',
+                'params' => array('id_template' => $idTemplate)
+            ),
             'phpScriptInstance.phpScript',
         ))->findAll();
 
@@ -391,7 +410,7 @@ class Menu extends DaActiveRecord implements ISearchable
     {
         $result = array();
         $modules = $this->getModules($idTemplate);
-        foreach ($modules AS $module) {
+        foreach ($modules as $module) {
             if ($module->place->place == $place) {
                 $result[] = $module;
             }
@@ -418,7 +437,7 @@ class Menu extends DaActiveRecord implements ISearchable
     {
         $child = $this->getChild();
         // Удаляем дочерние разделы, если они есть
-        foreach ($child AS $childMenu) {
+        foreach ($child as $childMenu) {
             if ($childMenu->deleteChildMenu()) {
                 $childMenu->delete();
             } else {

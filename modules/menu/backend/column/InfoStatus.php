@@ -34,15 +34,15 @@ class InfoStatus extends BaseColumn
             }
             if ($data->content == null) {
                 if ($data->getGoToType() == Menu::GO_TO_LIST_CHILD) {
-                    $text .= '<td><i class="glyphicon glyphicon-indent-left" title="выводится список вложенных разделов"></i></td>' . "\n";
+                    $text .= '<td><i class="glyphicon glyphicon-indent-left" title="выводится список вложенных разделов"></i></td>';
                 } else if ($data->getGoToType() == Menu::GO_TO_FIRST_CHILD) {
-                    $text .= '<td><i class="glyphicon glyphicon-step-forward" title="переход к первому потомку"></i></td>' . "\n";
+                    $text .= '<td><i class="glyphicon glyphicon-step-forward" title="переход к первому потомку"></i></td>';
                 }
             }
         }
 
         if ($text != "") {
-            $text = "<table class='b-status-bar'><tr>\n{$text}</tr></table>\n";
+            $text = "<table class='b-status-bar'><tr>{$text}</tr></table>";
         }
         echo $text;
     }

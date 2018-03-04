@@ -56,14 +56,29 @@ class File extends DaActiveRecord
         return $this->id_file_type;
     }
 
-    public function definitionFileType()
+    public static function getImageTypes(){
+        return array(
+            'jpg',
+            'jpeg',
+            'gif',
+            'png',
+            'bmp',
+            'tga',
+            //@todo
+        );
+    }
+
+    /**
+     * @return int|null
+     */
+    public function defineType()
     {
         $extension = HFile::getExtension($this->getFilePath());
-        $images = array('jpg', 'gif', 'png', 'bmp');
-        if (in_array($extension, $images)) {
+        $imageTypes = self::getImageTypes();
+        if (in_array($extension, $imageTypes)) {
             return File::FILE_IMAGE;
         }
-        return null;
+        return null; //@todo
     }
 
     public function getStatusProcess()
@@ -101,8 +116,8 @@ class File extends DaActiveRecord
     public function relations()
     {
         return array(
-            'childs' => array(self::HAS_MANY, 'File', 'id_parent_file'),
-            'parameters' => array(self::BELONGS_TO, 'ObjectParameter', 'id_parameter'),
+            'childs'        => array(self::HAS_MANY, 'File', 'id_parent_file'),
+            'parameters'    => array(self::BELONGS_TO, 'ObjectParameter', 'id_parameter'),
         );
     }
 
@@ -152,11 +167,14 @@ class File extends DaActiveRecord
         return parent::beforeDelete();
     }
 
+    /**
+     * @return bool
+     */
     public function deleteChildFile()
     {
         $deletedAll = true;
         $files = $this->childs;
-        foreach ($files AS $file){
+        foreach ($files as $file){
             if ( $file->delete() ){
                 //
             }else{
@@ -174,7 +192,8 @@ class File extends DaActiveRecord
     }
 
     public static function translatePath($res, $host = "/")
-    {  //static
+    {
+    //static
         $res = htmlentities(rawurlencode($res));
         $res = $host . str_replace("%2F", "/", $res);
         return $res;
@@ -262,31 +281,38 @@ class File extends DaActiveRecord
 
         //if ($f->getStatusProcess() == 1) return null;
 
-        $root = Yii::getPathOfAlias('webroot') . DIRECTORY_SEPARATOR;
-        $fp = $this->file_path;
-        $fotobig = $root . $fp;
+        $rootPath = Yii::getPathOfAlias('webroot') . DIRECTORY_SEPARATOR;
+        $filePath = $this->file_path;
+        $fullPath = $rootPath . $filePath;
 
-        if (empty($fp) || !file_exists($fotobig)) {
+        if (empty($filePath) || !file_exists($fullPath)) {
             return null;
         }
 
         // если размеры меньше, то не увеличиваем
         $img = new ImageUtils();
-        $a = $img->info($fotobig);
-        if (!$a) {
+        /**
+         * @var $info array image info
+         */
+        $info = $img->info($fullPath);
+        if (!$info) {
             return null;
         }
-        if (($w > 0) && ($a['width'] <= $w) && (empty($cropType))) {
+        if (($w > 0) && ($info['width'] <= $w) && (empty($cropType))) {
             $w = 0;
         }
-        if (($h > 0) && ($a['height'] <= $h) && (empty($cropType))) {
+        if (($h > 0) && ($info['height'] <= $h) && (empty($cropType))) {
             $h = 0;
         }
-        $previewAfter = HFile::addPostfix($fotobig, $postfix);
+        $previewAfter = HFile::addPostfix($fullPath, $postfix);
         $need2register = !file_exists($previewAfter);
 
-        if ($w == 0) $w = null;
-        if ($h == 0) $h = null;
+        if ($w == 0) {
+            $w = null;
+        }
+        if ($h == 0) {
+            $h = null;
+        }
 
         $img = new ImageUtils();
         // нужно ли проверять размер превью
@@ -294,22 +320,24 @@ class File extends DaActiveRecord
         if ( file_exists($previewAfter) ) {
             if ($resize) {
                 $prevInfo = $img->info($previewAfter);
-                if (!$prevInfo) return null;
+                if (!$prevInfo) {
+                    return null;
+                }
                 $rh = $h;
                 $rw = $w;
 
                 //Вписывает изображение в прямоугольник $w x $h
                 if ($resize === 'auto') {
                     if ($w > 0 && $h > 0) {
-                        $kw = $w / $a['width'];
-                        $kh = $h / $a['height'];
+                        $kw = $w / $info['width'];
+                        $kh = $h / $info['height'];
 
-                        $rh = round($kw * $a['height']);
-                        $rw = round($kw * $a['width']);
+                        $rh = round($kw * $info['height']);
+                        $rw = round($kw * $info['width']);
 
                         if ($rh > $h) {
-                            $rh = round($kh * $a['height']);
-                            $rw = round($kh * $a['width']);
+                            $rh = round($kh * $info['height']);
+                            $rw = round($kh * $info['width']);
                             $w = null;
                         } else {
                             $h = null;
@@ -326,7 +354,7 @@ class File extends DaActiveRecord
                 return $this;
             } else {
                 //if (DA_CONTROL_PROCESS_FILE) $f->updateStatusProcess(1);
-                if (!$img->open($fotobig)) {
+                if (!$img->open($fullPath)) {
                     return null;
                 }
 
@@ -363,7 +391,7 @@ class File extends DaActiveRecord
         $previewFile->id_tmp = $this->id_tmp;
         $previewFile->id_parameter = $this->id_parameter;
         $previewFile->id_property = $this->id_property;
-        $previewFile->file_path = mb_substr($previewAfter, mb_strlen($root));
+        $previewFile->file_path = mb_substr($previewAfter, mb_strlen($rootPath));
         // регистрация
         if ($this->id_object != null && $previewAfter != null && $need2register && file_exists($previewAfter)) {
             $previewFile->id_parent_file = $this->id_file;
@@ -374,9 +402,14 @@ class File extends DaActiveRecord
         return $previewFile;
     }
 
+    /**
+     * @return bool
+     */
     public function resizeImage()
     {
-        if ($this->getFileType() != self::FILE_IMAGE) return false;
+        if ($this->getFileType() != self::FILE_IMAGE) {
+            return false;
+        }
 
         // узнаем ширину и высоту
         $w = self::$_maxWidth;

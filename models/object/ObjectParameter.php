@@ -35,6 +35,7 @@ class ObjectParameter extends DaActiveRecord
 
     const PARAMETER_VALUE_TRUE = 1;
     const PARAMETER_VALUE_FALSE = 0;
+
     //@todo
 
     /**
@@ -94,32 +95,32 @@ class ObjectParameter extends DaActiveRecord
 
     public function isUnique()
     {
-        return ($this->is_unique == 1);
+        return ($this->is_unique == self::PARAMETER_VALUE_TRUE);
     }
 
     public function isRequired()
     {
-        return ($this->not_null == 1);
+        return ($this->not_null == self::PARAMETER_VALUE_TRUE);
     }
 
     public function isSearch()
     {
-        return ($this->search == 1);
+        return ($this->search == self::PARAMETER_VALUE_TRUE);
     }
 
     public function isVisible()
     {
-        return ($this->visible == 1);
+        return ($this->visible == self::PARAMETER_VALUE_TRUE);
     }
 
     public function getTypeGroup()
     {
-        return ($this->group_type == 1);
+        return ($this->group_type == self::PARAMETER_VALUE_TRUE);
     }
 
     public function setIsRequired($isRequired)
     {
-        $value = ($isRequired ? 1 : 0);
+        $value = ($isRequired ? self::PARAMETER_VALUE_TRUE : self::PARAMETER_VALUE_FALSE);
         $this->not_null = $value;
     }
 
@@ -202,7 +203,10 @@ class ObjectParameter extends DaActiveRecord
     {
         if (!$this->isNewRecord) {
             $idObject = $this->id_object;
-            $notChangeObject = array(20, 21);
+            $notChangeObject = array(
+                DaObject::ID_OBJECT,
+                ObjectParameter::ID_OBJECT
+            );//@todo
             if (!in_array($idObject, $notChangeObject)) {
                 $this->sqlChange($this);
             }
@@ -221,7 +225,10 @@ class ObjectParameter extends DaActiveRecord
     {
         if ($this->isNewRecord) {
             $idObject = $this->id_object;
-            $notChangeObject = array(20, 21);
+            $notChangeObject = array(
+                DaObject::ID_OBJECT,
+                ObjectParameter::ID_OBJECT
+            ); //@todo
             if (!in_array($idObject, $notChangeObject)) {
                 $this->sqlChange($this, 'insert');
             }
@@ -229,25 +236,39 @@ class ObjectParameter extends DaActiveRecord
             $pk = $this->getPkBeforeSave();
             $idOldParameter = $pk['id_parameter'];
             if ($this->id_parameter != $idOldParameter) {
-                DaObject::model()->updateAll(array('id_field_order' => $this->id_parameter), 'id_field_order=:param', array(':param' => $idOldParameter));
-                DaObject::model()->updateAll(array('id_field_caption' => $this->id_parameter), 'id_field_caption=:param', array(':param' => $idOldParameter));
-                File::model()->updateAll(array('id_parameter' => $this->id_parameter), 'id_parameter=:param', array(':param' => $idOldParameter));
-                DaObjectViewColumn::model()->updateAll(array('id_object_parameter' => $this->id_parameter), 'id_object_parameter=:param', array(':param' => $idOldParameter));
+                DaObject::model()->updateAll(array('id_field_order' => $this->id_parameter), 'id_field_order=:param', array(
+                    ':param' => $idOldParameter
+                ));
+                DaObject::model()->updateAll(array('id_field_caption' => $this->id_parameter), 'id_field_caption=:param', array(
+                    ':param' => $idOldParameter
+                ));
+                File::model()->updateAll(array('id_parameter' => $this->id_parameter), 'id_parameter=:param', array(
+                    ':param' => $idOldParameter
+                ));
+                DaObjectViewColumn::model()->updateAll(array('id_object_parameter' => $this->id_parameter), 'id_object_parameter=:param', array(
+                    ':param' => $idOldParameter
+                ));
             }
         }
         return parent::afterSave();
     }
 
+    /**
+     *
+     */
     protected function afterDelete()
     {
         $this->sqlChange($this, 'delete');
         return parent::afterDelete();
     }
 
+    /**
+     * @return $this
+     */
     public function onlyVisible()
     {
         $this->getDbCriteria()->mergeWith(array(
-            'condition' => $this->getTableAlias() . '.visible=1',
+            'condition' => $this->getTableAlias() . '.visible='.self::IS_VISIBLE,
         ));
         return $this;
     }
@@ -255,7 +276,9 @@ class ObjectParameter extends DaActiveRecord
     private function sqlChange(ObjectParameter $instance, $mode = null)
     {
         $idObject = $instance->id_object;
-        if ($idObject == null) return false;
+        if ($idObject == null) {
+            return false;
+        }
         $isDelete = $mode == 'delete';
         $isInsert = $mode == 'insert';
         $objectCurrent = DaObject::getById($idObject);
@@ -272,7 +295,9 @@ class ObjectParameter extends DaActiveRecord
             }
             return false;
         }
-        $tableNotExists = (Yii::app()->db->createCommand('SHOW TABLES LIKE :t')->queryScalar(array(':t' => $objectCurrent->table_name)) == null);
+        $tableNotExists = (Yii::app()->db->createCommand('SHOW TABLES LIKE :t')->queryScalar(array(
+                ':t' => $objectCurrent->table_name
+            )) == null);
 
         $sqls = array();
         $allowQuery = true;
@@ -313,7 +338,7 @@ class ObjectParameter extends DaActiveRecord
                 if ($instanceOld != null) {
                     $fieldName = $instanceOld->getFieldName();
                 }
-                foreach ($columns AS $column) {
+                foreach ($columns as $column) {
                     if ($column['Field'] == $fieldName) {
                         $fieldExists = true;
                     }
@@ -379,7 +404,9 @@ class ObjectParameter extends DaActiveRecord
             $msg .= 'Выполнено: ' . $sql . '<br>';
         }
         if ($msg != '') {
-            if (Yii::app()->isBackend) Yii::app()->addMessage($msg);
+            if (Yii::app()->isBackend) {
+                Yii::app()->addMessage($msg);
+            }
         }
     }
 

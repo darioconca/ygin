@@ -18,106 +18,119 @@
  * @property integer $start_date
  * @property integer $max_second_process
  *
- * @property integer $failures_max_count
+ * @property integer $failures_max_count //@todo
  */
-class Job extends DaActiveRecord {
+class Job extends DaActiveRecord
+{
 
 
-  const DEFAULT_MAX_COUNT_FAILURES = 10000;
-  const ID_OBJECT = 51;
-  protected $idObject = self::ID_OBJECT;
+    const DEFAULT_MAX_COUNT_FAILURES = 10000;
+    const ID_OBJECT = 51;
+    protected $idObject = self::ID_OBJECT;
 
-  /**
-   * Returns the static model of the specified AR class.
-   * @param string $className active record class name.
-   * @return Job the static model class
-   */
-  public static function model($className=__CLASS__) {
-    return parent::model($className);
-  }
+    /**
+     * Returns the static model of the specified AR class.
+     * @param string $className active record class name.
+     * @return Job the static model class
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-  /**
-   * @return string the associated database table name
-   */
-  public function tableName() {
-    return 'da_job';
-  }
+    /**
+     * @return string the associated database table name
+     */
+    public function tableName()
+    {
+        return 'da_job';
+    }
 
-  /**
-   * @return array validation rules for model attributes.
-   */
-  public function rules() {
-    return array(
-      array('id_job', 'match', 'pattern'=>'~\d+|[a-zA-Z\d\_]+\-[a-zA-Z\d\_\-]*[a-zA-Z\d\_]+~', 'message'=>'ИД должен содержать дефис'),
-      array('id_job', 'unique'),
-      array('name, class_name, id_job', 'required'),
-      array('interval_value, error_repeat_interval, first_start_date, last_start_date, next_start_date, failures, active, priority, start_date, max_second_process', 'numerical', 'integerOnly'=>true),
-      array('id_job, name, class_name', 'length', 'max'=>255),
-    );
-  }
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules()
+    {
+        return array(
+            array('id_job', 'match', 'pattern' => '~\d+|[a-zA-Z\d\_]+\-[a-zA-Z\d\_\-]*[a-zA-Z\d\_]+~', 'message' => 'ИД должен содержать дефис'),
+            array('id_job', 'unique'),
+            array('name, class_name, id_job', 'required'),
+            array('interval_value, error_repeat_interval, first_start_date, last_start_date, next_start_date, failures, active, priority, start_date, max_second_process', 'numerical', 'integerOnly' => true),
+            array('id_job, name, class_name', 'length', 'max' => 255),
+        );
+    }
 
-  /**
-   * @return array relational rules.
-   */
-  public function relations() {
-    return array(
-    );
-  }
-  
-  public function scopes() {
-    $a = $this->tableAlias;
-    return array(
-      'longExecuted' => array(
-        'condition' => "$a.max_second_process IS NOT NULL AND $a.max_second_process > 0 AND (start_date + max_second_process) < ".time(),
-      ),
-    );
-  }
+    /**
+     * @return array relational rules.
+     */
+    public function relations()
+    {
+        return array();
+    }
 
-  /*
-  public function available($maxFailures, $time) {
-    $a = $this->tableAlias;
-    $this->dbCriteria->mergeWith(array(
-      'condition' => "$a.start_date IS NULL AND $a.active=1 AND $a.failures < :FAILURES
-                      AND ($a.next_start_date IS NULL OR $a.next_start_date < :TIME)",
-      'params' => array(':FAILURES' => $maxFailures, ':TIME' => $time),
-    ));
-    return $this;
-  }
-  */
-  public function available($maxFailures, $time) {
-    $a = $this->tableAlias;
-    $this->dbCriteria->mergeWith(array(
-        'condition' => "$a.start_date IS NULL AND $a.active=1
+    public function scopes()
+    {
+        $a = $this->tableAlias;
+        return array(
+            'longExecuted' => array(
+                'condition' => "$a.max_second_process IS NOT NULL AND $a.max_second_process > 0 AND (start_date + max_second_process) < " . time(),
+            ),
+        );
+    }
+
+    /*
+    public function available($maxFailures, $time) {
+      $a = $this->tableAlias;
+      $this->dbCriteria->mergeWith(array(
+        'condition' => "$a.start_date IS NULL AND $a.active=1 AND $a.failures < :FAILURES
+                        AND ($a.next_start_date IS NULL OR $a.next_start_date < :TIME)",
+        'params' => array(':FAILURES' => $maxFailures, ':TIME' => $time),
+      ));
+      return $this;
+    }
+    */
+    public function available($maxFailures, $time)
+    {
+        $a = $this->tableAlias;
+        $this->dbCriteria->mergeWith(array(
+            'condition' => "$a.start_date IS NULL AND $a.active=:IS_ACTIVE
                       AND ($a.next_start_date IS NULL OR $a.next_start_date < :TIME)
                       AND $a.failures < :FAILURES",
-        'params' => array(':FAILURES' => $maxFailures, ':TIME' => $time),
-    ));
-    return $this;
-  }
-  /**
-   * @return array customized attribute labels (name=>label)
-   */
-  public function attributeLabels() {
-    return array(
-      'id_job' => 'Id Job',
-      'interval_value' => 'Interval Value',
-      'error_repeat_interval' => 'Error Repeat Interval',
-      'first_start_date' => 'First Start Date',
-      'last_start_date' => 'Last Start Date',
-      'next_start_date' => 'Next Start Date',
-      'failures' => 'Failures',
-      'failures_max_count' => 'Максимальное количество ошибок',
-      'name' => 'Name',
-      'class_name' => 'Class Name',
-      'active' => 'Active',
-      'priority' => 'Priority',
-      'start_date' => 'Start Date',
-      'max_second_process' => 'Max Second Process',
-    );
-  }
-  
-  public function getExecutionTimeHasCome($curTime) {
-    return empty($this->next_start_date) || (!empty($this->next_start_date) && $this->next_start_date <= $curTime);
-  }
+            'params' => array(
+                ':FAILURES'     => $maxFailures,
+                ':TIME'         => $time,
+                ':IS_ACTIVE'    => self::IS_ACTIVE,
+            ),
+        ));
+        return $this;
+    }
+
+    /**
+     * @return array customized attribute labels (name=>label)
+     */
+    public function attributeLabels()
+    {
+        return array(
+            'id_job' => 'Id Job',
+            'interval_value' => 'Interval Value',
+            'error_repeat_interval' => 'Error Repeat Interval',
+            'first_start_date' => 'First Start Date',
+            'last_start_date' => 'Last Start Date',
+            'next_start_date' => 'Next Start Date',
+            'failures' => 'Failures',
+            'failures_max_count' => 'Максимальное количество ошибок',
+            'name' => 'Name',
+            'class_name' => 'Class Name',
+            'active' => 'Active',
+            'priority' => 'Priority',
+            'start_date' => 'Start Date',
+            'max_second_process' => 'Max Second Process',
+        );
+    }
+
+    public function getExecutionTimeHasCome($curTime)
+    {
+        return empty($this->next_start_date) || (!empty($this->next_start_date) && $this->next_start_date <= $curTime);
+    }
 
 }

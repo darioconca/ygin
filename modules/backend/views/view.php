@@ -77,7 +77,7 @@ echo $form->errorSummary($model,
         $readOnlyInstance = true;
         $layout = Yii::app()->controller->layout;
         Yii::app()->controller->layout = false;
-        foreach ($visualElementArray AS $visualElement) {
+        foreach ($visualElementArray as $visualElement) {
             if (!$visualElement->isReadOnly()) {
                 $readOnlyInstance = false;
             }
@@ -98,14 +98,15 @@ echo $form->errorSummary($model,
 
                 <div class="additional-property-list">
                     <?php
-                    foreach ($visualElementArray AS $visualElement) {
+                    foreach ($visualElementArray as $visualElement) {
                         if ($visualElement->isAdditional()) {
                             $visualElement->run();
                         }
                     } ?>
                 </div>
             </div>
-        <?php }
+        <?php } ?>
+        <?php
 
         Yii::app()->controller->layout = $layout;
 
@@ -168,10 +169,9 @@ echo $form->errorSummary($model,
                             <!--             <li><a id="saveAsNew" class="btn-save" data-action="6" href="#"><i class="glyphicon glyphicon-ok"></i> Сохранить как новое <i class="glyphicon glyphicon-file"></i></a></li>  -->
                         </ul>
                     </div>
-                    &nbsp;&nbsp;
                     <a class="btn btn-success btn-save" id="acceptButton" title="Ctrl+Shift+Enter" data-action="3"><i
                             class="glyphicon glyphicon-ok icon-white"></i> <?= Yii::t('backend', 'Save'); ?>
-                    </a>&nbsp;&nbsp;
+                    </a>
                     <?php /* if ($idFormInstance != null && $copyInstance) { ?><button class="btn btn-default" id="saveAsNewButton" data-action="4"><i class="glyphicon glyphicon-asterisk"></i> Сохранить как новый</button>&nbsp;&nbsp;<?php } */ ?>
                     <a class="btn btn-danger" id="cancelButton" title="Ctrl+Esc" href="<?php echo $backLink ?>"><i
                             class="glyphicon glyphicon-remove icon-white"></i> <?= Yii::t('backend', 'Cancel'); ?></a>

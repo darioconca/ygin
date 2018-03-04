@@ -47,7 +47,9 @@ class DateTimeBehavior extends CModelBehavior
                 $this->owner->{$dateTimeForm->dateTimeAttribute} = $dateTimeForm->getTimestamp();
             } else {
                 foreach ($dateTimeForm->getErrors() as $attribute => $errors) {
-                    $event->sender->addErrors(array($dateTimeForm->dateTimeAttribute => $errors));
+                    $event->sender->addErrors(array(
+                        $dateTimeForm->dateTimeAttribute => $errors
+                    ));
                 }
             }
         }

@@ -92,6 +92,7 @@ function trim(str){
   return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
 
+ //@todo
 function yginTranslit(ruText) {
     if ((ruText == "") || (trim(ruText) == "")) return "";
     var enText = ruText.toLowerCase();

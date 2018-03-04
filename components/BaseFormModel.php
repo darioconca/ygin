@@ -1,12 +1,23 @@
 <?php
 
-abstract class BaseFormModel extends CFormModel {
+abstract class BaseFormModel extends CFormModel
+{
 
-  public static function newModel($modelName, $scenario='insert') {
-    $models = isset(Yii::app()->models) ? Yii::app()->models : array();
-    $className = HArray::val($models, $modelName, $modelName);
-    $className = Yii::import($className , true);
-    return new $className($scenario);
-  }
-  
+    /**
+     * @param $modelName
+     * @param string $scenario
+     * @return mixed
+     * @throws CException
+     */
+    public static function newModel($modelName, $scenario = 'insert')
+    {
+        $models = array();
+        if ( isset(Yii::app()->models) ){
+            $models = Yii::app()->models;
+        }
+        $className = HArray::val($models, $modelName, $modelName);
+        $className = Yii::import($className, true);
+        return new $className($scenario);
+    }
+
 }

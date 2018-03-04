@@ -61,8 +61,8 @@ class News extends DaActiveRecord implements ISearchable
     public function relations()
     {
         return array(
-            'image' => array(self::HAS_ONE, 'File', array('id_file' => 'photo'), 'select' => 'id_file, file_path, id_object, id_instance, id_parameter, id_property'),
-            'category' => array(self::BELONGS_TO, 'NewsCategory', 'id_news_category'),
+            'image'     => array(self::HAS_ONE, 'File', array('id_file' => 'photo'), 'select' => 'id_file, file_path, id_object, id_instance, id_parameter, id_property'),
+            'category'  => array(self::BELONGS_TO, 'NewsCategory', 'id_news_category'),
         );
     }
 
@@ -100,6 +100,9 @@ class News extends DaActiveRecord implements ISearchable
         );
     }
 
+    /**
+     * @return string
+     */
     public function getUrl()
     {
         if ($this->id_news) {
@@ -108,21 +111,30 @@ class News extends DaActiveRecord implements ISearchable
         return Yii::app()->createUrl('news/news/index');
     }
 
+    /**
+     * @return string
+     */
     public function getSearchTitle()
     {
         return $this->title;
     }
 
+    /**
+     * @return string
+     */
     public function getSearchUrl()
     {
         return $this->getUrl();
     }
 
+    /**
+     * @return array
+     */
     public function defaultScope()
     {
         $alias = $this->getTableAlias(true, false);
         return array(
-            'condition' => "$alias.is_visible = ",self::IS_VISIBLE,
+            'condition' => "{$alias}.is_visible = ".self::IS_VISIBLE,
         );
     }
 
@@ -130,13 +142,16 @@ class News extends DaActiveRecord implements ISearchable
     {
         $alias = $this->getTableAlias();
         $this->getDbCriteria()->mergeWith(array(
-            'with' => 'image',
-            'order' => "$alias.date DESC",
+            'with'  => 'image',
+            'order' => "{$alias}.date DESC",
             'limit' => $limit,
         ));
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function getIsVisible()
     {
         return $this->is_visible === self::IS_VISIBLE;

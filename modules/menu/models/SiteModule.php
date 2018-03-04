@@ -44,14 +44,26 @@ class SiteModule extends DaActiveRecord
         return 'da_site_module';
     }
 
+    /**
+     * @return bool
+     */
     public function isVisible()
     {
-        return ($this->is_visible === 1);
+        return ($this->is_visible === self::IS_VISIBLE);
     }
 
-    public function setIsVisible($bool)
+    /**
+     * @return bool
+     */
+    public function isHidden()
     {
-        $this->is_visible = ($bool ? 1 : 0);
+        return ($this->is_visible === self::NO_VISIBLE);
+    }
+
+
+    public function setVisible($bool)
+    {
+        $this->is_visible = (bool)$bool;
     }
 
     /**

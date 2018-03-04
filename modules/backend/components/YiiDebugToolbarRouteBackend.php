@@ -5,7 +5,9 @@ Yii::import('ygin.ext.yii-debug-toolbar.YiiDebugToolbarRoute', true);
 class YiiDebugToolbarRouteBackend extends YiiDebugToolbarRoute {
 
     public function init() {
-        if ($this->enabled) $this->enabled = Yii::app()->user->checkAccess(DaWebUser::ROLE_DEV);
+        if ($this->enabled) {
+            $this->enabled = Yii::app()->user->checkAccess(DaWebUser::ROLE_DEV);
+        }
         parent::init();
 /*
         $this->enabled && $this->enabled = ($this->allowIp(Yii::app()->request->userHostAddress)

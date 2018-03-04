@@ -12,7 +12,7 @@ class ObjectColumn extends BaseColumn
         }
         $data = $this->grid->dataProvider->getData();
         $field = $this->name;
-        foreach ($data AS $row) {
+        foreach ($data as $row) {
             $val = $row[$field];
             if ($val != null && !in_array($val, $this->_assocData)) {
                 $this->_assocData[] = $row[$field];

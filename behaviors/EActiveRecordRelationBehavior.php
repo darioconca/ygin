@@ -71,18 +71,20 @@ class EActiveRecordRelationBehavior extends CActiveRecordBehavior
 				// attribute of $this->owner has to be changed
 				case CActiveRecord::BELONGS_TO:
 
-					if (!$this->owner->hasRelated($name) || !$this->isRelationSupported($relation))
+					if (!$this->owner->hasRelated($name) || !$this->isRelationSupported($relation)){
 						break;
+					}
 
-					$pk=null;
-					if (($related=$this->owner->getRelated($name, false))!==null) {
+					$pk = null;
+					if (($related=$this->owner->getRelated($name, false)) !== null) {
 						if (is_object($related)) {
 							/** @var CActiveRecord $related */
-							if ($related->isNewRecord)
+							if ($related->isNewRecord){
 								throw new CDbException('You can not save a record that has new related records!');
-							$pk=$related->getPrimaryKey();
+							}
+							$pk = $related->getPrimaryKey();
 						} else {
-							$pk=$related;
+							$pk = $related;
 						}
 					}
 
@@ -172,8 +174,9 @@ class EActiveRecordRelationBehavior extends CActiveRecordBehavior
 					case CActiveRecord::HAS_MANY:
 					case CActiveRecord::HAS_ONE:
 
-						if (!$this->owner->hasRelated($name) || !$this->isRelationSupported($relation))
+						if (!$this->owner->hasRelated($name) || !$this->isRelationSupported($relation)){
 							break;
+						}
 
 						Yii::trace(
 							'updating '.(($relation[0]==CActiveRecord::HAS_ONE)?'HAS_ONE':'HAS_MANY').
@@ -188,10 +191,11 @@ class EActiveRecordRelationBehavior extends CActiveRecordBehavior
 
 						// HAS_ONE is special case of HAS_MANY, so we have array with one or no element
 						if ($relation[0]==CActiveRecord::HAS_ONE) {
-							if ($newRelatedRecords===null)
-								$newRelatedRecords=array();
-							else
-								$newRelatedRecords=array($newRelatedRecords);
+							if ($newRelatedRecords === null){
+								$newRelatedRecords = array();
+							}else{
+								$newRelatedRecords = array($newRelatedRecords);
+							}
 						}
 
 						// get related records as objects and primary keys
@@ -204,7 +208,9 @@ class EActiveRecordRelationBehavior extends CActiveRecordBehavior
 						// @todo add support for composite primary keys
 						$criteria->addColumnCondition(array($relation[2]=>$this->owner->getPrimaryKey()));
 						if (CActiveRecord::model($relation[1])->tableSchema->getColumn($relation[2])->allowNull) {
-							CActiveRecord::model($relation[1])->updateAll(array($relation[2]=>null), $criteria);
+							CActiveRecord::model($relation[1])->updateAll(array(
+								$relation[2] => null
+							), $criteria);
 						} else {
 							CActiveRecord::model($relation[1])->deleteAll($criteria);
 						}
@@ -222,13 +228,15 @@ class EActiveRecordRelationBehavior extends CActiveRecordBehavior
 				}
 			}
 			// commit internal transaction if one exists
-			if ($this->_transaction!==null)
+			if ($this->_transaction!==null){
 				$this->_transaction->commit();
+			}
 
 		} catch(Exception $e) {
 			// roll back internal transaction if one exists
-			if ($this->_transaction!==null)
+			if ($this->_transaction!==null){
 				$this->_transaction->rollback();
+			}
 			// re-throw exception
 			throw $e;
 		}
@@ -263,12 +271,13 @@ class EActiveRecordRelationBehavior extends CActiveRecordBehavior
 	 */
 	protected function objectsToPrimaryKeys($records)
 	{
-		$pks=array();
+		$pks = array();
 		foreach($records as $record) {
-			if (is_object($record) && $record->isNewRecord)
+			if (is_object($record) && $record->isNewRecord){
 				throw new CDbException('You can not save a record that has new related records!');
+			}
 
-			$pks[]=is_object($record) ? $record->getPrimaryKey() : $record;
+			$pks[] = is_object($record) ? $record->getPrimaryKey() : $record;
 		}
 		return $pks;
 	}
@@ -284,15 +293,18 @@ class EActiveRecordRelationBehavior extends CActiveRecordBehavior
 	protected function primaryKeysToObjects($pks, $className)
 	{
 		// @todo increase performance by running one query with findAllByPk()
-		$records=array();
+		$records = array();
 		foreach($pks as $pk) {
-			$record=$pk;
-			if (is_object($record) && $record->isNewRecord)
+			$record = $pk;
+			if (is_object($record) && $record->isNewRecord){
 				throw new CDbException('You can not save a record that has new related records!');
-			if (!is_object($record))
+			}
+			if ( !is_object($record) ){
 				$record=CActiveRecord::model($className)->findByPk($pk);
-			if ($record===null)
+			}
+			if ($record===null){
 				throw new CDbException('Related record with primary key "'.print_r($pk,true).'" does not exist!');
+			}
 
 			$records[]=$record;
 		}
@@ -325,7 +337,7 @@ class EActiveRecordRelationBehavior extends CActiveRecordBehavior
 	protected function getOldManyManyPks($relationName)
 	{
 		// @todo improve performance by doing simple select query instead of using AR
-		$tmpAr=CActiveRecord::model(get_class($this->owner))->findByPk($this->owner->getPrimaryKey());
+		$tmpAr = CActiveRecord::model(get_class($this->owner))->findByPk($this->owner->getPrimaryKey());
 		return $this->objectsToPrimaryKeys($tmpAr->getRelated($relationName, true));
 	}
 
@@ -346,12 +358,19 @@ class EActiveRecordRelationBehavior extends CActiveRecordBehavior
 	 */
 	protected function parseManyManyFk($name, $relation)
 	{
-		if(!preg_match('/^\s*(.*?)\((.*)\)\s*$/',$relation[2],$matches))
-			throw new CDbException(Yii::t('yii','The relation "{relation}" in active record class "{class}" is specified with an invalid foreign key. The format of the foreign key must be "joinTable(fk1,fk2,...)".',
-				array('{class}'=>get_class($this->owner),'{relation}'=>$name)));
-		if(($joinTable=$this->owner->dbConnection->schema->getTable($matches[1]))===null)
-			throw new CDbException(Yii::t('yii','The relation "{relation}" in active record class "{class}" is not specified correctly: the join table "{joinTable}" given in the foreign key cannot be found in the database.',
-				array('{class}'=>get_class($this->owner), '{relation}'=>$name, '{joinTable}'=>$matches[1])));
+		if(!preg_match('/^\s*(.*?)\((.*)\)\s*$/',$relation[2],$matches)){
+			throw new CDbException(Yii::t('yii','The relation "{relation}" in active record class "{class}" is specified with an invalid foreign key. The format of the foreign key must be "joinTable(fk1,fk2,...)".',	array(
+				'{class}'		=> get_class($this->owner),
+				'{relation}'	=> $name
+			)));
+		}
+		if(($joinTable=$this->owner->dbConnection->schema->getTable($matches[1]))===null){
+			throw new CDbException(Yii::t('yii','The relation "{relation}" in active record class "{class}" is not specified correctly: the join table "{joinTable}" given in the foreign key cannot be found in the database.', array(
+				'{class}'		=> get_class($this->owner),
+				'{relation}'	=> $name,
+				'{joinTable}'   => $matches[1]
+			)));
+		}
 		$fks=preg_split('/\s*,\s*/',$matches[2],-1,PREG_SPLIT_NO_EMPTY);
 
 		return array($joinTable, $fks);
@@ -412,8 +431,9 @@ class ECompositeDbCriteria extends CDbCriteria
 
 	private function createCompositeInCondition($columns,$values)
 	{
-		if(count($values)<1)
-			return '0=1'; // 0=1 is used because in MSSQL value alone can't be used in WHERE
+		if(count($values)<1){
+			return '0=1';
+		} // 0=1 is used because in MSSQL value alone can't be used in WHERE
 
 		$sql1 = array();
 		foreach($values as $value) {

@@ -42,19 +42,19 @@ class ObjectUrlRule extends CBaseUrlRule
             BackendModule::ROUTE_INSTANCE_LIST_GROUP,
             BackendModule::ROUTE_INSTANCE_VIEW);
         if (in_array($route, $available) && isset($params[self::PARAM_OBJECT])) {
-            $url = 'page/' . $params[self::PARAM_OBJECT] . '/';
+            $url = "page/{$params[self::PARAM_OBJECT]}/";
             if (isset($params[self::PARAM_OBJECT_INSTANCE])) {
                 $url .= $params[self::PARAM_OBJECT_INSTANCE] . '/';
             }
-            foreach ($params AS $key => $value) {
+            foreach ($params as $key => $value) {
                 if ($key == self::PARAM_OBJECT_INSTANCE) {
                     continue;
                 } else if ($key == self::PARAM_OBJECT_VIEW) {
-                    $url .= 'view/' . $value . '/';
+                    $url .= "view/{$value}/";
                 } else if ($key == self::PARAM_OBJECT) {
                     continue;
                 } else if ($value != null) {
-                    $url .= $key . '/' . $value . '/';
+                    $url .= "{$key}/{$value}/";
                 }
             }
             return $url;
@@ -82,7 +82,9 @@ class ObjectUrlRule extends CBaseUrlRule
             if (preg_match('~^page/[\da-zA-Z\-\_]+/([\d\-]+|[a-zA-Z\d\_]+\-[a-zA-Z\d\-\_]+)(/.*)~', $pathInfo, $matches)) {
                 $idInstance = trim($matches[1]);
                 $remainUrl = $matches[2];
-                if ($idInstance == '') $idInstance = null;
+                if ($idInstance == '') {
+                    $idInstance = null;
+                }
             }
 
             if ($idInstance != null) {
@@ -95,7 +97,9 @@ class ObjectUrlRule extends CBaseUrlRule
                 $count = count($matches[1]);
                 for ($i = 0; $i < $count; $i++) {
                     $param = $matches[1][$i];
-                    if ($param == self::PARAM_OBJECT) continue;
+                    if ($param == self::PARAM_OBJECT) {
+                        continue;
+                    }
                     $value = $matches[2][$i];
                     self::$_currentUrlParams[$param] = $value;
                     $_GET[$param] = $value;
@@ -106,12 +110,16 @@ class ObjectUrlRule extends CBaseUrlRule
             // пока тут определяем текущий объект и представление
             if ($idView != null) {
                 $objectView = DaObjectView::model()->with('columns:onlyVisible')->findByPk($idView);
-                if ($objectView == null) throw new CHttpException(404);
+                if ($objectView == null) {
+                    throw new CHttpException(HttpCode::NOT_FOUND);
+                }
                 Yii::app()->backend->objectView = $objectView;
                 Yii::app()->backend->object = DaObject::getById($objectView->id_object);
             } else {
                 $object = DaObject::getById($idObject);
-                if ($object == null || $object->table_name == null) throw new CHttpException(404);
+                if ($object == null || $object->table_name == null) {
+                    throw new CHttpException(HttpCode::NOT_FOUND);
+                }
 
                 Yii::app()->backend->object = $object;
                 if ($object->object_type == DaObject::OBJECT_TYPE_CONTROLLER) {
@@ -119,10 +127,14 @@ class ObjectUrlRule extends CBaseUrlRule
                 }
 
                 $cr = new CDbCriteria();
-                $cr->addColumnCondition(array('t.id_object' => $idObject));
+                $cr->addColumnCondition(array(
+                    't.id_object' => $idObject
+                ));
                 $cr->order = 't.order_no';
                 $objectView = DaObjectView::model()->with('columns:onlyVisible')->find($cr);
-                if ($objectView == null) return false;
+                if ($objectView == null) {
+                    return false;
+                }
                 $objectView->object = $object;
                 Yii::app()->backend->objectView = $objectView;
             }

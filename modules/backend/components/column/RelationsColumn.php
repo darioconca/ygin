@@ -17,10 +17,12 @@ class RelationsColumn extends CGridColumn
     {
         parent::init();
         $arrayOfId = $this->grid->dataProvider->getKeys();
-        if (count($arrayOfId) == 0) return;
+        if (count($arrayOfId) == 0) {
+            return;
+        }
         $availableObjects = array();
         $singleStatus = 0;
-        foreach ($this->childData AS $param) {
+        foreach ($this->childData as $param) {
             if ($param->isRelation() == false) continue;
             $idObject = $param->getIdObjectParameter();
             // Смотрим, может ли пользователь работать с подчинённым объектом
@@ -31,7 +33,7 @@ class RelationsColumn extends CGridColumn
                 $availableObjects[$idObject] = null;
                 continue;
             } else {
-                $singleStatus = ($singleStatus == 0 ? 1 : 2);
+                $singleStatus = ($singleStatus == 0 ? 1 : 2); //@todo
                 $availableObjects[$idObject][$param->getIdParameter()]['field'] = $param->getFieldName();
             }
         }
@@ -41,7 +43,7 @@ class RelationsColumn extends CGridColumn
         } else {
             $this->htmlOptions = array('class' => 'col-ref-one action-sub-data');
         }
-        foreach ($availableObjects AS $idObject => $params) {
+        foreach ($availableObjects as $idObject => $params) {
             if ($params === null) {
                 unset($availableObjects[$idObject]);
                 continue;
@@ -49,7 +51,7 @@ class RelationsColumn extends CGridColumn
             $object = null;
             if (count($params) == 1) {
                 $object = DaObject::getById($idObject, false);
-                foreach ($params AS $idParameter => $caption) {
+                foreach ($params as $idParameter => $caption) {
                     $availableObjects[$idObject][$idParameter]['caption'] = $object->name;
                 }
             } else {
@@ -60,7 +62,7 @@ class RelationsColumn extends CGridColumn
                 }
             }
             $model = $object->getModel();
-            foreach ($params AS $idParameter => $config) {
+            foreach ($params as $idParameter => $config) {
                 $cr = new CDbCriteria();
                 $cr->addColumnCondition(array('t.id_object' => $idObject));
                 $cr->order = 't.order_no';
@@ -71,7 +73,9 @@ class RelationsColumn extends CGridColumn
                 $params = $dataProvider->criteria->params;
 
                 $whereConfig = array('and');
-                if ($where != null) $whereConfig[] = $where;
+                if ($where != null) {
+                    $whereConfig[] = $where;
+                }
                 $whereConfig[] = array('in', $config['field'], $arrayOfId);
 
                 $data = Yii::app()->db->createCommand()
@@ -90,7 +94,7 @@ class RelationsColumn extends CGridColumn
                 }*/
 
                 $assocData = array();
-                foreach ($data AS $row) {
+                foreach ($data as $row) {
                     $assocData[$row['id']] = $row['cnt'];
                 }
                 $availableObjects[$idObject][$idParameter]['data'] = $assocData;
@@ -131,8 +135,8 @@ $(document).on("afterGridUpdate", function(e) {  $(".action-sub-data").daSubData
               <ul id="popm' . $idInstance . '">
 ';
         }
-        foreach ($this->prepareData AS $idObject => $params) {
-            foreach ($params AS $idParameter => $config) {
+        foreach ($this->prepareData as $idObject => $params) {
+            foreach ($params as $idParameter => $config) {
                 $page = null;
                 if ($this->grid->dataProvider->getPagination()) {
                     $page = $this->grid->dataProvider->getPagination()->currentPage + 1;

@@ -3,7 +3,7 @@
 class VisualElementWidget extends VisualElementBaseWidget
 {
 
-    private static $_objectParamPermission = 1;
+    private static $_objectParamPermission = 1; //@todo
     private $_objectParameter = null;
 
     public $layout = 'backend.widgets.layouts.default';
@@ -47,21 +47,33 @@ class VisualElementWidget extends VisualElementBaseWidget
         return $elementName;
     }
 
+    /**
+     * @return bool
+     */
     public function isAdditional()
     {
         return ($this->objectParameter->is_additional == 1);
     }
 
+    /**
+     * @return bool
+     */
     public function canNull()
     {
         return (!$this->getObjectParameter()->isRequired());
     }
 
+    /**
+     * @return string
+     */
     public function getCaption()
     {
         return $this->objectParameter->getCaption();
     }
 
+    /**
+     * @return string
+     */
     public function getHint()
     {
         return $this->objectParameter->getHint();
@@ -91,7 +103,7 @@ class VisualElementWidget extends VisualElementBaseWidget
                 ObjectUrlRule::PARAM_OBJECT_INSTANCE => $this->objectParameter->getIdParameter(),
                 ObjectUrlRule::PARAM_GROUP_OBJECT => DaObject::ID_OBJECT,
                 ObjectUrlRule::PARAM_GROUP_INSTANCE => $object->id_object,
-                ObjectUrlRule::PARAM_GROUP_PARAMETER => 75,
+                ObjectUrlRule::PARAM_GROUP_PARAMETER => 75,//@todo
             ));
         }
         return $link;
@@ -131,7 +143,9 @@ class VisualElementWidget extends VisualElementBaseWidget
         /**
          * @var DaObject $object
          */
-        if ($this->objectParameter == null) return null;
+        if ($this->objectParameter == null) {
+            return null;
+        }
         $defaultValue = $this->objectParameter->getDefaultValue();
         if (mb_strpos($defaultValue, "$") !== false || mb_strpos($defaultValue, "::") !== false) {
             $defaultValue = '$defaultValue = ' . addslashes($defaultValue) . ';';

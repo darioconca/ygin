@@ -1,14 +1,16 @@
 <?php
 
-class ConfigureDataProviderEvent extends CEvent {
+class ConfigureDataProviderEvent extends CEvent
+{
 
-  public $idObjectView;
-  public $dataProvider;
+    public $idObjectView;
+    public $dataProvider;
 
-  public function __construct($sender, $idView, $dataProvider) {
-    parent::__construct($sender);
+    public function __construct($sender, $idView, $dataProvider)
+    {
+        parent::__construct($sender);
 
-    $this->idObjectView = $idView;
-    $this->dataProvider = $dataProvider;
-  }
+        $this->idObjectView = $idView;
+        $this->dataProvider = $dataProvider;
+    }
 }

@@ -197,10 +197,14 @@ class MenuWidget extends CMenu implements IParametersConfig
     }
 
 
+    /**
+     * @param Menu $item
+     * @return bool
+     */
     protected function isMenuItemActive(Menu $item)
     {
-        $curMenu = Yii::app()->menu->current;
-        return $curMenu !== null && ($curMenu->id == $item->id || ($this->activateParents && $item->isAncestor($curMenu)));
+        $currentMenu = Yii::app()->menu->current;
+        return $currentMenu !== null && ($currentMenu->id == $item->id || ($this->activateParents && $item->isAncestorOf($currentMenu)));
     }
 
 
@@ -225,7 +229,11 @@ class MenuWidget extends CMenu implements IParametersConfig
             ob_start();
             ob_implicit_flush(false);
             parent::run();
-            echo strtr($this->baseTemplate, array('{menu}' => ob_get_clean()));
+
+            $this->render('menu',array(
+                'template'  => $this->baseTemplate,
+                'menu'      => ob_get_clean(),
+            ));
         }
     }
 

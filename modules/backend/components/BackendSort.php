@@ -1,17 +1,28 @@
 <?php
 
-class BackendSort extends CSort {
+class BackendSort extends CSort
+{
 
-  private $_model;
+    private $_model;
 
-  public function getModel($className) {
-    if ($this->_model == null) {
-      $this->_model = parent::getModel($className);
+    /**
+     * @param string $className
+     * @return CActiveRecord
+     */
+    public function getModel($className)
+    {
+        if ($this->_model == null) {
+            $this->_model = parent::getModel($className);
+        }
+        return $this->_model;
     }
-    return $this->_model;
-  }
-  public function setModel($model) {
-    $this->_model = $model;
-  }
+
+    /**
+     * @param CActiveRecord $model
+     */
+    public function setModel($model)
+    {
+        $this->_model = $model;
+    }
 
 }

@@ -9,19 +9,31 @@ abstract class DaActiveRecord extends BaseActiveRecord
     private $_idInstance = -1;
     private $_pkBeforeSave = null;
 
+    const IS_ACTIVE = 1;
+    const NO_ACTIVE = 0;
+
+    const IS_VISIBLE = 1;
+    const NO_VISIBLE = 0;
+
     protected $idObject = null;
 
     public final function getIdObject()
     {
-        if ($this->idObject == null && $this->__object != null) $this->idObject = $this->__object->id_object;
-        if ($this->idObject == null)
+        if ($this->idObject == null && $this->__object != null) {
+            $this->idObject = $this->__object->id_object;
+        }
+        if ($this->idObject == null){
             throw new ErrorException('Для модели ' . get_class($this) . ' не установлен id_object');
+        }
+
         return $this->idObject;
     }
 
     public final function getIdInstance($cache = true)
     {
-        if ($cache && $this->_idInstance != -1) return $this->_idInstance;
+        if ($cache && $this->_idInstance != -1) {
+            return $this->_idInstance;
+        }
         $this->_idInstance = null;
         $object = $this->getObjectInstance();
         $field = $object->getFieldByType(DataType::PRIMARY_KEY);
@@ -45,7 +57,9 @@ abstract class DaActiveRecord extends BaseActiveRecord
 
     public function getIdParent()
     {
-        if ($this->_idParent != -1) return $this->_idParent;
+        if ($this->_idParent != -1) {
+            return $this->_idParent;
+        }
         $this->_idParent = null;
         $object = $this->getObjectInstance();
         $field = $object->getFieldByType(DataType::ID_PARENT);
@@ -71,21 +85,25 @@ abstract class DaActiveRecord extends BaseActiveRecord
         } else {
             throw new ErrorException('Неверно определен тип параметра метода arrayOfModel.');
         }
-        if ($collection->getCount() == 0) return $arrayOfModel;
+        if ($collection->getCount() == 0) {
+            return $arrayOfModel;
+        }
         if ($parentField == null) {
             $parentField = $this->__object->getFieldByType(DataType::ID_PARENT);
         }
         $arrayOfId = $collection->getKeys();
         $countData = array_fill_keys($arrayOfId, 0);
-        if ($parentField == null) return $countData;
+        if ($parentField == null) {
+            return $countData;
+        }
         $whereConfig = array('in', $parentField, $arrayOfId);
         $data = Yii::app()->db->createCommand()
-            ->select($parentField . ' AS id, count(*) AS cnt')
+            ->select("{$parentField} AS id, count(*) AS cnt")
             ->from($this->tableName())
             ->where($whereConfig)
             ->group($parentField)
             ->queryAll();
-        foreach ($data AS $row) {
+        foreach ($data as $row) {
             $countData[$row['id']] = $row['cnt'];
         }
         return $countData;
@@ -114,14 +132,14 @@ abstract class DaActiveRecord extends BaseActiveRecord
         $arrayOfId = $collection->getKeys();
         $relationParams = $this->getObjectInstance()->relationParameters;
         $assocData = array_fill_keys($arrayOfId, array());
-        foreach ($relationParams AS $param) {
+        foreach ($relationParams as $param) {
             $whereConfig = array('and', array('in', $param->getFieldName(), $arrayOfId));
 
             $idObject = $param->getIdObjectParameter();
             $object = DaObject::getById($idObject, false);
 
             $data = Yii::app()->db->createCommand()
-                ->select($param->getFieldName() . ' AS id, count(*) AS cnt')
+                ->select("{$param->getFieldName()} AS id, count(*) AS cnt")
                 ->from($object->table_name)
                 ->where($whereConfig)
                 ->group($param->getFieldName())
@@ -135,13 +153,15 @@ abstract class DaActiveRecord extends BaseActiveRecord
               $iq->setUsedObjects(array($idObjectTmp));
             }*/
 
-            foreach ($data AS $row) {
+            foreach ($data as $row) {
                 $assocData[$row['id']][$idObject] = $row['cnt'];
                 if (!$all && isset($arrayOfId[$row['id']])) {
                     unset($arrayOfId[$row['id']]);
                 }
             }
-            if (!$all && count($arrayOfId) == 0) break;
+            if (!$all && count($arrayOfId) == 0) {
+                break;
+            }
         }
         if ($scalar) {
             return array_shift($assocData);
@@ -163,7 +183,9 @@ abstract class DaActiveRecord extends BaseActiveRecord
         } else {
             $collection = $instances;
         }
-        if ($collection->getCount() == 0) return $instances;
+        if ($collection->getCount() == 0) {
+            return $instances;
+        }
 
         $arrayOfId = $collection->getKeys();
         $resultData = array_fill_keys($arrayOfId, array('result' => true, 'info' => null));
@@ -174,7 +196,7 @@ abstract class DaActiveRecord extends BaseActiveRecord
             }
         }
         $countData = $this->getCountChildOfInstances($collection);
-        foreach ($countData AS $id => $count) {
+        foreach ($countData as $id => $count) {
             if ($count > 0) {
                 $resultData[$id]['result'] = false;
                 $resultData[$id]['info'] = array('Существуют дочерние экземпляры в количестве: ' . $count);
@@ -183,14 +205,14 @@ abstract class DaActiveRecord extends BaseActiveRecord
         }
 
         $dependentData = $this->getInstancesDependentData($collection);
-        foreach ($dependentData AS $idInstance => $info) {
+        foreach ($dependentData as $instanceId => $info) {
             if (count($info) > 0) {
-                $resultData[$idInstance]['result'] = false;
-                $resultData[$idInstance]['info'] = array();
-                foreach ($info AS $idObject => $count) {
-                    $obj = DaObject::getById($idObject, false);
+                $resultData[$instanceId]['result'] = false;
+                $resultData[$instanceId]['info'] = array();
+                foreach ($info as $objectId => $count) {
+                    $obj = DaObject::getById($objectId, false);
                     $message = "{$obj->name} (связей: {$count})";
-                    $resultData[$idInstance]['info'][] = $message;
+                    $resultData[$instanceId]['info'][] = $message;
                 }
             }
         }
@@ -226,13 +248,16 @@ abstract class DaActiveRecord extends BaseActiveRecord
     }
 
     /**
-     * @return DaObject
+     * @return DaObject|null
+     * @throws ErrorException
      */
     public final function getObjectInstance()
     {
         if ($this->__object == null) {
             $this->__object = DaObject::getById($this->getIdObject(), false);
-            if ($this->__object == null) throw new ErrorException('Не найден объект с ИД=' . $this->getIdObject());
+            if ($this->__object == null) {
+                throw new ErrorException('Не найден объект с ИД=' . $this->getIdObject());
+            }
         }
         return $this->__object;
     }
@@ -243,15 +268,17 @@ abstract class DaActiveRecord extends BaseActiveRecord
      */
     public function findByIdInstance($idInstance)
     {
-        $field = $this->getObjectInstance()->getFieldByType(DataType::PRIMARY_KEY);
-        return $this->findByAttributes(array($field => $idInstance));
+        $keyField = $this->getObjectInstance()->getFieldByType(DataType::PRIMARY_KEY);
+        return $this->findByAttributes(array(
+            $keyField => $idInstance
+        ));
     }
 
     public static function getInstanceOfArrayById(Array $arrayOfInstance, $id)
     {
         // только если первичный ключ не составной. Если составной, то надо дописать.
-        $c = count($arrayOfInstance);
-        for ($i = 0; $i < $c; $i++) {
+        $instancesCount = count($arrayOfInstance);
+        for ($i = 0; $i < $instancesCount; $i++) {
             $instance = $arrayOfInstance[$i];
             if ($instance->getPrimaryKey() == $id) {
                 return $instance;
@@ -260,16 +287,25 @@ abstract class DaActiveRecord extends BaseActiveRecord
         return null;
     }
 
+    /**
+     * @param array $arrayOfPk
+     * @return array
+     */
     public function findAllByPkArray(array $arrayOfPk)
     {
-        $cr = new CDbCriteria();
-        $pkName = ($this->__object != null ? $this->getInstanceKeyName() : null);
+        $criteria = new CDbCriteria();
+        $pkName = null;
+        if ( $this->__object != null ){
+            $pkName = $this->getInstanceKeyName();
+        }
         if ($pkName == null) {
             $pkName = $this->getPKName();
-            if (is_array($pkName)) $pkName = $this->getInstanceKeyName();
+            if (is_array($pkName)) {
+                $pkName = $this->getInstanceKeyName();
+            }
         }
-        $cr->addInCondition($pkName, $arrayOfPk);
-        return $this->findAll($cr);
+        $criteria->addInCondition($pkName, $arrayOfPk);
+        return $this->findAll($criteria);
     }
 
     public function getPKName()
@@ -295,7 +331,7 @@ abstract class DaActiveRecord extends BaseActiveRecord
         if ($folder != null) {
             $folder = HFile::addSlashPath($folder);
         } else if ($makeDir) {
-            $err = "Незадана папка для хранения файлов объекта {$ob->name} (id_object=" . $ob->idObject. ")";
+            $err = "Незадана папка для хранения файлов объекта {$ob->name} (id_object={$ob->idObject})";
             throw new ErrorException($err);
         }
 
@@ -317,15 +353,15 @@ abstract class DaActiveRecord extends BaseActiveRecord
         }*/
 
         $pathToFile = $folder . $instanceFolder . '/';
-        $webroot = Yii::getPathOfAlias('webroot') . '/';
+        $webRoot = Yii::getPathOfAlias('webroot') . '/';
         if ($makeDir) {
-            if (!file_exists($webroot . $pathToFile)) {
+            if (!file_exists($webRoot . $pathToFile)) {
                 umask(0);
-                mkdir($webroot . $pathToFile, 0777, true);
+                mkdir($webRoot . $pathToFile, 0777, true);
             }
         }
         if ($absolute){
-            $pathToFile = $webroot . $pathToFile;
+            $pathToFile = $webRoot . $pathToFile;
         }
         return $pathToFile;
     }
@@ -334,39 +370,42 @@ abstract class DaActiveRecord extends BaseActiveRecord
     {
         $object = DaObject::getById($this->getIdObject());
         $params = $object->parameters;
-        $data = '';
-        foreach ($params AS $p) {
+        $searchData = '';
+        foreach ($params as $param) {
             /**
-             * @var $p ObjectParameter
+             * @var $param ObjectParameter
              */
-            if ($p->isSearch()) {
-                $val = $this->{$p->getFieldName()};
+            if ($param->isSearch()) {
+                $val = $this->{$param->getFieldName()};
                 if ($val != null) {
-                    $data .= $val . ' ';
+                    $searchData .= $val . ' ';
                 }
             }
         }
-        return $data;
+        return $searchData;
     }
 
     protected function beforeDelete()
     {
-        $idObject = $this->getIdObject();
-        //$idInstance = $this->getPrimaryKey();
-
         // Проверяем есть ли у данного экземпляра зависимые от него экземпляры (например, если данный экземпляр ялвяется родительским для других)
         if (!$this->isAvailableForDelete(false)) {
             return false;
         }
 
+        $idObject = $this->getIdObject();
+        //$idInstance = $this->getPrimaryKey();
         // обрабатываем файлы экземпляра
         if ($idObject != File::model()->getIdObject()) {
             // TODO
-            Yii::app()->db->createCommand('DELETE FROM da_search_data WHERE id_object=:obj AND id_instance=:inst')->execute(array(':obj' => $idObject, ':inst' => $this->getIdInstance()));
+            Yii::app()->db->createCommand('DELETE FROM da_search_data WHERE id_object=:obj AND id_instance=:inst')->execute(array(
+                ':obj'  => $idObject,
+                ':inst' => $this->getIdInstance(),
+            ));
 
             $files = File::model()->byInstance($this)->findAll();
-            foreach ($files AS $f)
-                $f->delete();
+            foreach ($files as $file){
+                $file->delete();
+            }
         }
 
         //$cur->updateObjectInstanceInfo(3);

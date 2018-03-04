@@ -2,7 +2,9 @@
 $this->layout = 'backend.views.layouts.auth';
 $this->setPageTitle(Yii::t('backend','Control panel'));
 
-if (Yii::app()->user->returnUrl == null) Yii::app()->user->returnUrl = Yii::app()->homeUrl;
+if (Yii::app()->user->returnUrl == null) {
+    Yii::app()->user->returnUrl = Yii::app()->homeUrl;
+}
 
 // автофокус
 $elementId = null;
@@ -51,7 +53,9 @@ $form = $this->beginWidget('CActiveForm', array(
             <label for="LoginForm_password"><?= Yii::t('backend', 'Password'); ?>:</label>
             <?php echo $form->passwordField($model, 'password', array('class' => 'form-control nullField', 'size' => 15)); ?>
         </div>
-        <?php if (isset(Yii::app()->request->cookies['login_attempt']) && Yii::app()->request->cookies['login_attempt']->value >= 3): ?>
+        <?php if (isset(Yii::app()->request->cookies['login_attempt']) && Yii::app()->request->cookies['login_attempt']->value >= 3){
+            //@todo
+            ?>
             <div class="form-group b-auth-captcha">
                 <label for="LoginForm_verifyCode"><?= Yii::t('backend', 'Verify code'); ?>:</label>
                 <?php echo $form->textField($model, 'verifyCode', array(
@@ -67,7 +71,7 @@ $form = $this->beginWidget('CActiveForm', array(
                 Yii::app()->urlManager->frontendMode = false;
                 ?>
             </div>
-        <?php endif; ?>
+        <?php } ?>
         <div>
             <table>
                 <tr>

@@ -235,20 +235,26 @@ class ActiveRecordTreeBehavior extends CBehavior
 
     /**
      * Является ли текущий объект предком для модели из параметров
-     * @param DaActiveRecord $model
+     * @param CActiveRecord $model
+     * @return bool
      */
-    public function isAncestor(CActiveRecord $model)
+    public function isAncestorOf(CActiveRecord $model)
     {
         return $model->getParentById($this->owner->getPrimaryKey()) !== null;
     }
 
+
     /**
      * Является ли текущий объект потомком для модели из параметров
-     * @param DaActiveRecord $model
+     * @param CActiveRecord $model
+     * @param bool|false $checkSelf
+     * @return bool
      */
-    public function isDescendant(CActiveRecord $model, $checkSelf = false)
+    public function isDescendantOf(CActiveRecord $model, $checkSelf = false)
     {
-        if ($checkSelf && $this->owner->getPrimaryKey() == $model->getPrimaryKey()) return true;
+        if ($checkSelf && $this->owner->getPrimaryKey() == $model->getPrimaryKey()) {
+            return true;
+        }
         return $this->getParentById($model->getPrimaryKey()) !== null;
     }
 
@@ -291,6 +297,7 @@ class ActiveRecordTreeBehavior extends CBehavior
     /**
      * Сбрасывает кеш дерева у модели
      * @param string $tableName
+     * @return bool
      */
     public function flushCache($tableName)
     {
@@ -301,7 +308,9 @@ class ActiveRecordTreeBehavior extends CBehavior
                 foreach ($tableCacheKeys as $key) {
                     unset($cache[$key]);
                 }
+                return true;
             }
         }
+        return false;
     }
 }

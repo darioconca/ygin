@@ -10,7 +10,7 @@ class ActionViewColumn extends ActionColumn
         $collection = new DaActiveRecordCollection($this->grid->dataProvider->getData());
         $idObject = $this->getObject()->id_object;
 
-        foreach ($collection AS $key => $obj) {
+        foreach ($collection as $key => $obj) {
             if (!Yii::app()->authManager->checkObjectInstance(DaDbAuthManager::OPERATION_VIEW, Yii::app()->user->id, $idObject, $key, false)) {
                 $collection->remove($key);
             } else {

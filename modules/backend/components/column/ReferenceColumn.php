@@ -11,7 +11,7 @@ class ReferenceColumn extends BaseColumn
     {
         $data = $this->grid->dataProvider->getData();
         $field = $this->name;
-        foreach ($data AS $row) {
+        foreach ($data as $row) {
             $val = $row[$field];
             if ($val != null && !in_array($val, $this->_assocData)) {
                 $this->_assocData[] = $row[$field];
@@ -20,7 +20,7 @@ class ReferenceColumn extends BaseColumn
         $idReference = $this->objectParameter->getAdditionalParameter();
         $rows = ReferenceElement::model()->byReference($idReference)->findAllByAttributes(array('id_reference_element' => $this->_assocData));
         $this->_assocData = array();
-        foreach ($rows AS $model) {
+        foreach ($rows as $model) {
             $this->_assocData[$model->getIdReferenceElement()] = $model->getValue();
         }
     }

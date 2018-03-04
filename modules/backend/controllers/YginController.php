@@ -95,7 +95,7 @@ class YginController extends DaBackendController
                     if (count($dependentData) > 0) {
                         // экземпляр не был удален. Выводим информацию о зависимых данных
                         $msg = "Информация не удалена, т.к. раздел участвует в других объектах:";
-                        foreach ($dependentData AS $idObj => $count) {
+                        foreach ($dependentData as $idObj => $count) {
                             $obj = DaObject::getById($idObj);
                             $msg .= "\\n" . $obj->getName() . " (количество экземпляров: {$count})";
                         }

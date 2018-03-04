@@ -17,7 +17,7 @@ class BlockWidget extends CWidget
             if (Yii::app()->menu->current != null) {  // иначе берем набор модулей меню
                 $modules = Yii::app()->menu->current->getModulesByPlace($this->place);
             } else {  // иначе пытаемся найти набор по умолчанию
-                Yii::app()->controller->idSiteModuleTemplate = SiteModuleTemplate::getIdDefaultTemplate();
+                Yii::app()->controller->idSiteModuleTemplate = SiteModuleTemplate::getDefaultTemplateId();
             }
         }
 
@@ -32,7 +32,7 @@ class BlockWidget extends CWidget
                 ))->findAll();
             }
             $modules = array();
-            foreach (self::$_modules AS $module) {
+            foreach (self::$_modules as $module) {
                 if ($module->place->place == $this->place) {
                     $modules[] = $module;
                 }
@@ -41,21 +41,10 @@ class BlockWidget extends CWidget
             return;
         }
 
-        foreach ($modules AS $module) {
-            if ($module->id_php_script != null) { // динамический модуль
-                // формируем массив с параметрами
-                $params = array();
-                $moduleParams = $module->phpScriptInstance->phpScript->getParametersConfig();
-                foreach ($moduleParams AS $paramName => $config) {
-                    $params[$paramName] = $module->phpScriptInstance->getParameterValue($paramName);
-                }
-                $className = $module->phpScriptInstance->phpScript->import();
-                $this->controller->widget($className, $params);
-            } else {  // статика
-                echo $module->content;
-                echo $module->html;
-            }
-        }
+        $this->render('block',array(
+            'modules' => $modules,
+        ));
+
     }
 
 }
