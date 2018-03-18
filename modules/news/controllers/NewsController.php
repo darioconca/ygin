@@ -11,8 +11,6 @@ class NewsController extends Controller
     public function actionIndex($idCategory = null)
     {
         $criteria = new CDbCriteria();
-        $criteria->scopes = array('last');
-
         $newsModule = $this->getModule();
         $category = null;
         $categories = array();
@@ -21,10 +19,12 @@ class NewsController extends Controller
             if ($idCategory !== null && $category = $this->loadModelOr404('NewsCategory', $idCategory)) {
                 $criteria->compare('t.id_news_category', $idCategory);
             }
-            $categories = NewsCategory::model()->findAll(array('order' => 'seq'));
+            $categories = NewsCategory::model()->findAll(array(
+                'order' => 'seq'
+            ));
         }
 
-        $news = News::model()->findAll($criteria);
+        $news = News::model()->last()->findAll($criteria);
 
         $pages = new CPagination(count($news));
         $pages->pageSize = $newsModule->itemsCountPerPage;
@@ -44,7 +44,13 @@ class NewsController extends Controller
      */
     public function actionView($id)
     {
+
         $news = $this->loadModelOr404('News', $id);
+
+        if ( $image = $news->image ){
+            Yii::app()->clientScript->registerMetaTag($image->getUrl(true),'og:image');
+        }
+
         $this->caption = $news->title;
         $this->render('/view', array(
             'model' => $news

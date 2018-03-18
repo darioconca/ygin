@@ -1,32 +1,32 @@
 <?php
-  
-  if (count($photos) > 0) {
+
+if (count($photos) > 0) {
     $this->registerCssFile('jquery-photowall.css');
     $this->registerJsFile('jquery-photowall.js');
-    
+
     $data = array();
     $i = 0;
     foreach ($photos AS $photo) {
-      $preview = $photo->getImagePreview('_list');
-      if ($preview == null) continue;
-      $i++;
-      $previewSizes = getimagesize($preview->file_path);
+        $preview = $photo->getImagePreview('_list');
+        if ($preview == null) continue;
+        $i++;
+        $previewSizes = getimagesize($preview->file_path);
 
-      $data['photo'.$i] = array(
-        'id' => 'photo'.$i,
-        'img' => $photo->image->getUrlPath(),
-        'width' => 500,
-        'height' => 400,
-        'title' => CHtml::encode($photo->name),
-        'th' => array(
-          'src' => $preview->getUrlPath(),
-          'width' => 50,
-          'height' => 40,
-          'previewWidth' => $previewSizes[0],
-          'zoom_src' => $preview->getUrlPath(),
-          'zoom_factor' => 2,
-        ),
-      );
+        $data['photo' . $i] = array(
+            'id' => 'photo' . $i,
+            'img' => $photo->image->getUrl(),
+            'width' => 500,
+            'height' => 400,
+            'title' => CHtml::encode($photo->name),
+            'th' => array(
+                'src' => $preview->getUrl(),
+                'width' => 50,
+                'height' => 40,
+                'previewWidth' => $previewSizes[0],
+                'zoom_src' => $preview->getUrl(),
+                'zoom_factor' => 2,
+            ),
+        );
     }
 
     $script = "        PhotoWall.init({
@@ -42,14 +42,14 @@
                                                      // (may be little bigger due to resize to fit line)
         });
         
-        var photosArray = ".CJavaScript::encode($data).";
+        var photosArray = " . CJavaScript::encode($data) . ";
 
         PhotoWall.load(photosArray);
   ";
     Yii::app()->clientScript->registerScript('da_gal', $script, CClientScript::POS_READY);
-?>
-<div class="daGallery"> 
-  <div class="body">
-  </div> 
-</div>
+    ?>
+    <div class="daGallery">
+        <div class="body">
+        </div>
+    </div>
 <?php }

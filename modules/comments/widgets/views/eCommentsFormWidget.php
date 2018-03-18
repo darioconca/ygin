@@ -67,7 +67,7 @@
           <?php echo '<div class="commentator_name">' . $curUser->full_name . '</div>'; ?>
           <?php
           /*<?php if (($preview = $curUser->getImagePreview('_small')) !== null && in_array($curUser->id_group, array(BlogUser::GROUP_ID, BlogUser::ADMINBLOG_GROUP))):?>
-          <img alt="<?=$curUser->full_name;?>" src="<?=$preview->getUrlPath();?>">
+          <img alt="<?=$curUser->full_name;?>" src="<?=$preview->getUrl();?>">
           <?php endif;?>
           <?php echo $curUser->full_name;?>
           */

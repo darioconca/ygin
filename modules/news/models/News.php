@@ -147,14 +147,22 @@ class News extends DaActiveRecord implements ISearchable
         );
     }
 
+    /**
+     * @param null $limit
+     * @return $this
+     */
     public function last($limit = null)
     {
         $alias = $this->getTableAlias();
-        $this->getDbCriteria()->mergeWith(array(
+        $criteria = array(
             'with'  => 'image',
             'order' => "{$alias}.date DESC",
-            'limit' => $limit,
-        ));
+            //'limit' => $limit,
+        );
+        if ( $limit ){
+            $criteria['limit'] = $limit;
+        }
+        $this->getDbCriteria()->mergeWith($criteria);
         return $this;
     }
 

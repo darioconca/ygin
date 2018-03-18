@@ -105,11 +105,19 @@ class DaFrontendController extends DaWebController
     {
         Yii::app()->clientScript->registerMetaTag($this->getKeywords(true, $output), 'keywords');
         Yii::app()->clientScript->registerMetaTag($this->getDescription(), 'description');
+
+        Yii::app()->clientScript->registerMetaTag( $this->getCaption(),'og:title');
+        Yii::app()->clientScript->registerMetaTag($this->getDescription(),'og:description');
+        Yii::app()->clientScript->registerMetaTag(Yii::app()->sourceLanguage,'og:locale');
+        Yii::app()->clientScript->registerMetaTag(Yii::app()->name,'og:site_name');
+
+        Yii::app()->clientScript->registerMetaTag(Yii::app()->request->getBaseUrl(true).Yii::app()->request->getUrl(),'og:url');
+
         Yii::app()->clientScript->registerMetaTag(Yii::app()->domain->model->description, 'application-name');
         Yii::app()->clientScript->registerMetaTag(Yii::app()->domain->model->description, 'msapplication-tooltip');
-        Yii::app()->clientScript->registerMetaTag(Yii::app()->request->hostInfo, 'msapplication-starturl');
+        Yii::app()->clientScript->registerMetaTag(Yii::app()->request->getHostInfo(), 'msapplication-starturl');
 
-        Yii::app()->clientScript->registerLinkTag('home', null, Yii::app()->request->hostInfo);
+        Yii::app()->clientScript->registerLinkTag('home', null, Yii::app()->request->getHostInfo());
         if ($this->favicon != null) {
             Yii::app()->clientScript->registerLinkTag('icon', "image/x-icon", $this->favicon);
             Yii::app()->clientScript->registerLinkTag('shortcut icon', "image/x-icon", $this->favicon);
@@ -122,7 +130,7 @@ class DaFrontendController extends DaWebController
 
       // картинка домена
       if ($img = $daDomain->getImage()) {
-        $daPage->addLinkTag("image_src", $img->getUrlPath());
+        $daPage->addLinkTag("image_src", $img->getUrl());
       }
       */
     }

@@ -41,10 +41,16 @@ class StaticController extends Controller
          */
         $current = Yii::app()->menu->current;
         if ($current !== null) {
+
+            if ( $image = $current->imageFile ){
+                Yii::app()->clientScript->registerMetaTag($image->getUrl(true),'og:image');
+            }
+
             if (!empty($current->content) ||
                 $current->go_to_type == Menu::SHOW_INCLUDED_ITEMS_AFTER_CONTENT ||
                 $current->go_to_type == Menu::SHOW_INCLUDED_ITEMS_BEFORE_CONTENT
             ) {
+
                 $this->render('/staticPage', array(
                     'menu' => $current
                 ));

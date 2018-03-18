@@ -10,7 +10,7 @@ $url = $product->getUrl();
 $desc = HText::smartCrop($product->description, 470, '...', 100);
 $price = $product->getPriceWithMarkup();
 $preview = $product->getImagePreview('_list');
-$previewUrl = $preview == null ? 'http://dummyimage.com/100x90/cccccc/000000&text=%D0%BD%D0%B5%D1%82+%D1%84%D0%BE%D1%82%D0%BE' : $preview->getUrlPath();
+$previewUrl = $preview == null ? 'http://dummyimage.com/100x90/cccccc/000000&text=%D0%BD%D0%B5%D1%82+%D1%84%D0%BE%D1%82%D0%BE' : $preview->getUrl();
 ?>
   <tr>
     <td class="preview_picture"><a href="<?php echo $url; ?>"><img src="<?php echo $previewUrl; ?>" alt="<?php echo CHtml::encode($product->name); ?>" title="<?php echo CHtml::encode($product->name); ?>"></a></td>

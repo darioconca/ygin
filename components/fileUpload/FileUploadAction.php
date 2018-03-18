@@ -432,11 +432,18 @@ class FileUploadAction extends CAction
             "name"      => $this->fileName,
             "type"      => $uploadedFile->getType(),
             "size"      => $uploadedFile->getSize(),
-            "url"       => $savedFile->getUrlPath(),
+            "url"       => $savedFile->getUrl(),
             "fileId"    => $savedFile->id_file,
         );
         if ($savedFile->getIsImage() && $this->createThumb) {
-            $paramsNames = array('width', 'height', 'postfix', 'cropType', 'quality', 'resize');
+            $paramsNames = array(
+                'width',
+                'height',
+                'postfix',
+                'cropType',
+                'quality',
+                'resize'
+            );
             $params = array();
             foreach ($paramsNames as $name) {
                 if (array_key_exists($name, $this->thumbConfig)) {
@@ -444,7 +451,9 @@ class FileUploadAction extends CAction
                 }
             }
             if ($thumb = call_user_func_array(array($savedFile, 'getPreview'), $params)) {
-                $response = array_merge($response, array('thumbnail_url' => $thumb->getUrlPath()));
+                $response = array_merge($response, array(
+                    'thumbnail_url' => $thumb->getUrl()
+                ));
             }
         }
         $objectParameter = $this->getFormModel()->getObjectParameter();

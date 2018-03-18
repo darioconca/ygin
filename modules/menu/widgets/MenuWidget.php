@@ -175,7 +175,7 @@ class MenuWidget extends CMenu implements IParametersConfig
                 }
             }
             if ($this->drawImage && $menuItem->image != null) {
-                $itemOptions['style'] = 'background:url(' . $menuItem->imageFile->getUrlPath() . ')';
+                $itemOptions['style'] = 'background:url(' . $menuItem->imageFile->getUrl() . ')';
             }
             if ($menuItem->external_link_type == 1) $linkOptions['target'] = '_blank';
             $preparedItem = array(

@@ -201,9 +201,10 @@ class File extends DaActiveRecord
 
     /**
      * Возвращает абсолютный путь к файлу по урл
-     * @return string
+     * @param bool|false $absolute
+     * @return null|string
      */
-    public function getUrlPath($absolute = false)
+    public function getUrl($absolute = false)
     {
         if ($this->file_path == null) {
             return null;

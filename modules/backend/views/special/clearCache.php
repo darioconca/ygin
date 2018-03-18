@@ -38,7 +38,7 @@ if (HU::get('mode') == $this::CLEAR_CACHE_PREVIEWS) {
             if ($fileResultStr2 == "") {
                 $fileResultStr2 .= "<br>Были обработаны следующие картинки: <br>";
             }
-            $fileResultStr2 .= $file->getUrlPath() . "<br>";
+            $fileResultStr2 .= $file->getUrl() . "<br>";
         }
     }
     Yii::app()->clientScript->registerScript('admin.special.cacheClear.yii', "alert('Процедура завершена, обработано изображений: {$count}');");

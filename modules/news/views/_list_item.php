@@ -3,7 +3,7 @@
     <h3><?php echo CHtml::link($model->title, $model->getUrl()); ?></h3>
     <?php if (($preview = $model->getImagePreview('_list')) !== null){ ?>
         <div class="photo">
-            <?php echo CHtml::link(CHtml::image($preview->getUrlPath(), $model->title), $model->getUrl(), array(
+            <?php echo CHtml::link(CHtml::image($preview->getUrl(), $model->title), $model->getUrl(), array(
                 'title' => $model->title
             )); ?>
         </div>

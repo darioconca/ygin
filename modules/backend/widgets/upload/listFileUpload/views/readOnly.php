@@ -7,22 +7,24 @@ Yii::app()->clientScript->registerCss("view.list-file", "
 ");
 
 if (count($files = $this->getFiles()) > 0) {
-  echo CHtml::openTag('ul', array('class' => 'list-file'));
-  foreach ($this->getFiles() as $file) {
-    echo CHtml::openTag('li');
-    if ($file->getIsImage()) {
-      if ($prev = $file->getPreview(70, 50, 'top', '_da')) {
-        echo CHtml::link(CHtml::image($prev->getUrlPath(), 'Превью', array('class' => 'img-thumbnail')),
-          $file->getUrlPath(),
-          array('rel' => 'gallery'.$this->getObjectParameter()->id_parameter)
-        );
-      } else {
-        echo CHtml::link($file->getName(), $file->getUrlPath());
-      }
-    } else {
-      echo CHtml::link($file->getName(), $file->getUrlPath());
+    echo CHtml::openTag('ul', array(
+        'class' => 'list-file'
+    ));
+    foreach ($this->getFiles() as $file) {
+        echo CHtml::openTag('li');
+        if ($file->getIsImage()) {
+            if ($prev = $file->getPreview(70, 50, 'top', '_da')) {
+                echo CHtml::link(CHtml::image($prev->getUrl(), 'Превью', array('class' => 'img-thumbnail')),
+                    $file->getUrl(),
+                    array('rel' => 'gallery' . $this->getObjectParameter()->id_parameter)
+                );
+            } else {
+                echo CHtml::link($file->getName(), $file->getUrl());
+            }
+        } else {
+            echo CHtml::link($file->getName(), $file->getUrl());
+        }
+        echo CHtml::closeTag('li');
     }
-    echo CHtml::closeTag('li');
-  }
-  echo CHtml::closeTag('ul');
+    echo CHtml::closeTag('ul');
 }

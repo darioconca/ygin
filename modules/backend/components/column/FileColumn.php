@@ -23,7 +23,7 @@ class FileColumn extends BaseColumn
             if ($file == null) {
                 $value = "";
             } else {
-                $link = $file->getUrlPath();
+                $link = $file->getUrl();
                 $fileType = $file->getFileType();
                 if ($fileType == null) {
                     $fileType = $file->defineType();
@@ -38,7 +38,7 @@ class FileColumn extends BaseColumn
                         if ($filePreview == null) {
                             $value = '<b>Открыть текущий файл для просмотра</b>';
                         } else {
-                            $value = "<img src='{$filePreview->getUrlPath()}' alt='' />";
+                            $value = "<img src='{$filePreview->getUrl()}' alt='' />";
                         }
                     }
                     $value = "<a rel='daG' target='_blank' href='{$link}' >{$value}</a>";

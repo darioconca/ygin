@@ -48,11 +48,10 @@ $form = $this->beginWidget('CActiveForm', array(
             ));
         } ?>
         <div class="form-actions">
-            <div class="progress-bar">
+            <div class="">
                 <button type="submit" class="btn btn-success"><i class="glyphicon glyphicon-ok icon-white"></i>Сохранить</button>
                 <a class="btn btn-danger"
-                   href="<?php echo Yii::app()->createUrl(PluginModule::ROUTE_PLUGIN_LIST); ?>"><i
-                        class="glyphicon glyphicon-remove icon-white"></i> Отменить</a>
+                   href="<?= Yii::app()->createUrl(PluginModule::ROUTE_PLUGIN_LIST) ?>"><i class="glyphicon glyphicon-remove icon-white"></i> Отменить</a>
             </div>
         </div>
     </fieldset>

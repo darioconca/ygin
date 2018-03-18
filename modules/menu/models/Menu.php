@@ -303,7 +303,7 @@ class Menu extends DaActiveRecord implements ISearchable
             // Если у раздела есть контент, то возвращаем ссылку на раздел, не смотря на то, что указан файл.
             $file = $this->firstFile;
             if ($file != null) {
-                $res = $file->getUrlPath();
+                $res = $file->getUrl();
                 /*if (DA_USE_FULL_LINK) {
                   $idDomain = $this->getIdDomainInstance();
                   $domain = Domain::loadByIdDomain($idDomain);

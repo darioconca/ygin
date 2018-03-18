@@ -88,13 +88,15 @@ class FileUploadWidget extends XUpload
         foreach ($files as $file) {
             $fileJson = array(
                 'fileId'            => $file->id_file,
-                'url'               => $file->getUrlPath(),
+                'url'               => $file->getUrl(),
                 'name'              => $file->getName(),
                 'readebleFileSize'  => $file->getReadableFileSize(),
             );
             if ($this->createThumb && $file->getIsImage()) {
                 if ($thumb = $this->getPreview($file)) {
-                    $fileJson = array_merge($fileJson, array('thumbnail_url' => $thumb->getUrlPath()));
+                    $fileJson = array_merge($fileJson, array(
+                        'thumbnail_url' => $thumb->getUrl()
+                    ));
                 }
             }
             if ($this->enableDeleting && !$this->objectParameter->not_null) {
@@ -106,8 +108,8 @@ class FileUploadWidget extends XUpload
                 }
                 $fileJson = array_merge($fileJson, array(
                     "delete_url" => Yii::app()->createUrl($route, array_merge($params, array(
-                        "_method" => "delete",
-                        "fileId" => $file->id_file,
+                        "_method"   => "delete",
+                        "fileId"    => $file->id_file,
                     ))),
                     "delete_type" => "POST",
                 ));

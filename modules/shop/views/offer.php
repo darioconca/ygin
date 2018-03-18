@@ -105,7 +105,7 @@ $currencyImage18 = CHtml::asset(Yii::app()->getModule('shop')->getBasePath().'/a
                 </td>
                 <td class="img">
                   <?php if ($product->getImagePreview('_offer') != null): ?>
-                  <?php echo CHtml::link(CHtml::image($product->getImagePreview('_offer')->getUrlPath(), $product->name), $product->getUrl(), array('title' => $product->name, 'rel' => 'product')); ?>
+                  <?php echo CHtml::link(CHtml::image($product->getImagePreview('_offer')->getUrl(), $product->name), $product->getUrl(), array('title' => $product->name, 'rel' => 'product')); ?>
                   <?php endif; ?>
                 </td>
                 <td class="name"><?php echo $product->name; ?></td>

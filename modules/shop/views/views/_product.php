@@ -2,7 +2,7 @@
     <div class="thumbnail">
         <?php
         if ($data->getImagePreview('_spec')) {
-            $image = $data->getImagePreview('_spec')->getUrlPath();
+            $image = $data->getImagePreview('_spec')->getUrl();
         } else {
             $image = '/themes/business/gfx/placeholder.png';
         }
