@@ -12,7 +12,12 @@ $this->registerCssFile('news.css');
     <div class="date">
         <?php echo Yii::app()->dateFormatter->format(Yii::app()->getModule('news')->singleNewsDateFormat, $model->date); ?>
     </div>
-    <div class="text"><?php echo $model->content; ?></div>
+    <div class="text">
+        <?php
+        //echo $model->content;
+        echo $model->renderShortCodes();
+        ?>
+    </div>
     <?php $this->widget('ygin.widgets.likeAndShare.LikeAndShareWidget', array(
         "title" => $model->title
     )); ?>

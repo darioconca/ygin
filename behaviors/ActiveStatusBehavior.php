@@ -8,6 +8,6 @@ class ActiveStatusBehavior extends CBehavior
      * @return bool
      */
     public function isActive(){
-        return $this->owner->{$this->statusProperty} == DaActiveRecord::IS_ACTIVE;
+        return $this->getOwner()->{$this->statusProperty} == DaActiveRecord::IS_ACTIVE;
     }
 }

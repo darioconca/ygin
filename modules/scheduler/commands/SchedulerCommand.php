@@ -70,7 +70,9 @@ class SchedulerCommand extends CConsoleCommand
         //т.е. у REPEATABLE READ полная согласованноть чтения данных
         $this->setIsolationLevel('READ COMMITTED');
 
-        $candidateCriteria = new CDbCriteria(array('order' => 't.priority DESC, RAND()'));
+        $candidateCriteria = new CDbCriteria(array(
+            'order' => 't.priority DESC, RAND()'
+        ));
         $db = Yii::app()->db;
         $time = time();
         while (1) {

@@ -4,9 +4,10 @@ class m180304_135701_shortcode_fields extends CDbMigration
 {
 	public function up()
 	{
-		//ALTER TABLE `da_menu` ADD `has_embed_widgets` INT(2) UNSIGNED NULL DEFAULT '0'
-		
-
+		$sql = "ALTER TABLE `da_menu` ADD `has_embed_widgets` INT(2) UNSIGNED NULL DEFAULT '0'";
+		$this->execute($sql);
+		$sql = "ALTER TABLE `pr_news` ADD `has_embed_widgets` INT(2) UNSIGNED NULL DEFAULT '0'";
+		$this->execute($sql);
 	}
 
 	public function down()

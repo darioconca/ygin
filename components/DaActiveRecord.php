@@ -69,12 +69,23 @@ abstract class DaActiveRecord extends BaseActiveRecord
         return $this->_idParent;
     }
 
+    /**
+     * @param null $parentField
+     * @return mixed
+     * @throws ErrorException
+     */
     public function getCountChild($parentField = null)
     {
         $array = $this->getCountChildOfInstances(array($this), $parentField);
         return $array[$this->getIdInstance()];
     }
 
+    /**
+     * @param $arrayOfModel
+     * @param null $parentField
+     * @return array
+     * @throws ErrorException
+     */
     public function getCountChildOfInstances($arrayOfModel, $parentField = null)
     {
         $collection = null;
@@ -188,7 +199,10 @@ abstract class DaActiveRecord extends BaseActiveRecord
         }
 
         $arrayOfId = $collection->getKeys();
-        $resultData = array_fill_keys($arrayOfId, array('result' => true, 'info' => null));
+        $resultData = array_fill_keys($arrayOfId, array(
+            'result' => true,
+            'info' => null
+        ));
 
         if ($handlerClassCheck) {
             if ($this->isProcessDeleteChild() === true) {

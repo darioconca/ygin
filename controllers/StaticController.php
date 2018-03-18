@@ -45,16 +45,20 @@ class StaticController extends Controller
                 $current->go_to_type == Menu::SHOW_INCLUDED_ITEMS_AFTER_CONTENT ||
                 $current->go_to_type == Menu::SHOW_INCLUDED_ITEMS_BEFORE_CONTENT
             ) {
-                $this->render('/staticPage', array('menu' => $current));
+                $this->render('/staticPage', array(
+                    'menu' => $current
+                ));
             } else {
-                if ($current->go_to_type == Menu::GO_TO_LIST_CHILD &&
-                    $current->getVisibleChildCount() > 0
-                ) {
-                    $this->render('/treeMenu', array('menu' => $current));
+                if ($current->go_to_type == Menu::GO_TO_LIST_CHILD && $current->getVisibleChildCount() > 0 ) {
+                    $this->render('/treeMenu', array(
+                        'menu' => $current
+                    ));
                 } else if ($current->go_to_type == Menu::GO_TO_SHOW_BLANK) {
                     $this->render('/blankPage');
                 } else {
-                    $this->render('/emptyPage', array('menu' => $current));
+                    $this->render('/emptyPage', array(
+                        'menu' => $current
+                    ));
                 }
             }
         } else {

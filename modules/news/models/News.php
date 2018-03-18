@@ -12,6 +12,7 @@
  * @property string $content
  * @property integer $photo
  * @property integer $is_visible
+ * @property integer $has_embed_widgets
  * @todo integer pinned //pinned news
  */
 class News extends DaActiveRecord implements ISearchable
@@ -78,6 +79,14 @@ class News extends DaActiveRecord implements ISearchable
                         'height' => 75,
                     ),
                 ),
+            ),
+            'checkShortCode' => array(
+                'class'                 => 'ShortCodeBehavior',
+                'shortCodeContentField' => 'content',
+                'shortCodeStatusField'  => 'has_embed_widgets',
+                'schemeStart'           => ShortCodeWidget::getSchemeStart(),
+                'schemeEnd'             => ShortCodeWidget::getSchemeEnd(),
+                'classSuffix'           => ShortCodeWidget::getSuffix(),
             ),
         );
         return $behaviors;

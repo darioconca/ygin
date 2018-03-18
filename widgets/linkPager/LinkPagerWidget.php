@@ -32,7 +32,9 @@ class LinkPagerWidget extends CLinkPager
             $this->cssFile = CHtml::asset(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'pager.css');
         }
 
-        $this->header .= CHtml::openTag('div', array('class' => $this->pagerCssClass));
+        $this->header .= CHtml::openTag('div', array(
+            'class' => $this->pagerCssClass
+        ));
         $this->footer = $this->ajaxProcessTemplate . CHtml::closeTag('div') . $this->footer;
 
         parent::init();
@@ -62,8 +64,9 @@ class LinkPagerWidget extends CLinkPager
         }
 
         // internal pages
-        for ($i = $beginPage; $i <= $endPage; ++$i)
+        for ($i = $beginPage; $i <= $endPage; ++$i){
             $buttons[] = $this->createPageButton($i + 1, $i, self::CSS_INTERNAL_PAGE, false, $i == $currentPage);
+        }
 
         // next page
         if ($this->nextPageLabel !== false) {

@@ -77,7 +77,7 @@ class Menu extends DaActiveRecord implements ISearchable
             array('name, caption, title_teg, meta_description, meta_keywords, external_link', 'length', 'max' => 255),
             array('note', 'length', 'max' => 200),
             array('alias', 'length', 'max' => 100),
-            array('content', 'safe'),
+            array('content, has_embed_widgets', 'safe'),
         );
     }
 
@@ -92,6 +92,14 @@ class Menu extends DaActiveRecord implements ISearchable
             'activeStatus' => array(
                 'class'             => 'ActiveStatusBehavior',
                 'statusProperty'    => 'visible',
+            ),
+            'checkShortCode' => array(
+                'class'                 => 'ShortCodeBehavior',
+                'shortCodeContentField' => 'content',
+                'shortCodeStatusField'  => 'has_embed_widgets',
+                'schemeStart'           => ShortCodeWidget::getSchemeStart(),
+                'schemeEnd'             => ShortCodeWidget::getSchemeEnd(),
+                'classSuffix'           => ShortCodeWidget::getSuffix(),
             ),
         );
     }
