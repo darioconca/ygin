@@ -185,10 +185,15 @@ class DaObject extends DaActiveRecord
         // TODO должен быть единым методом по получению объекта
         // в будущем возможно реализовать кэширование и тд
         if ($loadWithParameter) {
-            return DaObject::model()->cache(3600)->with('parameters')->findByPk($idObject);
+            return DaObject::model()
+                ->cache(3600)
+                ->with('parameters')
+                ->findByPk($idObject);
         }
         if ( !isset(self::$_objects[$idObject]) ) {
-            self::$_objects[$idObject] = DaObject::model()->cache(3600)->findByPk($idObject);
+            self::$_objects[$idObject] = DaObject::model()
+                ->cache(3600)
+                ->findByPk($idObject);
         }
         return self::$_objects[$idObject];
     }
@@ -280,13 +285,17 @@ class DaObject extends DaActiveRecord
                     $table = $obParent->table_name;
                 }
                 $htmlStr = "\n";
+
                 if ($html) {
                     $htmlStr = "<br/>";
                 }
-                $sql = "CREATE TABLE IF NOT EXISTS `{$table}` (" . $htmlStr . "
-                   " . implode(", " . $htmlStr, $textSql) . ($primary != '' ? " ," . $htmlStr . "
-                   $primary" : '') . $htmlStr . "
-                   ) ENGINE = InnoDB COMMENT=" . $this->dbConnection->quoteValue($this->name) . ";";
+
+                $sql = strtr('CREATE TABLE IF NOT EXISTS `%table%` (%fields%) ENGINE = InnoDB COMMENT=%comment%;',array(
+                    '%table%' => $table,
+                    '%fields%' => $htmlStr.' '.implode(', ' . $htmlStr, $textSql).($primary != '' ? ' ,'.$htmlStr.' '.$primary : '').$htmlStr,
+                    '%comment%' => $this->dbConnection->quoteValue($this->name),
+                )); //@todo
+
             }
         }
         return $sql;
@@ -298,7 +307,7 @@ class DaObject extends DaActiveRecord
 
         // удаляем права по ид объекта
         $authItems = Yii::app()->authManager->getAuthItemByIdObject($this->id_object);
-        foreach ($authItems AS $item) {
+        foreach ($authItems as $item) {
             Yii::app()->authManager->removeAuthItem($item->name);
         }
 
@@ -314,8 +323,11 @@ class DaObject extends DaActiveRecord
                 $parameter = ObjectParameter::newModel('ObjectParameter');
                 $parameter->id_object = $idObject;
                 $parameter->id_parameter_type = DataType::PRIMARY_KEY;
-                $parameter->caption = 'id';
-                $fieldName = 'id_' . str_replace(array('da_', 'pr_'), '', $this->table_name);
+                $parameter->caption = 'id'; //@toredo
+                $fieldName = 'id_' . str_replace(array(
+                    'da_',
+                    'pr_',
+                ), '', $this->table_name);
                 $parameter->field_name = $fieldName;
                 $parameter->id_parameter = $idObject . '-' . str_replace('_', '-', $fieldName);
                 $parameter->setIsRequired(true);
@@ -323,24 +335,36 @@ class DaObject extends DaActiveRecord
             }
         } else {
             if ($this->id_object != $this->getPkBeforeSave()) {
-                ObjectParameter::model()->updateAll(array('id_object' => $this->id_object), 'id_object=:obj', array(
-                    ':obj' => $this->getPkBeforeSave()
+                ObjectParameter::model()->updateAll(array(
+                    'id_object' => $this->id_object,
+                ), 'id_object=:obj', array(
+                    ':obj' => $this->getPkBeforeSave(),
                 ));
-                ObjectParameter::model()->updateAll(array('add_parameter' => $this->id_object), 'id_parameter_type=:id_parameter_type_FK AND add_parameter=:obj', array(
+                ObjectParameter::model()->updateAll(array(
+                    'add_parameter' => $this->id_object,
+                ), 'id_parameter_type=:id_parameter_type_FK AND add_parameter=:obj', array(
                     ':obj'                  => $this->getPkBeforeSave(),
                     ':id_parameter_type_FK' => ObjectParameter::PARAMETER_TYPE_FK,
                 ));
-                DaObjectView::model()->updateAll(array('id_object' => $this->id_object), 'id_object=:obj', array(
-                    ':obj' => $this->getPkBeforeSave()
+                DaObjectView::model()->updateAll(array(
+                    'id_object' => $this->id_object,
+                ), 'id_object=:obj', array(
+                    ':obj' => $this->getPkBeforeSave(),
                 ));
-                DaObjectViewColumn::model()->updateAll(array('id_object' => $this->id_object), 'id_object=:obj', array(
-                    ':obj' => $this->getPkBeforeSave()
+                DaObjectViewColumn::model()->updateAll(array(
+                    'id_object' => $this->id_object,
+                ), 'id_object=:obj', array(
+                    ':obj' => $this->getPkBeforeSave(),
                 ));
-                File::model()->updateAll(array('id_object' => $this->id_object), 'id_object=:obj', array(
-                    ':obj' => $this->getPkBeforeSave()
+                File::model()->updateAll(array(
+                    'id_object' => $this->id_object,
+                ), 'id_object=:obj', array(
+                    ':obj' => $this->getPkBeforeSave(),
                 ));
-                Search::model()->updateAll(array('id_object' => $this->id_object), 'id_object=:obj', array(
-                    ':obj' => $this->getPkBeforeSave()
+                Search::model()->updateAll(array(
+                    'id_object' => $this->id_object,
+                ), 'id_object=:obj', array(
+                    ':obj' => $this->getPkBeforeSave(),
                 ));
             }
         }
@@ -353,7 +377,9 @@ class DaObject extends DaActiveRecord
             //echo 'id='.$idObject;HU::dump($this);exit;
             $objectCurrent = DaObject::getById($idObject);
             if ($objectCurrent != null && $objectCurrent->object_type == self::OBJECT_TYPE_TABLE && $objectCurrent->table_name != null) {
-                $tableNotExists = (Yii::app()->db->createCommand('SHOW TABLES LIKE :t')->queryScalar(array(':t' => $objectCurrent->table_name)) == null);
+                $tableNotExists = Yii::app()->db->createCommand('SHOW TABLES LIKE :t')->queryScalar(array(
+                    ':t' => $objectCurrent->table_name,
+                )) == null;
                 if ($tableNotExists) {
                     if (Yii::app()->isBackend) {
                         Yii::app()->addMessage("Таблица {$objectCurrent->table_name} не существует, невозможно выполнить переименование в базе данных", BackendApplication::MESSAGE_TYPE_ERROR, true);

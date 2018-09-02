@@ -40,7 +40,7 @@ class DaWidget extends CWidget
             $this->_assetsPath = $this->getBasePath() . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR;
         }
         if ($fileName != null) {
-            if (!is_file($this->_assetsPath . $fileName)) {
+            if ( !is_file($this->_assetsPath . $fileName) ) {
                 $class = new ReflectionClass(get_class($this));
                 $pClass = $class->getParentClass();
                 while ($pClass->getName() != 'DaWidget') {
@@ -55,6 +55,11 @@ class DaWidget extends CWidget
         return $this->_assetsPath;
     }
 
+    /**
+     * @param $cssFile
+     * @param null $path
+     * @return mixed
+     */
     public function registerCssFile($cssFile, $path = null)
     {
         if ($path == null) {
@@ -67,9 +72,14 @@ class DaWidget extends CWidget
         }
 
         $cs = Yii::app()->clientScript;
-        $cs->registerCssFile(Yii::app()->getAssetManager()->publish($path . $cssFile, true));
+        return $cs->registerCssFile(Yii::app()->getAssetManager()->publish($path . $cssFile, true));
     }
 
+    /**
+     * @param $jsFile
+     * @param null $path
+     * @return mixed
+     */
     public function registerJsFile($jsFile, $path = null)
     {
         if ($path == null) {
@@ -81,6 +91,6 @@ class DaWidget extends CWidget
             $path = Yii::getPathOfAlias($path) . DIRECTORY_SEPARATOR;
         }
         $cs = Yii::app()->clientScript;
-        $cs->registerScriptFile(Yii::app()->getAssetManager()->publish($path . $jsFile, true));
+        return $cs->registerScriptFile(Yii::app()->getAssetManager()->publish($path . $jsFile, true));
     }
 }

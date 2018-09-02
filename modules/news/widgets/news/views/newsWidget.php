@@ -9,7 +9,10 @@ $this->registerCssFile('newsWidget.css');
     //webroot.themes.название_темы.views.news._list_item
     ?>
     <?php foreach ($this->getNews() as $model) { ?>
-        <?php $this->render('news.views._list_item', array('model' => $model)); ?>
+        <?php $this->render('news.views._list_item', array(
+            'model' => $model
+        )); ?>
     <?php } ?>
-    <div class="archive"><a href="<?php echo Yii::app()->createUrl(NewsModule::ROUTE_NEWS_CATEGORY); ?>" >Все&nbsp;новости&nbsp;»</a></div>
+    <div class="archive"><a href="<?php echo Yii::app()->createUrl(NewsModule::ROUTE_NEWS_CATEGORY); ?>">Все&nbsp;новости&nbsp;»</a>
+    </div>
 </div>

@@ -49,13 +49,20 @@ class Reference extends DaActiveRecord
         if (!$this->isNewRecord) {
             $idOldReference = $this->getPkBeforeSave();
             if ($this->id_reference != $idOldReference) {
-                ReferenceElement::model()->updateAll(array('id_reference' => $this->id_reference), 'id_reference=:id', array(
-                    ':id' => $idOldReference
+
+                ReferenceElement::model()->updateAll(array(
+                    'id_reference' => $this->id_reference,
+                ), 'id_reference=:id', array(
+                    ':id' => $idOldReference,
                 ));
-                ObjectParameter::model()->updateAll(array('add_parameter' => $this->id_reference), 'id_parameter_type=:parameter_type AND add_parameter=:id', array(
+
+                ObjectParameter::model()->updateAll(array(
+                    'add_parameter' => $this->id_reference,
+                ), 'id_parameter_type=:parameter_type AND add_parameter=:id', array(
                     ':id'               => $idOldReference,
                     ':parameter_type'   => SystemParameter::TYPE_REFERENCE,
                 ));
+
             }
         }
         return parent::afterSave();

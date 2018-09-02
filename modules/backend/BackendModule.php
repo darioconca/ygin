@@ -88,7 +88,9 @@ class BackendModule extends DaWebModuleAbstract implements IApplicationComponent
             if (strpos($dir, '/') === false){
                 $dir = Yii::getPathOfAlias($dir);
             }
-            $files = HFile::findFiles($dir, array('level' => 1));
+            $files = HFile::findFiles($dir, array(
+                'level' => 1,
+            ));
             foreach ($files as $file) {
                 if (basename($file) != 'config.php'){
                     continue;
@@ -99,7 +101,7 @@ class BackendModule extends DaWebModuleAbstract implements IApplicationComponent
                     continue;
                 }
                 $this->extensions = array(
-                    $extName => require $file
+                    $extName => require $file,
                 );
             }
         }

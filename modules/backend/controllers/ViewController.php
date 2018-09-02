@@ -41,33 +41,33 @@ class ViewController extends DaObjectController
         }
 
         if ($id == null && $id_v == null) {
-            throw new CHttpException(400, 'Bad Request');
+            throw new CHttpException(HttpCode::BAD_REQUEST, 'Bad Request');
         }
 
         $statusProcess = intval(HU::post('submit_form', ViewController::MODE_VIEW));
         if (!in_array($statusProcess, array(ViewController::MODE_VIEW, ViewController::MODE_SAVE_AND_CLOSE, ViewController::MODE_ACCEPT, ViewController::MODE_SAVE_AND_CREATE_NEW))) {
-            throw new CHttpException(400, 'Bad Request');
+            throw new CHttpException(HttpCode::BAD_REQUEST, 'Bad Request');
         }
         $readOnlyInstance = false;
 
         if ($id != null) {
             if ($id == -1) {
                 if (!Yii::app()->authManager->canCreateInstance($idObject, Yii::app()->user->id)) {
-                    throw new CHttpException(403, 'Нет прав на создание');
+                    throw new CHttpException(HttpCode::FORBIDDEN, 'Нет прав на создание');
                 }
                 $id = null;
             } else {
                 // Редактируют, проверяем доступность текущему пользователю
                 if (!Yii::app()->authManager->checkObjectInstance(DaDbAuthManager::OPERATION_EDIT, Yii::app()->user->id, $idObject, $id)) {
-                    throw new CHttpException(403, 'Нет прав на редактирование или объект не существует');
+                    throw new CHttpException(HttpCode::FORBIDDEN, 'Нет прав на редактирование или объект не существует');
                 }
             }
         } else if ($id_v != null) {
             if ($id_v == -1) {
-                throw new CHttpException(403);
+                throw new CHttpException(HttpCode::FORBIDDEN);
             } else {
                 if (!Yii::app()->authManager->checkObjectInstance(DaDbAuthManager::OPERATION_VIEW, Yii::app()->user->id, $idObject, $id_v)) {
-                    throw new CHttpException(403, "Нет прав на просмотр");
+                    throw new CHttpException(HttpCode::FORBIDDEN, "Нет прав на просмотр");
                 }
                 $id = $id_v;
                 $readOnlyInstance = true;
@@ -76,7 +76,9 @@ class ViewController extends DaObjectController
 
         if ($id != null) {
             $model = $object->getModel()->findByIdInstance($id);
-            if ($model == null) throw new CHttpException(404);
+            if ($model == null) {
+                throw new CHttpException(HttpCode::NOT_FOUND);
+            }
             $model->setScenario('backendUpdate');
         } else {
             $model = $object->getModel(true);
@@ -98,7 +100,7 @@ class ViewController extends DaObjectController
         }
 
         $parameters = $object->parameters;
-        foreach ($parameters AS $objectParameter) {
+        foreach ($parameters as $objectParameter) {
             /**
              * @var $objectParameter ObjectParameter
              */
@@ -114,7 +116,7 @@ class ViewController extends DaObjectController
                 if ($model->isNewRecord) {
                     $model->{$objectParameter->getFieldName()} = 0;
                 }
-            } else if ($objectParameter->getType() == DataType::ID_PARENT) {
+            } elseif ($objectParameter->getType() == DataType::ID_PARENT) {
                 if ($model->isNewRecord) {
                     // TODO - сделать проверку, что пользователь может создавать раздел в переданном ИД паренте
                     $model->{$objectParameter->getFieldName()} = HU::get(ObjectUrlRule::PARAM_OBJECT_PARENT);
@@ -173,8 +175,7 @@ class ViewController extends DaObjectController
         }  // закончили обрабатывать свойства
 
         $modelClass = get_class($model);
-        if (isset($_POST[$modelClass]) ||
-            isset($_POST['submit_form'])) {
+        if ( isset($_POST[$modelClass]) ||  isset($_POST['submit_form']) ) {
             if (isset($_POST[$modelClass])) {
                 $model->attributes = $_POST[$modelClass];
             }
@@ -192,9 +193,14 @@ class ViewController extends DaObjectController
                     $seqKey = $object->getFieldByType(DataType::SEQUENCE);
                     if ($seqKey != null) {
                         $pk = $object->getFieldByType(DataType::PRIMARY_KEY);
-                        $max = Yii::app()->db->createCommand("SELECT MAX({$seqKey}) FROM {$object->table_name}")->queryScalar();
+                        $max = Yii::app()->db
+                            ->createCommand("SELECT MAX({$seqKey}) FROM {$object->table_name}")
+                            ->queryScalar();
                         $sql = "UPDATE {$object->table_name} SET {$seqKey} = :max WHERE {$pk}=:id";
-                        Yii::app()->db->createCommand($sql)->execute(array(':max' => ($max + 1), ':id' => $newIdInstance));
+                        Yii::app()->db->createCommand($sql)->execute(array(
+                            ':max' => $max + 1,
+                            ':id' => $newIdInstance,
+                        ));
                     }
                     Yii::log('Добавлен новый экземпляр (' . $object->getName() . ') id=' . $newIdInstance, CLogger::LEVEL_INFO, 'backend.model.insert');
                 } else {
@@ -204,7 +210,7 @@ class ViewController extends DaObjectController
                 if ($model->save()) {
                     SearchComponent::replaceIndex($model);
                     //$instance->updateObjectInstanceInfo(2);
-                    Yii::log('Изменение (' . $object->getName() . ') id=' . $model->getIdInstance(), CLogger::LEVEL_INFO, 'backend.model.update');
+                    Yii::log("Изменение ({$object->getName()}) id={$model->getIdInstance()}", CLogger::LEVEL_INFO, 'backend.model.update');
                 } else {
                     $statusProcess = ViewController::MODE_ERROR;
                 }
@@ -218,9 +224,7 @@ class ViewController extends DaObjectController
                     'model' => $model,
                     'visualElementArray' => $visualElementArray,
                     'truncateView' => true,
-                ),
-                    true
-                );
+                ), true);
             }else{
                 $this->render('/view', array(
                     'model' => $model,
@@ -229,13 +233,19 @@ class ViewController extends DaObjectController
             }
 
         } else if ($statusProcess == ViewController::MODE_ACCEPT) {
-            $url = ObjectUrlRule::createUrlFromCurrent(BackendModule::ROUTE_INSTANCE_VIEW, array(ObjectUrlRule::PARAM_OBJECT_INSTANCE => $model->getIdInstance()));
+            $url = ObjectUrlRule::createUrlFromCurrent(BackendModule::ROUTE_INSTANCE_VIEW, array(
+                ObjectUrlRule::PARAM_OBJECT_INSTANCE => $model->getIdInstance(),
+            ));
             $this->redirect($url);
         } else if ($statusProcess == ViewController::MODE_SAVE_AND_CLOSE) {
-            $url = ObjectUrlRule::createUrlFromCurrent(BackendModule::ROUTE_INSTANCE_LIST, array(), array(ObjectUrlRule::PARAM_OBJECT_INSTANCE, ObjectUrlRule::PARAM_ACTION_VIEW));
+            $url = ObjectUrlRule::createUrlFromCurrent(BackendModule::ROUTE_INSTANCE_LIST, array(), array(
+                ObjectUrlRule::PARAM_OBJECT_INSTANCE, ObjectUrlRule::PARAM_ACTION_VIEW,
+            ));
             $this->redirect($url);
         } else if ($statusProcess == ViewController::MODE_SAVE_AND_CREATE_NEW) {
-            $url = ObjectUrlRule::createUrlFromCurrent(BackendModule::ROUTE_INSTANCE_VIEW, array(ObjectUrlRule::PARAM_OBJECT_INSTANCE => -1));
+            $url = ObjectUrlRule::createUrlFromCurrent(BackendModule::ROUTE_INSTANCE_VIEW, array(
+                ObjectUrlRule::PARAM_OBJECT_INSTANCE => -1,
+            ));
             $this->redirect($url);
         }
 

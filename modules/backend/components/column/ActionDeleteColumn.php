@@ -24,7 +24,7 @@ class ActionDeleteColumn extends ActionColumn
         }
 
         $info = $this->grid->dataProvider->model->isInstancesAvailableForDelete($collection);
-        foreach ($info AS $id => $availableInfo) {
+        foreach ($info as $id => $availableInfo) {
             if (!$availableInfo['result']) {
                 $key = array_search($id, $this->_availableIdInstance);
                 unset($this->_availableIdInstance[$key]);
@@ -72,7 +72,10 @@ class ActionDeleteColumn extends ActionColumn
         } else {
             $contentCell = '<i></i>';
             $info = (isset($this->_unavailableInfo[$idInstance]) ? ', т.к. экземпляр связан с другими данными (' . $this->_unavailableInfo[$idInstance] . ')' : '');
-            $this->htmlOptions = array('class' => 'col-ref action-delete-no', 'title' => 'Удаление не доступно' . $info);
+            $this->htmlOptions = array(
+                'class' => 'col-ref action-delete-no',
+                'title' => 'Удаление не доступно' . $info,
+            );
         }
         echo CHtml::openTag('td', $this->htmlOptions) . $contentCell . Chtml::closeTag('td');
     }

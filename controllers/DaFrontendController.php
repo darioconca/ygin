@@ -77,13 +77,13 @@ class DaFrontendController extends DaWebController
         }
 
         if ($keywords == null && $data != null) {
-            $preg = '/<h[123456].*?>(.*?)<\/h[123456]>/i';
+            $preg_mask = '/<h[123456].*?>(.*?)<\/h[123456]>/i';
             $content = str_replace("\n", "", str_replace("\r", "", $data));
-            $pregCount = preg_match_all($preg, $content, $headers);
+            $pregCount = preg_match_all($preg_mask, $content, $headers);
             $keywords = '';
             for ($i = 0; $i < $pregCount; $i++) {
                 if ($keywords != '') {
-                    $keywords .= ', ';
+                    $keywords = $keywords . ', ';
                 }
                 $keyword = trim( strip_tags($headers[0][$i]) );
                 if ($keyword == '') {

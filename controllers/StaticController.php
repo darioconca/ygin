@@ -6,7 +6,7 @@ class StaticController extends Controller
     public $defaultAction = 'page';
 
     public $view404 = '/404';
-    public $view403 = '/access_denied';
+    public $view403 = '/403';
     public $viewError = '/error';
 
     private function processViewPath($view, $viewName, $engineDir)
@@ -51,19 +51,19 @@ class StaticController extends Controller
                 $current->go_to_type == Menu::SHOW_INCLUDED_ITEMS_BEFORE_CONTENT
             ) {
 
-                $this->render('/staticPage', array(
+                $this->render('/static', array(
                     'menu' => $current
                 ));
             } else {
                 if ($current->go_to_type == Menu::GO_TO_LIST_CHILD && $current->getVisibleChildCount() > 0 ) {
                     $this->render('/treeMenu', array(
-                        'menu' => $current
+                        'menu' => $current,
                     ));
                 } else if ($current->go_to_type == Menu::GO_TO_SHOW_BLANK) {
-                    $this->render('/blankPage');
+                    $this->render('/blank');
                 } else {
-                    $this->render('/emptyPage', array(
-                        'menu' => $current
+                    $this->render('/empty', array(
+                        'menu' => $current,
                     ));
                 }
             }

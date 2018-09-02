@@ -152,10 +152,19 @@ class ShortCodeBehavior extends CActiveRecordBehavior
         if ($cache && $cachedHtml = Yii::app()->cache->get($index)) {
             $html = $cachedHtml;
         } else {
+            //$html = '';
             ob_start();
             $widgetClass = $this->_getFullClassName($name);
-            //echo $widgetClass;
+
+            //set_error_handler(function($errno, $errstr, $errfile, $errline ){
+                //@todo logging
+                //$html = '';
+                //echo 'sdfsdf';
+                //return $html;
+            //});
             $widget = Yii::app()->getWidgetFactory()->createWidget($this->owner, $widgetClass, $attributes);
+            //restore_error_handler();
+
             $widget->init();
             $widget->run();
             $html = trim(ob_get_clean());

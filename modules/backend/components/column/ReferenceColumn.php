@@ -3,7 +3,9 @@
 class ReferenceColumn extends BaseColumn
 {
 
-    public $htmlOptions = array('class' => 'col-ref');
+    public $htmlOptions = array(
+        'class' => 'col-ref',
+    );
 
     private $_assocData = array();
 
@@ -18,7 +20,11 @@ class ReferenceColumn extends BaseColumn
             }
         }
         $idReference = $this->objectParameter->getAdditionalParameter();
-        $rows = ReferenceElement::model()->byReference($idReference)->findAllByAttributes(array('id_reference_element' => $this->_assocData));
+        $rows = ReferenceElement::model()
+            ->byReference($idReference)
+            ->findAllByAttributes(array(
+                'id_reference_element' => $this->_assocData,
+            ));
         $this->_assocData = array();
         foreach ($rows as $model) {
             $this->_assocData[$model->getIdReferenceElement()] = $model->getValue();
@@ -29,7 +35,7 @@ class ReferenceColumn extends BaseColumn
     {
         $field = $this->name;
         $id = $data->$field;
-        echo(isset($this->_assocData[$id]) ? $this->_assocData[$id] : '');
+        echo isset($this->_assocData[$id]) ? $this->_assocData[$id] : '';
     }
 
 }

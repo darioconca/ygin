@@ -213,9 +213,11 @@ class ObjectParameter extends DaActiveRecord
         } else {
             // если создается свойство типа Первичный ключ или Родительский ключ, и поле такого типа уже есть, то кидаем исключение.
             $type = $this->getType();
-            if (in_array($type, array(DataType::PRIMARY_KEY, DataType::ID_PARENT))) {
+            if ( in_array($type, array(DataType::PRIMARY_KEY, DataType::ID_PARENT)) ) {
                 $object = $this->getObject();
-                if ($object->getFieldByType($type) !== null) throw new CException('Свойство такого типа уже существует.');
+                if ( $object->getFieldByType($type) !== null ) {
+                    throw new CException('Свойство такого типа уже существует.');
+                }
             }
         }
         return parent::beforeSave();
@@ -227,7 +229,7 @@ class ObjectParameter extends DaActiveRecord
             $idObject = $this->id_object;
             $notChangeObject = array(
                 DaObject::ID_OBJECT,
-                ObjectParameter::ID_OBJECT
+                ObjectParameter::ID_OBJECT,
             ); //@todo
             if (!in_array($idObject, $notChangeObject)) {
                 $this->sqlChange($this, 'insert');
@@ -236,18 +238,31 @@ class ObjectParameter extends DaActiveRecord
             $pk = $this->getPkBeforeSave();
             $idOldParameter = $pk['id_parameter'];
             if ($this->id_parameter != $idOldParameter) {
-                DaObject::model()->updateAll(array('id_field_order' => $this->id_parameter), 'id_field_order=:param', array(
-                    ':param' => $idOldParameter
+
+                DaObject::model()->updateAll(array(
+                    'id_field_order' => $this->id_parameter,
+                ), 'id_field_order=:param', array(
+                    ':param' => $idOldParameter,
                 ));
-                DaObject::model()->updateAll(array('id_field_caption' => $this->id_parameter), 'id_field_caption=:param', array(
-                    ':param' => $idOldParameter
+
+                DaObject::model()->updateAll(array(
+                    'id_field_caption' => $this->id_parameter,
+                ), 'id_field_caption=:param', array(
+                    ':param' => $idOldParameter,
                 ));
-                File::model()->updateAll(array('id_parameter' => $this->id_parameter), 'id_parameter=:param', array(
-                    ':param' => $idOldParameter
+
+                File::model()->updateAll(array(
+                    'id_parameter' => $this->id_parameter,
+                ), 'id_parameter=:param', array(
+                    ':param' => $idOldParameter,
                 ));
-                DaObjectViewColumn::model()->updateAll(array('id_object_parameter' => $this->id_parameter), 'id_object_parameter=:param', array(
-                    ':param' => $idOldParameter
+
+                DaObjectViewColumn::model()->updateAll(array(
+                    'id_object_parameter' => $this->id_parameter,
+                ), 'id_object_parameter=:param', array(
+                    ':param' => $idOldParameter,
                 ));
+
             }
         }
         return parent::afterSave();
@@ -295,9 +310,9 @@ class ObjectParameter extends DaActiveRecord
             }
             return false;
         }
-        $tableNotExists = (Yii::app()->db->createCommand('SHOW TABLES LIKE :t')->queryScalar(array(
-                ':t' => $objectCurrent->table_name
-            )) == null);
+        $tableNotExists = Yii::app()->db->createCommand('SHOW TABLES LIKE :t')->queryScalar(array(
+                ':t' => $objectCurrent->table_name,
+            )) == null;
 
         $sqls = array();
         $allowQuery = true;
@@ -305,7 +320,7 @@ class ObjectParameter extends DaActiveRecord
         $instanceOld = null;
         if ($isDelete) {
             $instanceOld = $instance;
-        } else if (!$isInsert) {
+        } elseif (!$isInsert) {
             $instanceOld = ObjectParameter::model()->findByIdInstance($instance->getIdInstance());
             if ($instanceOld == null) { // такой вариант может быть только в случае, если у параметра поменяли ИД. Тогда мы не можем найти старый параметр и не можем понять какие были данные. Поэтому ничего не делаем.
                 return;
@@ -345,13 +360,13 @@ class ObjectParameter extends DaActiveRecord
                     $countFields++;
                 }
             }
-            if ((!$isInsert || $isDelete) && !$fieldExists) {
+            if ( (!$isInsert || $isDelete) && !$fieldExists ) {
                 $allowQuery = false;
-                $msg = 'В таблице ' . $table . ' не существует поля "' . $instanceOld->getFieldName() . '"';
+                $msg = "В таблице {$table} не существует поля '{$instanceOld->getFieldName()}'";
             }
             if ($isInsert && $fieldExists) {
                 $allowQuery = false;
-                $msg = 'В таблице ' . $table . ' уже существует поле "' . $instance->getFieldName() . '"';
+                $msg = "В таблице {$table} уже существует поле '{$instance->getFieldName()}'";
             }
             // TODO проверки еще [Field] => person_type [Type] => int(8) [Null] => YES [Key] => [Default] => [Extra] =>
             if ($allowQuery) {
@@ -401,7 +416,7 @@ class ObjectParameter extends DaActiveRecord
 
         foreach ($sqls as $sql) {
             Yii::app()->db->createCommand($sql)->execute();
-            $msg .= 'Выполнено: ' . $sql . '<br>';
+            $msg = "{$msg}Выполнено: {$sql}<br>";
         }
         if ($msg != '') {
             if (Yii::app()->isBackend) {

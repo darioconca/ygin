@@ -31,7 +31,7 @@ class DaMenu extends CApplicationComponent
             }
             $current = $this->getAll()->getByAlias($alias);
 
-        } else if ($route == MenuModule::ROUTE_STATIC_MENU && isset($actionParams[MenuModule::ROUTE_STATIC_MENU_PARAM])) {
+        } elseif ($route == MenuModule::ROUTE_STATIC_MENU && isset($actionParams[MenuModule::ROUTE_STATIC_MENU_PARAM])) {
             $aliases = explode(Menu::SEPARATOR, $actionParams[MenuModule::ROUTE_STATIC_MENU_PARAM]);
             $alias = array_pop($aliases);
             $current = $this->getAll()->getByAlias($alias);

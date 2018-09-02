@@ -2,6 +2,7 @@
 
 Yii::import('backend.widgets.dropDownList.DropDownObjectWidget', true);
 
-class TypeObjectParameterWidget extends DropDownObjectWidget {
+class TypeObjectParameterWidget extends DropDownObjectWidget
+{
 
 }

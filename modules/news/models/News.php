@@ -115,7 +115,9 @@ class News extends DaActiveRecord implements ISearchable
     public function getUrl()
     {
         if ($this->id_news) {
-            return Yii::app()->createUrl('news/news/view', array('id' => $this->id_news));
+            return Yii::app()->createUrl('news/news/view', array(
+                'id' => $this->id_news,
+            ));
         }
         return Yii::app()->createUrl('news/news/index');
     }

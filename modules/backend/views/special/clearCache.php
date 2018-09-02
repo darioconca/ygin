@@ -44,7 +44,9 @@ if (HU::get('mode') == $this::CLEAR_CACHE_PREVIEWS) {
     Yii::app()->clientScript->registerScript('admin.special.cacheClear.yii', "alert('Процедура завершена, обработано изображений: {$count}');");
 } else if (HU::get("mode") == $this::CLEAR_CACHE_ASSETS) {
     $path = Yii::app()->assetManager->basePath;
-    HFile::removeDirectoryRecursive($path, false, false, false, array('.gitignore'));
+    HFile::removeDirectoryRecursive($path, false, false, false, array(
+        '.gitignore',
+    ));
     //Yii::app()->request->redirect('/admin/page/89/');
 }
 $countImage = File::model()->count('id_parent_file IS NULL AND id_file_type=' . File::FILE_IMAGE);
@@ -57,7 +59,7 @@ $countImage = File::model()->count('id_parent_file IS NULL AND id_file_type=' . 
         <label class="text-right col-lg-4">Кэш стилей и js-файлов</label>
 
         <div class="controls col-lg-8">
-            <p>Местонахождение: <b><?php echo Yii::app()->assetManager->basePath; ?></b></p>
+            <p>Местонахождение: <b><?= Yii::app()->assetManager->basePath ?></b></p>
 
             <form method="get" submit="">
                 <input type="hidden" name="mode" value="<?= $this::CLEAR_CACHE_ASSETS ?>">
@@ -71,7 +73,7 @@ $countImage = File::model()->count('id_parent_file IS NULL AND id_file_type=' . 
 
         <div class="controls col-lg-8">
             <?php if (isset(Yii::app()->cache)){ ?>
-                <p>Компонент Yii::app()->cache: <b><?php echo get_class(Yii::app()->cache); ?></b></p>
+                <p>Компонент Yii::app()->cache: <b><?= get_class(Yii::app()->cache) ?></b></p>
             <?php } ?>
             <form method="get" submit="">
                 <input type="hidden" name="mode" value="<?= $this::CLEAR_CACHE_COMPONENT ?>">
@@ -85,7 +87,7 @@ $countImage = File::model()->count('id_parent_file IS NULL AND id_file_type=' . 
 
         <div class="controls col-lg-8">
             <p>Местонахождение: <b>/content/</b></p>
-            <p>Количество превьюшек: <b><?php echo $countPreview; ?></b></p>
+            <p>Количество превьюшек: <b><?= $countPreview ?></b></p>
 
             <form method="get" submit="">
                 <input type="hidden" name="mode" value="<?= $this::CLEAR_CACHE_PREVIEWS ?>">
@@ -99,11 +101,11 @@ $countImage = File::model()->count('id_parent_file IS NULL AND id_file_type=' . 
 
     <div class="form-group">
         <label class="text-right col-lg-4">Провести пропорциональное уменьшение всех картинок до
-            размера <?php echo Yii::app()->params['upload_image_width'] . "x" . Yii::app()->params['upload_image_height']; ?></label>
+            размера <?= Yii::app()->params['upload_image_width'] . "x" . Yii::app()->params['upload_image_height'] ?></label>
 
         <div class="controls col-lg-8">
             <p>Местонахождение: <b>/content/</b></p>
-            <p>Количество картинок: <b><?php echo $countImage; ?></b></p>
+            <p>Количество картинок: <b><?= $countImage ?></b></p>
 
             <form method="get" submit="">
                 <input type="hidden" name="mode" value="<?= $this::CLEAR_CACHE_SCALE ?>">
@@ -111,7 +113,7 @@ $countImage = File::model()->count('id_parent_file IS NULL AND id_file_type=' . 
                         onclick="if (!confirm('Вы действительно хотите провести уменьшение всех картинок (восстановить оригиналы будет невозможно)?')) return false"<?= ($countImage == 0 ? ' disabled' : '') ?>
                 ">Запустить</button>
             </form>
-            <?php echo $fileResultStr2; ?>
+            <?= $fileResultStr2 ?>
         </div>
     </div>
 </fieldset>

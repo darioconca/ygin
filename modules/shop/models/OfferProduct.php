@@ -25,7 +25,7 @@ class OfferProduct extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'pr_link_offer_product';
+		return 'pr_link_offer_product'; //@todo //@what
 	}
 
 	/**
@@ -35,7 +35,7 @@ class OfferProduct extends CActiveRecord
 	{
 		return array(
 			array('id_offer, id_product, amount', 'required'),
-			array('id_offer, id_product, amount', 'numerical', 'integerOnly'=>true),
+			array('id_offer, id_product, amount', 'numerical', 'integerOnly' => true),
 		);
 	}
 

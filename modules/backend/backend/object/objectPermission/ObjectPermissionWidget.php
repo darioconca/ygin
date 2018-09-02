@@ -5,7 +5,10 @@ class ObjectPermissionWidget extends VisualElementWidget
 
     public function onPostForm(PostFormEvent $event)
     {
-        $this->model->attachEventHandler('onAfterSave', array($this, 'processModel'));
+        $this->model->attachEventHandler('onAfterSave', array(
+            $this,
+            'processModel',
+        ));
     }
 
     public function processModel(CEvent $event)
@@ -48,12 +51,12 @@ class ObjectPermissionWidget extends VisualElementWidget
         $createPermissions = array_diff($permissionsNew, $permissionsOld);
         foreach ($createPermissions as $info) {
             list($roleName, $action) = explode('-', $info);
-            if (!isset($permissions[$action])) {
+            if ( !isset($permissions[$action]) ) {
                 continue;
             }
             $operation = Yii::app()->authManager->getAuthItemObject($action, $idObject);
             if ($operation == null) {
-                $operation = Yii::app()->authManager->createOperationForObject($action, $idObject, 'Операция ' . $permissions[$action] . ' для объекта ' . $object->getName());
+                $operation = Yii::app()->authManager->createOperationForObject($action, $idObject, "Операция {$permissions[$action]} для объекта {$object->getName()}");
             }
             $role = Yii::app()->authManager->getAuthItem($roleName);
             if (!Yii::app()->authManager->hasItemChild($role->getName(), $operation->getName())) {
@@ -64,7 +67,7 @@ class ObjectPermissionWidget extends VisualElementWidget
         $deletePermissions = array_diff($permissionsOld, $permissionsNew);
         foreach ($deletePermissions as $info) {
             list($roleName, $action) = explode('-', $info);
-            if (!isset($permissions[$action])) {
+            if ( !isset($permissions[$action]) ) {
                 continue;
             }
             $operation = Yii::app()->authManager->getAuthItemObject($action, $idObject);
@@ -90,13 +93,13 @@ class ObjectPermissionWidget extends VisualElementWidget
             $operation = Yii::app()->authManager->getAuthItemObject(DaDbAuthManager::OPERATION_LIST, $idObject);
             if ($exists) { // создаем
                 if ($operation == null) {
-                    $operation = Yii::app()->authManager->createOperationForObject(DaDbAuthManager::OPERATION_LIST, $idObject, 'Просмотр списка данных объекта ' . $object->getName());
+                    $operation = Yii::app()->authManager->createOperationForObject(DaDbAuthManager::OPERATION_LIST, $idObject, "Просмотр списка данных объекта {$object->getName()}" );
                 }
-                if (!Yii::app()->authManager->hasItemChild($role->getName(), $operation->getName())) {
+                if ( !Yii::app()->authManager->hasItemChild($role->getName(), $operation->getName()) ) {
                     $role->addChild($operation->getName());
                 }
             } else if ($operation != null && !$exists) { // удаляем
-                if (Yii::app()->authManager->hasItemChild($role->getName(), $operation->getName())) {
+                if ( Yii::app()->authManager->hasItemChild($role->getName(), $operation->getName()) ) {
                     Yii::app()->authManager->removeItemChild($roleName, $operation->getName());
                 }
             }

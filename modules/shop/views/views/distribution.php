@@ -1,43 +1,45 @@
 <?php $this->caption = 'Распределение товаров'; ?>
 <ul class="inline">
-    <?php foreach ($rootCategories as $cat): ?>
+    <?php foreach ($rootCategories as $cat){ ?>
         <li>
             <?php $class = ($cat->primaryKey == $idCategory) ? 'muted' : ''; ?>
-            <?php echo CHtml::link($cat->name, Yii::app()->createUrl('shop/product/distribution', array('idCategory' => $cat->primaryKey)), array('class' => $class)); ?>
+            <?= CHtml::link($cat->name, Yii::app()->createUrl('shop/product/distribution', array(
+                'idCategory' => $cat->primaryKey,
+            )), array(
+                'class' => $class,
+            ))?>
         </li>
-    <?php endforeach; ?>
+    <?php } ?>
 </ul>
 <button class="btn check-all" style="margin-bottom: 10px;">Отметить все</button>
 <form method="post">
     <ul class="media-list">
-        <?php foreach ($models as $key => $model): ?>
+        <?php foreach ($models as $key => $model){ ?>
             <li class="media">
-                <?php if ($model->image): ?>
+                <?php if ($model->image){ ?>
                     <a class="pull-left">
-                        <img class="media-object" src="<?php echo $model->getImagePreview('_dist')->getUrl(); ?>">
+                        <img class="media-object" src="<?= $model->getImagePreview('_dist')->getUrl() ?>">
                     </a>
-                <?php endif; ?>
+                <?php } ?>
                 <div class="media-body" style="height: 100px;">
                     <label class="checkbox">
                         <input type="checkbox" name="Product[<?= $key ?>][save]"><?= $model->name ?>
                     </label>
-                    <input name="Product[<?php echo $key; ?>][id]" value="<?= $model->primaryKey ?>" type="hidden">
+                    <input name="Product[<?= $key ?>][id]" value="<?= $model->primaryKey ?>" type="hidden">
                 </div>
                 <hr>
             </li>
-        <?php endforeach; ?>
+        <?php } ?>
     </ul>
-    <?php echo $data; ?>
+    <?= $data ?>
     <br>
     <button type="submit" class="btn">Перенести отмеченные товары в выбранную категорию</button>
 </form>
-<?php if ($pages): ?>
-    <?php
-    $this->widget('CLinkPager', array(
+<?php if ($pages){ ?>
+    <?php $this->widget('CLinkPager', array(
         'pages' => $pages,
-    ))
-    ?>
-<?php endif; ?>
+    )) ?>
+<?php } ?>
 <script>
     $(document).ready(function () {
         $('.check-all').on('click', function () {

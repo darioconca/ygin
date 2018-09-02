@@ -27,7 +27,10 @@ abstract class BaseApplication extends CWebApplication
     public function __construct($config = null)
     {
         parent::__construct($config);
-        register_shutdown_function(array($this, 'onShutdownHandler'));
+        register_shutdown_function(array(
+            $this,
+            'onShutdownHandler',
+        ));
     }
 
     public function setModels(array $models)
@@ -81,7 +84,9 @@ abstract class BaseApplication extends CWebApplication
     {
         Yii::import('ygin.models.Plugin');
         $plugins = Plugin::model()->enabled()->findAll();
-        $config = array('pluginsCompile' => true);
+        $config = array(
+            'pluginsCompile' => true,
+        );
         foreach ($plugins as $plugin) {
             $appPlugin = $this->getPluginConfig($plugin->code);
             $defaultConfig = array();
@@ -97,7 +102,7 @@ abstract class BaseApplication extends CWebApplication
 
             $config = CMap::mergeArray($config, $defaultConfig, $pluginConfig);
         }
-        $path = $this->getRuntimePath() . '/plugin-compile.dat';
+        $path = $this->getRuntimePath() . '/plugin-compile.dat'; //@toredo
 
         return (bool)file_put_contents($path, serialize($config));
     }
@@ -140,8 +145,9 @@ abstract class BaseApplication extends CWebApplication
             'ygin.controllers.*',
         ));
 
-        if (!isset($this->controllerMap['static']))
+        if (!isset($this->controllerMap['static'])) {
             $this->controllerMap['static'] = 'ygin.controllers.StaticController';
+        }
 
         mb_internal_encoding('UTF-8');
         mb_regex_encoding('UTF-8');
@@ -162,7 +168,7 @@ abstract class BaseApplication extends CWebApplication
         $urlManager = $this->getUrlManager();
         //  print_r($modules);exit;
         $urlRules = array();
-        foreach ($modules AS $moduleName => $params) {
+        foreach ($modules as $moduleName => $params) {
             if ($moduleName == 'gii'){
                 continue;
             }  // перекрывает errorHandler/errorAction
@@ -225,7 +231,9 @@ abstract class BaseApplication extends CWebApplication
 
     public function addModule($moduleName)
     {
-        $this->setModules(array($moduleName));
+        $this->setModules(array(
+            $moduleName,
+        ));
     }
 
 }

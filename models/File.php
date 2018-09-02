@@ -68,6 +68,16 @@ class File extends DaActiveRecord
         );
     }
 
+    public static function getArchiveTYpes(){
+        return [
+            'zip',
+            'rar',
+            '7z',
+            //@todo
+        ];
+    }
+
+
     /**
      * @return int|null
      */
@@ -104,8 +114,11 @@ class File extends DaActiveRecord
     {
         $alias = $this->getTableAlias();
         $this->getDbCriteria()->mergeWith(array(
-            'condition' => $alias . '.id_object=:id_object AND ' . $alias . '.id_instance=:id_instance',
-            'params' => array(':id_object' => $model->getIdObject(), ':id_instance' => $model->getIdInstance()),
+            'condition' => $alias . ".id_object=:id_object AND {$alias}.id_instance=:id_instance",
+            'params'    => array(
+                ':id_object'    => $model->getIdObject(),
+                ':id_instance'  => $model->getIdInstance(),
+            ),
         ));
         return $this;
     }
@@ -296,13 +309,13 @@ class File extends DaActiveRecord
          * @var $info array image info
          */
         $info = $img->info($fullPath);
-        if (!$info) {
+        if ( !$info ) {
             return null;
         }
-        if (($w > 0) && ($info['width'] <= $w) && (empty($cropType))) {
+        if ( ($w > 0) && ($info['width'] <= $w) && empty($cropType) ) {
             $w = 0;
         }
-        if (($h > 0) && ($info['height'] <= $h) && (empty($cropType))) {
+        if ( ($h > 0) && ($info['height'] <= $h) && empty($cropType) ) {
             $h = 0;
         }
         $previewAfter = HFile::addPostfix($fullPath, $postfix);
@@ -319,9 +332,9 @@ class File extends DaActiveRecord
         // нужно ли проверять размер превью
         $needResize = false;
         if ( file_exists($previewAfter) ) {
-            if ($resize) {
+            if ( $resize ) {
                 $prevInfo = $img->info($previewAfter);
-                if (!$prevInfo) {
+                if ( !$prevInfo ) {
                     return null;
                 }
                 $rh = $h;
@@ -349,7 +362,7 @@ class File extends DaActiveRecord
             }
         }
         // Создание превью
-        if (!file_exists($previewAfter) || $needResize) {
+        if ( !file_exists($previewAfter) || $needResize ) {
             // 0-0
             if ($h == null && $w == null) {
                 return $this;
@@ -408,7 +421,7 @@ class File extends DaActiveRecord
      */
     public function resizeImage()
     {
-        if ($this->getFileType() != self::FILE_IMAGE) {
+        if ( $this->getFileType() != self::FILE_IMAGE ) {
             return false;
         }
 
@@ -416,7 +429,7 @@ class File extends DaActiveRecord
         $w = self::$_maxWidth;
         $h = self::$_maxHeight;
 
-        if (!self::$_initSize) {
+        if ( !self::$_initSize ) {
             $w = Yii::app()->params['upload_image_width'];
             $h = Yii::app()->params['upload_image_height'];
             if ($w == null || !is_numeric($w) || $w < 0) {
@@ -491,6 +504,9 @@ class File extends DaActiveRecord
         return HFile::isImage(HFile::getExtension($this->file_path));
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return HFile::getFileNameByPath($this->file_path);
@@ -506,6 +522,9 @@ class File extends DaActiveRecord
         return Yii::app()->format->formatSize($this->getSize(), $verbose);
     }
 
+    /**
+     * @return int|null
+     */
     public function getSize()
     {
         $size = null;

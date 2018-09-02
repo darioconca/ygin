@@ -17,7 +17,7 @@ class FileColumn extends BaseColumn
 
         if ($value != null) {
             $this->htmlOptions = array(
-                'class' => 'col-img'
+                'class' => 'col-img',
             );
             $file = File::model()->findByPk($value);
             if ($file == null) {
@@ -44,7 +44,9 @@ class FileColumn extends BaseColumn
                     $value = "<a rel='daG' target='_blank' href='{$link}' >{$value}</a>";
                 } else {
                     $value = "<a target='_blank' href={$link}' title='Открыть текущий файл для просмотра'><i></i></a>";
-                    $this->htmlOptions = array('class' => 'col-action-view');
+                    $this->htmlOptions = array(
+                        'class' => 'col-action-view',
+                    );
                 }
             }
         }

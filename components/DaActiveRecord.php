@@ -15,6 +15,10 @@ abstract class DaActiveRecord extends BaseActiveRecord
     const IS_VISIBLE = 1;
     const NO_VISIBLE = 0;
 
+    const IS_DELETED = 1;
+    const NO_DELETED = 0;
+
+
     protected $idObject = null;
 
     public final function getIdObject()
@@ -51,7 +55,7 @@ abstract class DaActiveRecord extends BaseActiveRecord
             $this->_idInstance = $idInstance;
             $this->$field = $idInstance;
         } else {
-            throw new ErrorException('Не удалось определить первичный ключ объект.');
+            throw new ErrorException('Не удалось определить первичный ключ объекта.');
         }
     }
 
@@ -134,7 +138,9 @@ abstract class DaActiveRecord extends BaseActiveRecord
         } else if ($instances instanceof DaActiveRecordCollection) {
             $collection = $instances;
         } else if ($instances instanceof DaActiveRecord) {
-            $collection = new DaActiveRecordCollection(array($instances));
+            $collection = new DaActiveRecordCollection(array(
+                $instances,
+            ));
             $scalar = true;
         } else {
             throw new ErrorException('Неверно определен тип параметра метода getInstancesDependentData.');
@@ -144,7 +150,14 @@ abstract class DaActiveRecord extends BaseActiveRecord
         $relationParams = $this->getObjectInstance()->relationParameters;
         $assocData = array_fill_keys($arrayOfId, array());
         foreach ($relationParams as $param) {
-            $whereConfig = array('and', array('in', $param->getFieldName(), $arrayOfId));
+            $whereConfig = array(
+                'and',
+                array(
+                    'in',
+                    $param->getFieldName(),
+                    $arrayOfId,
+                ),
+            );
 
             $idObject = $param->getIdObjectParameter();
             $object = DaObject::getById($idObject, false);
@@ -270,7 +283,7 @@ abstract class DaActiveRecord extends BaseActiveRecord
         if ($this->__object == null) {
             $this->__object = DaObject::getById($this->getIdObject(), false);
             if ($this->__object == null) {
-                throw new ErrorException('Не найден объект с ИД=' . $this->getIdObject());
+                throw new ErrorException("Не найден объект с ИД={$this->getIdObject()}");
             }
         }
         return $this->__object;
@@ -338,14 +351,20 @@ abstract class DaActiveRecord extends BaseActiveRecord
     }
 
 
+    /**
+     * @param bool|true $makeDir
+     * @param bool|false $absolute
+     * @return string
+     * @throws ErrorException
+     */
     public function getDir($makeDir = true, $absolute = false)
     {
-        $ob = $this->getObjectInstance();
-        $folder = $ob->getFolderName();
+        $objectInstance = $this->getObjectInstance();
+        $folder = $objectInstance->getFolderName();
         if ($folder != null) {
             $folder = HFile::addSlashPath($folder);
         } else if ($makeDir) {
-            $err = "Незадана папка для хранения файлов объекта {$ob->name} (id_object={$ob->idObject})";
+            $err = "Незадана папка для хранения файлов объекта {$objectInstance->name} (id_object={$objectInstance->idObject})";
             throw new ErrorException($err);
         }
 
@@ -369,7 +388,7 @@ abstract class DaActiveRecord extends BaseActiveRecord
         $pathToFile = $folder . $instanceFolder . '/';
         $webRoot = Yii::getPathOfAlias('webroot') . '/';
         if ($makeDir) {
-            if (!file_exists($webRoot . $pathToFile)) {
+            if ( !file_exists($webRoot . $pathToFile) ) {
                 umask(0);
                 mkdir($webRoot . $pathToFile, 0777, true);
             }

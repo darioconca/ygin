@@ -1,5 +1,6 @@
 <?php
 
-class Controller extends DaBackendController {
+class Controller extends DaBackendController
+{
 }
 

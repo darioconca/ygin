@@ -20,11 +20,13 @@ class NewsController extends Controller
                 $criteria->compare('t.id_news_category', $idCategory);
             }
             $categories = NewsCategory::model()->findAll(array(
-                'order' => 'seq'
+                'order' => 'seq',
             ));
         }
 
-        $news = News::model()->last()->findAll($criteria);
+        $news = News::model()
+            ->last()
+            ->findAll($criteria);
 
         $pages = new CPagination(count($news));
         $pages->pageSize = $newsModule->itemsCountPerPage;
@@ -53,7 +55,7 @@ class NewsController extends Controller
 
         $this->caption = $news->title;
         $this->render('/view', array(
-            'model' => $news
+            'model' => $news,
         ));
     }
 

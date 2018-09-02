@@ -19,7 +19,10 @@ class DaConsoleApplication extends CConsoleApplication
     public function __construct($config = null)
     {
         parent::__construct($config);
-        register_shutdown_function(array($this, 'onShutdownHandler'));
+        register_shutdown_function(array(
+            $this,
+            'onShutdownHandler',
+        ));
     }
 
     public function onShutdownHandler()

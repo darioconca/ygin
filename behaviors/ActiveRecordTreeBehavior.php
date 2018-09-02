@@ -86,7 +86,9 @@ class ActiveRecordTreeBehavior extends CBehavior
         } else {
             $criteria = new CDbCriteria();
             $criteria->order = $this->order;
-            if ($this->with != null) $criteria->with = $this->with;
+            if ($this->with != null) {
+                $criteria->with = $this->with;
+            }
             $criteria->mergeWith($addCriteria);
 
             $model = null;
@@ -261,16 +263,26 @@ class ActiveRecordTreeBehavior extends CBehavior
     /**
      * Получение корневого предка
      */
-    public function getRootParent()
+    public function getRoot()
     {
         $parent = $this->getParent();
         if ($parent === null) {
             return $this->owner;
         }
-        return $parent->getRootParent();
+        return $parent->getRoot();
     }
-    //@todo getRootChild
-    //@todo getGrandParent
+
+    public function getGrandParent(){
+        $parent = $this->getParent();
+        if ($parent === null) {
+            return null;
+        }
+        return $parent->getParent();
+    }
+
+
+
+    //todo getRootChild
     //@todo getBrothers
 
     /**

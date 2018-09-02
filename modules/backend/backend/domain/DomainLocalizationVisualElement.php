@@ -9,9 +9,9 @@ class DomainLocalizationVisualElement extends MultiSelectWidget
 
     public function getCriteria()
     {
-        $cr = new CDbCriteria();
-        $cr->condition = 't.is_use=1 AND t.id_localization != 1';
-        return $cr;
+        $criteria = new CDbCriteria();
+        $criteria->condition = 't.is_use=1 AND t.id_localization != 1';
+        return $criteria;
     }
 
     public function getIdObjectSelectInstance()

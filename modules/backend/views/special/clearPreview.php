@@ -25,7 +25,7 @@ function getImageFiles($dir = '.', $exclude)
         }
         if (is_dir(HFile::addSlashPath($dir) . $v)) {
             $files = array_merge($files, getImageFiles(HFile::addSlashPath($dir) . $v, $exclude));
-        } else if (isImage(HFile::getExtension($v))) {
+        } elseif (isImage(HFile::getExtension($v))) {
             $files[] = str_replace($exclude, '', HFile::addSlashPath($dir) . $v);
         }
     }
@@ -74,30 +74,25 @@ if (count($arrayOfNoRegisteredFiles) > 0 && $action == 'deleteNoRegister') {
 
 echo '<h3>Проверка файлов на существование</h3>';
 $count = count($arrayOfNoRegisteredFiles);
-if ($count > 0) {
-    ?>
+if ($count > 0) { ?>
     <b style="color:red">В папке /content найден<?= getWordFinishByNumber($count, '', 'о', 'о') ?> <?= $count ?>
         файл<?= getWordFinishByNumber($count, '', 'а', 'ов') ?>, не
         зарегистрированны<?= getWordFinishByNumber($count, 'й', 'х', 'х') ?> в таблице da_files</b><br>
     Список:<br/>
-    <textarea name="" cols="" rows="10" style="width:95%"
-              wrap="ON"><?= implode("\n", $arrayOfNoRegisteredFiles) ?></textarea>
+    <textarea name="" cols="" rows="10" style="width:95%" wrap="ON"><?= implode("\n", $arrayOfNoRegisteredFiles) ?></textarea>
     <br/><a href="?action=deleteNoRegister" onClick="if (!confirm('Уверены?')) return false">Удалить эти файлы?</a><br/>
-    <?php
-} else {
+<?php } else {
     echo '<b style="color:green">Незарегистрированных файлов в папке /content/ не обнаружено</b><br>';
 }
 
 $count = count($idOfNotExistFiles);
-if ($count > 0) {
-    ?>
+if ($count > 0) { ?>
     <br>
     <b style="color:red">В базе данных зарегистрирован<?= getWordFinishByNumber($count, '', 'о', 'о') ?> <?= $count ?>
         файл<?= getWordFinishByNumber($count, '', 'а', 'ов') ?>, не
         найденны<?= getWordFinishByNumber($count, 'й', 'х', 'х') ?> в папке /content/</b><br>
     Вот их список:<br/>
-    <textarea name="" cols="" rows="10" style="width:95%"
-              wrap="ON"><?= implode("\n", $arrayOfNotExistFiles) ?></textarea>
+    <textarea name="" cols="" rows="10" style="width:95%" wrap="ON"><?= implode("\n", $arrayOfNotExistFiles) ?></textarea>
     Запрос на их удаление:<br>
     <textarea name="" cols="" rows="5" style="width:95%" wrap="ON" onclick="this.focus(); this.select()">DELETE FROM da_files WHERE id_file IN (<?php echo implode(', ', $idOfNotExistFiles) ?>
         )</textarea><br>

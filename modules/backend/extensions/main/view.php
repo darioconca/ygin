@@ -62,7 +62,7 @@
 $html = '';
 $block = '';
 $i = -1;
-foreach ($mainElements AS $element) {
+foreach ($mainElements as $element) {
     $i++;
     $addButton = (isset($element['link-add']) ? '<a class="btn btn-success" href="' . $element['link-add'] . '"><i class="icon-plus icon-white"></i> Добавить</a>' : '');
     $block .= '<div class="col-md-4">
@@ -79,7 +79,9 @@ foreach ($mainElements AS $element) {
         $block = '';
     }
 }
-if ($block != '') $html .= CHtml::tag('div', array('class' => 'row'), $block);
+if ($block != '') {
+    $html .= CHtml::tag('div', array('class' => 'row'), $block);
+}
 
 echo $html . '
   </div><!-- .plugin-list -->

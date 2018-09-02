@@ -23,9 +23,11 @@ class ObjectColumn extends BaseColumn
         $object = DaObject::getById($idObject, false);
         $model = $object->getModel();
         //$rows = $model->findAllByPkArray($this->_assocData);
-        $rows = $model->findAllByAttributes(array($object->getFieldByType(DataType::PRIMARY_KEY) => $this->_assocData));
+        $rows = $model->findAllByAttributes(array(
+            $object->getFieldByType(DataType::PRIMARY_KEY) => $this->_assocData
+        ));
         $this->_assocData = array();
-        foreach ($rows AS $model) {
+        foreach ($rows as $model) {
             $this->_assocData[$model->getIdInstance()] = $model->getInstanceCaption();
         }
     }

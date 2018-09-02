@@ -88,7 +88,7 @@ class ReferenceElement extends DaActiveRecord
             'condition' => $this->getTableAlias() . '.id_reference=:ref AND ' . $this->getTableAlias() . '.id_reference_element=:element',
             'params'    => array(
                 ':ref'      => $idReference,
-                ':element'  => $idReferenceElement
+                ':element'  => $idReferenceElement,
             ),
         ));
         return $this;
@@ -99,7 +99,7 @@ class ReferenceElement extends DaActiveRecord
         $this->getDbCriteria()->mergeWith(array(
             'condition' => $this->getTableAlias() . '.id_reference=:ref',
             'params'    => array(
-                ':ref' => $idReference
+                ':ref' => $idReference,
             ),
         ));
         return $this;

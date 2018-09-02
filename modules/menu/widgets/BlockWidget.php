@@ -26,7 +26,9 @@ class BlockWidget extends CWidget
                 self::$_modules = SiteModule::model()->with(array(
                     'place' => array(
                         'condition' => 'place.id_module_template=:id_template',
-                        'params' => array('id_template' => Yii::app()->controller->idSiteModuleTemplate)
+                        'params' => array(
+                            'id_template' => Yii::app()->controller->idSiteModuleTemplate,
+                        ),
                     ),
                     'phpScriptInstance.phpScript',
                 ))->findAll();

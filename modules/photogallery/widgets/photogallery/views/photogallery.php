@@ -6,9 +6,11 @@ if (count($photos) > 0) {
 
     $data = array();
     $i = 0;
-    foreach ($photos AS $photo) {
+    foreach ($photos as $photo) {
         $preview = $photo->getImagePreview('_list');
-        if ($preview == null) continue;
+        if ($preview == null) {
+            continue;
+        }
         $i++;
         $previewSizes = getimagesize($preview->file_path);
 

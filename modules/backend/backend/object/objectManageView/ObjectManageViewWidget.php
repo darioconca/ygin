@@ -5,12 +5,17 @@ class ObjectManageViewWidget extends VisualElementWidget
 
     public function init()
     {
-        if ($this->model->object_type != DaObject::OBJECT_TYPE_TABLE || $this->model->isNewRecord) $this->render = false;
+        if ($this->model->object_type != DaObject::OBJECT_TYPE_TABLE || $this->model->isNewRecord) {
+            $this->render = false;
+        }
     }
 
     public function onPostForm(PostFormEvent $event)
     {
-        $this->model->attachEventHandler('onAfterSave', array($this, 'processModel'));
+        $this->model->attachEventHandler('onAfterSave', array(
+            $this,
+            'processModel',
+        ));
     }
 
     public function processModel(CEvent $event)
@@ -50,7 +55,9 @@ class ObjectManageViewWidget extends VisualElementWidget
             if (is_null($idView)) {
                 //Свойства стоят, представления нет, приписываем имеющемуся
                 //Если у объекта есть единственное представление, приписываем отмеченные галочки ему
-                $view = DaObjectView::model()->findAll('id_object=:id', array(':id' => $idObject));
+                $view = DaObjectView::model()->findAll('id_object=:id', array(
+                    ':id' => $idObject,
+                ));
                 if (count($view) != 1) {
                     return;
                 }
@@ -60,13 +67,17 @@ class ObjectManageViewWidget extends VisualElementWidget
             //Уже приписанные представлению колонки
             $already = array();
 
-            $columns = DaObjectViewColumn::model()->findAll('id_object_view=:id', array(':id' => $idView));
-            foreach ($columns AS $c) {
-                $already[] = $c->id_object_parameter;
+            $columns = DaObjectViewColumn::model()->findAll('id_object_view=:id', array(
+                ':id' => $idView,
+            ));
+            foreach ($columns as $column) {
+                $already[] = $column->id_object_parameter;
             }
 
             foreach ($columnsForm as $col) {
-                if (in_array($col, $already)) continue;
+                if (in_array($col, $already)) {
+                    continue;
+                }
 
                 $objectParam = $model->getParameterObjectByIdParameter($col);
                 if ($objectParam == null) {

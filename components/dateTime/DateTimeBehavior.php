@@ -28,7 +28,9 @@ class DateTimeBehavior extends CModelBehavior
     {
         parent::attach($owner);
         $owner->getValidatorList()->add(
-            CValidator::createValidator('safe', $this->owner, array('dateTimes'))
+            CValidator::createValidator('safe', $this->owner, array(
+                'dateTimes',
+            ))
         );
     }
 
@@ -48,7 +50,7 @@ class DateTimeBehavior extends CModelBehavior
             } else {
                 foreach ($dateTimeForm->getErrors() as $attribute => $errors) {
                     $event->sender->addErrors(array(
-                        $dateTimeForm->dateTimeAttribute => $errors
+                        $dateTimeForm->dateTimeAttribute => $errors,
                     ));
                 }
             }

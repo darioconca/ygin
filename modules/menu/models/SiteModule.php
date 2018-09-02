@@ -98,6 +98,24 @@ class SiteModule extends DaActiveRecord
         );
     }
 
+    /**
+     * @return string
+     */
+    public function getContent_excerpt(){
+        $content_excerpt = '';
+        if ( !empty(trim($this->content)) ){
+            $content_excerpt = $this->content;
+        } elseif ( !empty(trim($this->html))) {
+            $content_excerpt = $this->html;
+        } else {
+            return $content_excerpt;
+        }
+
+        return substr(strip_tags($content_excerpt),0,150).' ...';
+
+    }
+
+
     /** поскольку связь 1 к 1
      * @return mixed
      */

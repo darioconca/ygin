@@ -315,7 +315,7 @@ function CartWidgetProduct(id, count, name, price) {
       'itemPriceValue': '.price .val', //контейнер с ценной товара
       'itemAttrId': 'data-id', //атрибут, содержащий id одиночного товара
       'itemAttrPrice': 'data-price', //атрибут, содержащий цену одиночного товара
-      'itemAttrCount': 'data-kolvo', //атрибут, содержащий количество выбранного товара
+      'itemAttrCount': 'data-qty', //атрибут, содержащий количество выбранного товара
       'offerLink': '#', //ссылка на форму заказа
       'buttonOffer': '.btns .offer', //кнопка заказать
       'buttonClearCart': '.btns .clear', //кнопка очистить корзину

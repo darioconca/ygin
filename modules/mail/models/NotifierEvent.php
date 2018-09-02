@@ -96,8 +96,8 @@ class NotifierEvent extends DaActiveRecord
     public function getEventsProcess()
     {
         if ($this->_eventsProcess === null) {
-            $this->_eventsProcess = NotifierEventProcess::model()->scForSend()->findAll(
-                't.id_event = :ID_EVENT', array(':ID_EVENT' => $this->primaryKey
+            $this->_eventsProcess = NotifierEventProcess::model()->scForSend()->findAll('t.id_event = :ID_EVENT', array(
+                ':ID_EVENT' => $this->primaryKey,
             ));
         }
         return $this->_eventsProcess;
@@ -197,7 +197,9 @@ class NotifierEvent extends DaActiveRecord
             $criteria = new CDbCriteria(array(
                 'select' => '*',
                 'condition' => 'id_event_type = :ID_EVENT_TYPE',
-                'params' => array(':ID_EVENT_TYPE' => $this->id_event_type),
+                'params' => array(
+                    ':ID_EVENT_TYPE' => $this->id_event_type,
+                ),
             ));
 
             //Если указан, то делаем уточнение по данному подписчику
@@ -219,7 +221,9 @@ class NotifierEvent extends DaActiveRecord
                     ->query();
                 //Собираем email'ы подписчиков
                 foreach ($dataReader as $row) {
-                    $criteria = new CDbCriteria(array('select' => 'mail'));
+                    $criteria = new CDbCriteria(array(
+                        'select' => 'mail',
+                    ));
 
                     if ($row['id_user'] !== null) {
                         $criteria->addCondition('id_user=:idUser');
@@ -263,13 +267,13 @@ class NotifierEvent extends DaActiveRecord
                      AND a.notify_date IS NULL
                      AND a.id_event_subscriber=:ID_EVENT_SUBSCR";
             $command = $this->getDbConnection()->createCommand($sql);
-            foreach ($emails as $idSubscriber => $subscrEmails) {
-                $unnotifiedEmails = $command->queryColumn(array(
-                    ':ID_INST' => $this->id_instance,
-                    ':ID_EVENT_TYPE' => $this->id_event_type,
-                    ':ID_EVENT_SUBSCR' => $idSubscriber,
+            foreach ($emails as $idSubscriber => $subscriberEmails) {
+                $unNotifiedEmails = $command->queryColumn(array(
+                    ':ID_INST'          => $this->id_instance,
+                    ':ID_EVENT_TYPE'    => $this->id_event_type,
+                    ':ID_EVENT_SUBSCR'  => $idSubscriber,
                 ));
-                $emails[$idSubscriber] = array_diff($subscrEmails, $unnotifiedEmails);
+                $emails[$idSubscriber] = array_diff($subscriberEmails, $unNotifiedEmails);
             }
         }
         return $emails;
@@ -308,7 +312,12 @@ class NotifierEvent extends DaActiveRecord
         foreach ($this->_recipientsEmails as $idEventSubscriber => $emails) {
             $ec = count($emails);
             for ($i = 0; $i < $ec; $i++) {
-                $command->execute(array($this->getPrimaryKey(), $emails[$i], $idEventSubscriber, null));
+                $command->execute(array(
+                    $this->getPrimaryKey(),
+                    $emails[$i],
+                    $idEventSubscriber,
+                    null,
+                ));
             }
         }
     }

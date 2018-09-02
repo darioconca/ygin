@@ -31,6 +31,8 @@ class DefaultController extends Controller
             throw new CHttpException(HttpCode::NOT_FOUND, 'Not found.');
         }
         $model->markAsRead(Yii::app()->user->id);
-        echo CJSON::encode(array('result' => true));
+        echo CJSON::encode(array(
+            'result' => true,
+        ));
     }
 }

@@ -9,6 +9,8 @@
  * @property integer $date
  * @property string $ip
  * @property integer $type_visit
+ * @todo user-agent
+ * @todo referrer
  */
 class VisitSite extends CActiveRecord
 {
@@ -51,15 +53,17 @@ class VisitSite extends CActiveRecord
             $criteria = new CDbCriteria();
             $criteria->addCondition('date>:date');
             $criteria->params = array(
-                ':date' => $expired
+                ':date' => $expired,
             );
             $criteria->addColumnCondition(array(
                 'type_visit'    => $type,
                 'ip'            => $digitalIp,
-                'id_object'     => $idObject
+                'id_object'     => $idObject,
             ));
             if ($idInstance != null) {
-                $criteria->addColumnCondition(array('id_instance' => $idInstance));
+                $criteria->addColumnCondition(array(
+                    'id_instance' => $idInstance,
+                ));
             }
             $count = self::model()->count($criteria);
             if ($count < $countRepeats) {

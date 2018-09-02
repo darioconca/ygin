@@ -13,20 +13,20 @@ $elementOfObject = VisualElementFactory::getVisualElement($model, $this->paramet
 $this->parameterOfObjectParameter->widget = null;
 $elementOfParameter = VisualElementFactory::getVisualElement($model, $this->parameterOfObjectParameter);
 $ajax = CHtml::ajax(array(
-  'url'=>Yii::app()->createUrl('backend/engine/getObjectParameters'),
-  'data'=>array(
-    'id_object' => 'js:$(this).val()',
-    'value' => $model->$attributeName,
-    'element_object' => $model->getIdObject(),
-    'element_parameter' => $this->getObjectParameter()->getIdParameter(),
-  ),
-  'type'=>'POST',
-  'dataType'=>'json',
-  'success'=>'js:function(data){if (data.error !== undefined) {alert(data.error); return;} element.parent().html(data.html);}',
+    'url' => Yii::app()->createUrl('backend/engine/getObjectParameters'),
+    'data' => array(
+        'id_object' => 'js:$(this).val()',
+        'value' => $model->$attributeName,
+        'element_object' => $model->getIdObject(),
+        'element_parameter' => $this->getObjectParameter()->getIdParameter(),
+    ),
+    'type' => 'POST',
+    'dataType' => 'json',
+    'success' => 'js:function(data){if (data.error !== undefined) {alert(data.error); return;} element.parent().html(data.html);}',
 ));
-Yii::app()->clientScript->registerScript('admin.ve.abstract.PermPropVisualElement', '$("select[name=\''.$elementOfObject->getElementName().'\']").change(function(){
-var element = $("[name=\''.$elementOfParameter->getElementName().'\']");
-'.$ajax.'
+Yii::app()->clientScript->registerScript('admin.ve.abstract.PermPropVisualElement', '$("select[name=\'' . $elementOfObject->getElementName() . '\']").change(function(){
+var element = $("[name=\'' . $elementOfParameter->getElementName() . '\']");
+' . $ajax . '
 }
 ).change();');
 

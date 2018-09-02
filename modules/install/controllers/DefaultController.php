@@ -7,7 +7,7 @@ class DefaultController extends CController
     public $caption;
     public $layout = 'main';
     public $view404 = 'ygin.views.404';
-    public $view403 = 'ygin.views.access_denied';
+    public $view403 = 'ygin.views.403';
     public $viewError = 'ygin.views.error';
 
     public function filters()
@@ -234,12 +234,17 @@ class DefaultController extends CController
         }
     }
 
+    /**
+     * @param $dbSettings
+     * @return bool
+     * @throws CException
+     */
     private function saveConfigFile($dbSettings)
     {
         file_put_contents($this->getLocalConfigFile(), $this->renderPartial('_local_config', array(
             'dbSettings' => $dbSettings,
         ), true));
-        @chmod($this->getLocalConfigFile(), 0777);
+        return @chmod($this->getLocalConfigFile(), 0777);
     }
 
     public function actionSuccess()
@@ -256,7 +261,9 @@ class DefaultController extends CController
                 $view = $this->view404;
             } else if ($error['code'] == HttpCode::FORBIDDEN) { // доступ запрещен
                 $view = $this->view403;
-                if (empty($error['message'])) $error['message'] = 'Доступ к странице запрещен.';
+                if (empty($error['message'])) {
+                    $error['message'] = 'Доступ к странице запрещен.';
+                }
             }
             if (Yii::app()->request->isAjaxRequest) {
                 echo $error['message'];

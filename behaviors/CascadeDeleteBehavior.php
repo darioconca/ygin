@@ -106,7 +106,9 @@ class CascadeDeleteBehavior extends CActiveRecordBehavior
         if (isset($relation['condition'])) {
             $condition .= ' AND ' . $relation['condition']; 
         }
-        $params = array(':_pk' => $this->getOwner()->getPrimaryKey());
+        $params = array(
+            ':_pk' => $this->getOwner()->getPrimaryKey(),
+        );
         if (isset($relation['params'])) {
             $params = array_merge($params, $relation['params']);
         }

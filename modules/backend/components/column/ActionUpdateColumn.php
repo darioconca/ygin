@@ -34,11 +34,18 @@ class ActionUpdateColumn extends ActionColumn
                 ObjectUrlRule::PARAM_ACTION_VIEW,
                 ObjectUrlRule::PARAM_SYSTEM_MODULE,
             ));
-            $contentCell = CHtml::link('', $link, array('title' => 'Изменить'));
-            $this->htmlOptions = array('class' => 'col-ref action-edit');
+            $contentCell = CHtml::link('', $link, array(
+                'title' => 'Изменить'
+            ));
+            $this->htmlOptions = array(
+                'class' => 'col-ref action-edit'
+            );
         } else {
             $contentCell = '<i></i>';
-            $this->htmlOptions = array('class' => 'col-ref action-edit-no', 'title' => 'Редактирование не доступно');
+            $this->htmlOptions = array(
+                'class' => 'col-ref action-edit-no',
+                'title' => 'Редактирование не доступно'
+            );
         }
         echo CHtml::openTag('td', $this->htmlOptions);
         echo $contentCell;

@@ -17,7 +17,7 @@ class StatView
 
         $data = Yii::app()->db->createCommand($sql)->queryAll(true, array(':id_object' => $idObject));
         $result = array();
-        foreach ($data AS $row) {
+        foreach ($data as $row) {
             $result[$row['id_instance']] = $row['view_count'];
         }
         return $result;
@@ -32,9 +32,11 @@ class StatView
         $collection = new DaActiveRecordCollection($instances);
         $array = $collection->getKeys();
         $sql = "SELECT id_instance, COUNT(view_count) AS c FROM da_stat_view WHERE id_object = :id_object AND id_instance IN (" . implode(", ", $array) . ')' . $add . ' GROUP BY id_instance;';
-        $data = Yii::app()->db->createCommand($sql)->queryAll(true, array(':id_object' => $idObject));
+        $data = Yii::app()->db->createCommand($sql)->queryAll(true, array(
+            ':id_object' => $idObject,
+        ));
         $result = array();
-        foreach ($data AS $row) {
+        foreach ($data as $row) {
             $result[$row['id_instance']] = $row['c'];
         }
         return $result;
@@ -50,7 +52,9 @@ class StatView
         }
         $sql = "SELECT SUM(view_count) AS view_count FROM da_stat_view WHERE id_object = :id_object AND id_instance = :id_instance" . $add;
         $result = Yii::app()->db->createCommand($sql)->queryScalar($params);
-        if ($result == null) $result = 0;
+        if ($result == null) {
+            $result = 0;
+        }
         return $result;
     }
 
@@ -63,13 +67,15 @@ class StatView
 
         $arrayOfResult = array(); // в результат вернём текущее кол-во просмотров (с учётом новых)
         $sql = "";
-        if ($date == null) $date = time();
+        if ($date == null) {
+            $date = time();
+        }
 
         $maskDateVal = null;
         $newArr = array();
         if (!$saveHistory && $maskDate != null) {  // отсекаем старые данные
             $maskDateVal = date($maskDate, $date);
-            foreach ($arrayOfData AS $id => $arrayOfViewDate) {
+            foreach ($arrayOfData as $id => $arrayOfViewDate) {
                 $c = count($arrayOfViewDate);
                 for ($i = 0; $i < $c; $i++) {
                     $d = $arrayOfViewDate[$i];
@@ -86,14 +92,18 @@ class StatView
             $newArr = $arrayOfData;
         }
 
-        foreach ($newArr AS $idInstance => $arrayOfViewDate) {
+        foreach ($newArr as $idInstance => $arrayOfViewDate) {
             $result = 0;
             $c = count($arrayOfViewDate);
             if (!$saveHistory) {
                 $sql2 = "SELECT view_count, last_date_process AS date FROM da_stat_view
                         WHERE id_object = :id_object AND id_instance = :id_instance
                         AND view_type = :type" . ($where != "" ? " AND ($where)" : "") . " ORDER BY last_date_process DESC LIMIT 1";
-                $row = Yii::app()->db->createCommand($sql2)->queryRow(true, array(':id_object' => $idObject, ':id_instance' => $idInstance, ':type' => $type));
+                $row = Yii::app()->db->createCommand($sql2)->queryRow(true, array(
+                    ':id_object' => $idObject,
+                    ':id_instance' => $idInstance,
+                    ':type' => $type,
+                ));
                 if (is_array($row) && count($row) > 0) {
                     $result = $row['view_count'];
                     $dateQuery = $row['date'];
@@ -136,7 +146,12 @@ class StatView
 
     public static function newView($idObject, $idInstance, $type = 1, $maskDate = "", $saveHistory = true, $where = "", $date = null)
     {
-        $result = StatView::newViewPacket($idObject, array($idInstance => array(time())), $type, $maskDate, $saveHistory, $where, $date);
+        $result = StatView::newViewPacket($idObject, array(
+            $idInstance => array(
+                time(),
+            )
+        ), $type, $maskDate, $saveHistory, $where, $date);
+
         if (array_key_exists($idInstance, $result)) {
             return $result[$idInstance];
         }

@@ -89,10 +89,6 @@ class Menu extends DaActiveRecord implements ISearchable
                 'order' => 'id_parent DESC, sequence ASC',
                 'idParentField' => 'id_parent',
             ),
-            'activeStatus' => array(
-                'class'             => 'ActiveStatusBehavior',
-                'statusProperty'    => 'visible',
-            ),
             'checkShortCode' => array(
                 'class'                 => 'ShortCodeBehavior',
                 'shortCodeContentField' => 'content',
@@ -279,7 +275,7 @@ class Menu extends DaActiveRecord implements ISearchable
         }
 
         if (!empty($url)) {
-            $url .= self::SEPARATOR . $this->alias;
+            $url = $url . self::SEPARATOR . $this->alias;
         } else {
             $url = $this->alias;
         }
@@ -322,14 +318,14 @@ class Menu extends DaActiveRecord implements ISearchable
             return $url;
         }
         $result = Yii::app()->createUrl(MenuModule::ROUTE_STATIC_MENU, array(
-            MenuModule::ROUTE_STATIC_MENU_PARAM => $url
+            MenuModule::ROUTE_STATIC_MENU_PARAM => $url,
         ));
         return $result;
     }
 
     public function getByRoute($controller, $action)
     {
-        if (!empty($this->controller)) {
+        if ( !empty($this->controller) ) {
             if ($this->controller == $controller) {
                 if ($this->action == '*') { //для любого действия контроллера
                     return $this;
@@ -355,19 +351,22 @@ class Menu extends DaActiveRecord implements ISearchable
         return null;
     }
 
+    /**
+     * @return int
+     */
     public function getVisibleChildCount()
     {
-        $c = 0;
+        $count = 0;
         $childCount = $this->getChildCount();
 
         for ($i = 0; $i < $childCount; $i++) {
             $child = $this->getChild();
             if ($child[$i]->isVisible) {
-                $c++;
+                $count++;
             }
         }
 
-        return $c;
+        return $count;
     }
 
 
@@ -378,10 +377,12 @@ class Menu extends DaActiveRecord implements ISearchable
      */
     public function getModules($idTemplate = null)
     {
-        if ($this->_modules !== null) return $this->_modules;
+        if ( $this->_modules !== null ) {
+            return $this->_modules;
+        }
 
         $this->_modules = array();
-        $idTemplate = ($idTemplate != null ? $idTemplate : $this->id_module_template);
+        $idTemplate = $idTemplate != null ? $idTemplate : $this->id_module_template;
 
         if ($idTemplate == null) {
             // Если модулей нет, то устанавливаем родительские модули
@@ -401,7 +402,9 @@ class Menu extends DaActiveRecord implements ISearchable
         $this->_modules = SiteModule::model()->with(array(
             'place' => array(
                 'condition' => 'place.id_module_template=:id_template',
-                'params' => array('id_template' => $idTemplate)
+                'params' => array(
+                    'id_template' => $idTemplate,
+                ),
             ),
             'phpScriptInstance.phpScript',
         ))->findAll();
@@ -477,7 +480,7 @@ class Menu extends DaActiveRecord implements ISearchable
 
     protected function beforeDelete()
     {
-        if (!$this->isRemovable()) {
+        if ( !$this->isRemovable() ) {
             throw new ErrorException('Раздел нельзя удалить, так как он не отмечен как удаляемый');
         }
         $all = self::getAll();
@@ -507,7 +510,7 @@ class Menu extends DaActiveRecord implements ISearchable
                 'condition' => 'visible ='.self::IS_VISIBLE,
             ),
             'external' => array(
-                'condition' => 'external_link IS NOT NULL'
+                'condition' => 'external_link IS NOT NULL',
             ),
         );
     }

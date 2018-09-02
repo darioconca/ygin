@@ -1,7 +1,7 @@
 <?php
 $offerText = "Заявка:\n\n";
 $sum = 0;
-foreach ($products AS $product) {
+foreach ($products as $product) {
   $cost = $product->getOfferSum();
   $sum += $cost;
 

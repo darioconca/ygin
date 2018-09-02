@@ -36,9 +36,23 @@ class ExportYandexMarketController extends Controller
                  * @var $category ProductCategory
                  */
                 $category = ($product->id_product_category == null ? null : $categories->getById($product->id_product_category));
-                if ($category == null) continue;
+                if ($category == null) {
+                    continue;
+                }
                 $product->category = $category;
-                $name = str_replace(array("\n", "\r", ";", "\t", '"'), array(' ', ' ', ',', ' ', ''), $product->name);
+                $name = str_replace(array(
+                    "\n",
+                    "\r",
+                    ";",
+                    "\t",
+                    '"',
+                ), array(
+                    ' ',
+                    ' ',
+                    ',',
+                    ' ',
+                    '',
+                ), $product->name);
                 $this->writeElements($handle, array(
                     $product->id_product,
                     'vendor.model',
@@ -52,7 +66,19 @@ class ExportYandexMarketController extends Controller
                     $name,
                     'false',
                     'true', // delivery
-                    str_replace(array("\n", "\r", ";", "\t", '"'), array(' ', ' ', ',', ' ', ''), $product->description),
+                    str_replace(array(
+                        "\n",
+                        "\r",
+                        ";",
+                        "\t",
+                        '"',
+                    ), array(
+                        ' ',
+                        ' ',
+                        ',',
+                        ' ',
+                        '',
+                    ), $product->description),
                 ));
             }
             fclose($handle);

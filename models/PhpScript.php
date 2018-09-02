@@ -101,14 +101,22 @@ class PhpScript extends DaActiveRecord
             $idOldPhpScript = $this->getPkBeforeSave();
             if ($this->id_php_script_type != $idOldPhpScript) {
                 PhpScriptInstance::model()->updateAll(
-                    array('id_php_script_type' => $this->id_php_script_type),
+                    array(
+                        'id_php_script_type' => $this->id_php_script_type,
+                    ),
                     'id_php_script_type=:id',
-                    array(':id' => $idOldPhpScript)
+                    array(
+                        ':id' => $idOldPhpScript
+                    )
                 );
                 DaObjectViewColumn::model()->updateAll(
-                    array('handler' => $this->id_php_script_type),
+                    array(
+                        'handler' => $this->id_php_script_type,
+                    ),
                     'handler=:id',
-                    array(':id' => $idOldPhpScript)
+                    array(
+                        ':id' => $idOldPhpScript,
+                    )
                 );
             }
         }

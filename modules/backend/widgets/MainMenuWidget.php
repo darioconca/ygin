@@ -20,9 +20,11 @@ class MainMenuWidget extends CMenu
             $views = $child->views;
             if (in_array($child->id_object, $availableObjects, true)) {
                 if (count($views) > 0) {
-                    foreach ($views AS $view) {
+                    foreach ($views as $view) {
                         $active = false;
-                        if ($this->idObjectViewCurrent == $view->id_object_view) $active = true;
+                        if ($this->idObjectViewCurrent == $view->id_object_view) {
+                            $active = true;
+                        }
 
                         $add = ($view->icon_class != null) ? '<i class="' . $view->icon_class . ($active ? ' icon-white' : '') . '"></i> ' : '';
                         $items[] = array(
@@ -34,7 +36,9 @@ class MainMenuWidget extends CMenu
                 } else if ($child->object_type == DaObject::OBJECT_TYPE_CONTROLLER) {
                     // если это ручной объект то выводим без представления
                     $active = false;
-                    if ($this->idObjectCurrent == $child->id_object) $active = true;
+                    if ($this->idObjectCurrent == $child->id_object) {
+                        $active = true;
+                    }
                     //$url = (mb_strpos($child->table_name, '/') === false ? Yii::app()->controller->createUrl($child->table_name) : '/admin/page/'.$child->id_object.'/');
                     //$url = Yii::app()->controller->createUrl($child->table_name);
                     $url = '/admin/page/' . $child->id_object . '/';
@@ -112,23 +116,17 @@ class MainMenuWidget extends CMenu
     ', CClientScript::POS_LOAD);
     }
 
+
+    public function parentRun(){
+        return parent::run();
+    }
+
     public function run()
     {
         $items = $this->items;
-        foreach ($items as $item) {
-            $this->items = $item['items'];
-            if (count($this->items) == 0) {
-                continue;
-            }
-            echo '<div class="panel panel-default">
-              <a class="panel-heading collapsed" href="#smm-' . $item['id_object'] . '" data-toggle="collapse">' . $item['label'] . '</a>
-              <div id="smm-' . $item['id_object'] . '" class="collapse panel-collapse">';
-            parent::run();
-            echo '
-              </div>
-            </div>
-';
-        }
+        $this->render("sidebar", array(
+            'items'       => $items,
+        ));
     }
 
 }

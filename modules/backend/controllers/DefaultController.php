@@ -121,7 +121,9 @@ class DefaultController extends DaObjectController
 
         // кнопка создать
         if (Yii::app()->authManager->canCreateInstance($idObject, Yii::app()->user->id)) {
-            $link = ObjectUrlRule::createUrlFromCurrent(BackendModule::ROUTE_INSTANCE_LIST, array(ObjectUrlRule::PARAM_OBJECT_INSTANCE => -1));
+            $link = ObjectUrlRule::createUrlFromCurrent(BackendModule::ROUTE_INSTANCE_LIST, array(
+                ObjectUrlRule::PARAM_OBJECT_INSTANCE => -1,
+            ));
             array_unshift($this->buttons, array(
                 'url' => $link,
                 'caption' => '<i class="glyphicon glyphicon-plus icon-white"></i> Создать',
@@ -136,7 +138,7 @@ class DefaultController extends DaObjectController
 
         // поиск
         $searchModel = new ParameterSearchForm($object);
-        foreach ($searchModel->getSearchParameters() AS $searchParam) {
+        foreach ($searchModel->getSearchParameters() as $searchParam) {
             $event = new ParameterAvailableToSearchEvent($this, $searchParam->parameter);
             $this->raiseEvent(DefaultController::EVENT_ON_PARAMETER_AVAILABLE_TO_SEARCH, $event);
             $searchParam->visible = $event->visible;
@@ -223,7 +225,9 @@ class DefaultController extends DaObjectController
         $gridColumns[] = array(
             'name' => $pk,
             'header' => 'id',
-            'htmlOptions' => array('class' => 'col-id')
+            'htmlOptions' => array(
+                'class' => 'col-id',
+            ),
         );
         // колонка сортировки
         if ($seqKey != null) {
@@ -264,7 +268,9 @@ class DefaultController extends DaObjectController
             'header' => '&nbsp;',
             'type' => 'raw',
             'value' => '\'&nbsp;\'',
-            'headerHtmlOptions' => array('class' => 'col-void'),
+            'headerHtmlOptions' => array(
+                'class' => 'col-void',
+            ),
         );
 
         // колонки представлений
@@ -279,7 +285,9 @@ class DefaultController extends DaObjectController
             }
 
             // Если у отображаемого объекта есть группирующее свойство, то колонку для него пропускаем.
-            if ($this->getGroupParameter() != null && $this->getGroupParameter()->getIdParameter() == $column->getIdObjectParameter()) continue;
+            if ($this->getGroupParameter() != null && $this->getGroupParameter()->getIdParameter() == $column->getIdObjectParameter()) {
+                continue;
+            }
 
             $header = $column->getCaption();
             $columnConfig = array(

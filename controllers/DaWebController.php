@@ -80,9 +80,9 @@ class DaWebController extends CController
         if (($theme = Yii::app()->getTheme()) !== null) {
             $viewPath = $theme->getViewPath();
             if (($module = $this->getModule()) !== null) {
-                $viewPath .= '/' . $module->getId();
+                $viewPath = $viewPath.'/' . $module->getId();
             }
-            $viewPath .= '/assets/';
+            $viewPath = $viewPath.'/assets/';
             if (is_file($viewPath . $fileName)) {
                 return $viewPath;
             }
@@ -193,7 +193,7 @@ class DaWebController extends CController
         if ($this->addDomainCaptionToTitle && isset(Yii::app()->domain) && !empty($title)) {
             $description = Yii::app()->domain->model->description;
             if (!empty($description)) {
-                $title .= ' | ' . $description;
+                $title = $title . ' | ' . $description;
             }
         }
 
@@ -209,6 +209,9 @@ class DaWebController extends CController
         $this->_description = $value;
     }
 
+    /**
+     * @return null|string
+     */
     public function getDescription()
     {
         if (!empty($this->_description)) {
@@ -227,12 +230,25 @@ class DaWebController extends CController
         return $this->_keywords;
     }
 
+    /**
+     * @param $modelClass
+     * @param $pk
+     * @param string $notFoundMessage
+     * @return mixed
+     * @throws CHttpException
+     */
     public function loadModelOr404($modelClass, $pk, $notFoundMessage = 'Запрашиваемая страница не найдена.')
     {
         $model = DaActiveRecord::model($modelClass)->findByPk($pk);
         return $this->throw404IfNull($model, $notFoundMessage);
     }
 
+    /**
+     * @param $model
+     * @param string $notFoundMessage
+     * @return mixed
+     * @throws CHttpException
+     */
     public function throw404IfNull($model, $notFoundMessage = 'Запрашиваемая страница не найдена.')
     {
         if ($model === null) {

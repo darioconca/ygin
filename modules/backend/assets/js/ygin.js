@@ -38,12 +38,14 @@ function aCacheOptionsBind() {
         var rel = $(this).attr('rel');
         $('#' + rel).slideDown();
     });
+
     $('.aCacheInDB').click(function () {
-        var dbSettings = $(this).attr('rel');
-        if ($(this).is(':checked')) {
-            $('#' + dbSettings).slideDown();
+        var dbSettings = $('#' + $(this).attr('rel') );
+
+        if ( $(this).is(':checked') ) {
+            dbSettings.slideDown();
         } else {
-            $('#' + dbSettings).slideUp();
+            dbSettings.slideUp();
         }
     });
 }
@@ -98,7 +100,10 @@ jQuery.daSticker = function (options) {
         if ($buttonsBar.size() > 0) {
             bottom = $buttonsBar.height() + 10;
         }
-        stickers.css('position', 'fixed').css({right: '20px', bottom: bottom}); // позиционируем
+        stickers.css('position', 'fixed').css({
+            right: '20px',
+            bottom: bottom
+        }); // позиционируем
     }
     var stick = $('<div class="stick"></div>'); // создаём стикер
     if (options.id) {
@@ -229,13 +234,23 @@ jQuery.fn.daAccordionMenu = function (options) {
 
     return this.each(function () {
         // Отмечаем текущую категорию меню
-        $(this).find('.' + options.activeItemClass).parents('.' + options.accordionClass).find('.' + options.togglerClass).addClass(options.activeItemClass).removeClass(options.collapsedItemClass);
+        $(this)
+            .find('.' + options.activeItemClass)
+            .parents('.' + options.accordionClass)
+            .find('.' + options.togglerClass)
+            .addClass(options.activeItemClass)
+            .removeClass(options.collapsedItemClass);
 
         // Блокируем меню, которое пользователь ранее сознательно открыл
         $(this).find('.' + options.accordionBodyClass).each(function () {
             var idMenuCategory = $(this).attr('id');
             var openedCategory = $.cookie('daMenuCategoty[' + idMenuCategory + ']');
-            if (openedCategory == 1) $(this).parents('.' + options.accordionClass).find('.' + options.togglerClass + '.collapsed').click();
+            if (openedCategory == 1) {
+                $(this)
+                    .parents('.' + options.accordionClass)
+                    .find('.' + options.togglerClass + '.collapsed')
+                    .click();
+            }
         });
 
 
@@ -293,8 +308,9 @@ jQuery.fn.daNotNullChange = function (options) {
             if (ifr.length > 0) {
                 var ifrCont = $('<div>' + document.getElementById(ifr.attr('id')).contentWindow.document.body.innerHTML + '</div>');
                 tinyMCEText = ifrCont.text();
-                if (tinyMCEText) isError = false;
-                else {
+                if (tinyMCEText) {
+                    isError = false;
+                } else {
                     /* На php, видимо, делается strip_tags, поэтому нельзя сохранить просто теги
                      ifrCont.find('br').remove().end().find('p').remove();
                      if (ifrCont.html()) isError = false;
@@ -314,7 +330,10 @@ jQuery.fn.daNotNullChange = function (options) {
         }
 
         var parent = $(this).parents('.' + options.fieldParentClass); // Для обычных элементов
-        if (!parent) parent = $(this).parent();      // Для прочих неожиданных случаев
+        if (!parent) {
+            parent = $(this).parent();
+        }
+        // Для прочих неожиданных случаев
         var messageBox = $(this).find('.' + options.errorMessageClass); // Место для вывода ошибки
 
         if (isError) {
@@ -347,14 +366,18 @@ jQuery.fn.daInstanceSequence = function (options) {
             axis: 'y',
             handle: '.sorter',
             update: function (event, ui) {
-                if (options['isAjax']) that.daUpdateSequence({'idObject': options.idObject});
+                if (options['isAjax']) {
+                    that.daUpdateSequence({'idObject': options.idObject});
+                }
             },
             start: function (event, ui) {
                 var firstTrTd = $('.' + options.highlightClass).parent().find('tr:first:not(".' + options.highlightClass + '") > td');
                 var tdNum = firstTrTd.length;
                 var tdHeight = firstTrTd.height();
                 var add = "";
-                for (var i = 0; i < tdNum; i++) add += '<td style="height:' + tdHeight + 'px"></td>';
+                for (var i = 0; i < tdNum; i++) {
+                    add += '<td style="height:' + tdHeight + 'px"></td>';
+                }
                 $('.' + options.highlightClass).append(add);
             }
         });
@@ -366,6 +389,7 @@ jQuery.fn.daUpdateSequence = function (options) {
         successMessage: "Порядок сортировки изменён",
         rowPrefix: "ygin_inst_",
     }, options);
+
     return this.each(function () {
         var m_seq = {};
         var seqItems = $(this).find('tr[id^="' + options.rowPrefix + '"]');
@@ -391,8 +415,9 @@ jQuery.fn.daCheckNotNullFields = function (options) {
         var errorParent = $(this).parents('.' + options.parentErrorClass);
         if (errorParent.length > 0) {
             checkResult = false;
-            if (!$(this).next().hasClass('label-message'))
+            if (!$(this).next().hasClass('label-message')){
                 $(this).after('<br class="label-message"><span class="label label-danger label-message">' + options.messageText + '</span>');
+            }
             alert(options.alertText);
         }
     });
@@ -509,6 +534,7 @@ jQuery.fn.daRBAMSexy = function () {
             .addClass('btn')
             .parents('.buttons')
             .removeClass('buttons');
-        $('#rbam form').addClass('well');
+        $('#rbam form')
+            .addClass('well');
     });
 }

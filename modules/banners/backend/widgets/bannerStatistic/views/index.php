@@ -5,13 +5,15 @@
  */
 $viewStat = $this->viewStat;
 ?>
-<b>Количество кликов:</b><br>
-за день: <?php echo (isset($viewStat[BannerPlace::CLICK_DAY])) ? $viewStat[BannerPlace::CLICK_DAY] : 0; ?><br>
-за месяц: <?php echo (isset($viewStat[BannerPlace::CLICK_MONTH])) ? $viewStat[BannerPlace::CLICK_MONTH] : 0; ?><br>
-всего: <?php echo (isset($viewStat[BannerPlace::CLICK_ALL])) ? $viewStat[BannerPlace::CLICK_ALL] : 0; ?><br>
+    <b>Количество кликов:</b><br>
+    за день: <?php echo (isset($viewStat[BannerPlace::STAT_CLICK_DAY])) ? $viewStat[BannerPlace::STAT_CLICK_DAY] : 0; ?><br>
+    за месяц: <?php echo (isset($viewStat[BannerPlace::STAT_CLICK_MONTH])) ? $viewStat[BannerPlace::STAT_CLICK_MONTH] : 0; ?><br>
+    всего: <?php echo (isset($viewStat[BannerPlace::STAT_CLICK_ALL])) ? $viewStat[BannerPlace::STAT_CLICK_ALL] : 0; ?><br>
 <?php if (Yii::app()->getModule('banners')->viewStatisticAvailable): ?>
-  <b>Количество показов:</b><br>
-  за день: <?php echo (isset($viewStat[BannerPlace::VIEWING_TYPE_DAY])) ? $viewStat[BannerPlace::VIEWING_TYPE_DAY] : 0; ?><br>
-  за месяц: <?php echo (isset($viewStat[BannerPlace::VIEWING_TYPE_MONTH])) ? $viewStat[BannerPlace::VIEWING_TYPE_MONTH] : 0; ?><br>
-  всего: <?php echo (isset($viewStat[BannerPlace::VIEWING_TYPE_ALL])) ? $viewStat[BannerPlace::VIEWING_TYPE_ALL] : 0; ?>
+    <b>Количество показов:</b><br>
+    за день: <?php echo (isset($viewStat[BannerPlace::STAT_VIEW_DAY])) ? $viewStat[BannerPlace::STAT_VIEW_DAY] : 0; ?>
+    <br>
+    за месяц: <?php echo (isset($viewStat[BannerPlace::STAT_VIEW_MONTH])) ? $viewStat[BannerPlace::STAT_VIEW_MONTH] : 0; ?>
+    <br>
+    всего: <?php echo (isset($viewStat[BannerPlace::STAT_VIEW_ALL])) ? $viewStat[BannerPlace::STAT_VIEW_ALL] : 0; ?>
 <?php endif; ?>

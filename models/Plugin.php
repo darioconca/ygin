@@ -48,7 +48,10 @@ class Plugin extends DaActiveRecord
         $object = $this->getPluginObject();
         if ($object !== null) {
             if (method_exists($object, $name)) {   // методы делегата
-                return call_user_func_array(array($object, $name), $parameters);
+                return call_user_func_array(array(
+                    $object,
+                    $name,
+                ), $parameters);
             }
         }
         return parent::__call($name, $parameters);
@@ -140,7 +143,7 @@ class Plugin extends DaActiveRecord
     public static function loadByCode($code)
     {
         return Plugin::model()->notDeleted()->find('code=:code', array(
-            ':code' => $code
+            ':code' => $code,
         ));
     }
 
@@ -167,7 +170,7 @@ class Plugin extends DaActiveRecord
     {
         if (!$this->isNewRecord) {
             return Yii::app()->createUrl(PluginModule::ROUTE_PLUGIN_VIEW, array(
-                'code' => $this->code
+                'code' => $this->code,
             ));
         }
         return '/';

@@ -34,39 +34,45 @@ class DefaultController extends Controller
         return false;
     }
 
-    public function actionClick($unicName)
+    public function actionClick($uniqueName)
     {
         $idObject = Banner::ID_OBJECT;
 
         /**
          * @var Banner $banner
          */
-        $banner = Banner::model()->byUnicName($unicName)->find();
+        $banner = Banner::model()->byUniqueName($uniqueName)->find();
         if ($banner != null) {
             // Статистика за день
-            StatView:: newView($idObject, $banner->id_banner, BannerPlace::CLICK_DAY, 'd.m.Y', false);
+            StatView:: newView($idObject, $banner->id_banner, BannerPlace::STAT_CLICK_DAY, 'd.m.Y', false);
             // Статистика за месяц
-            StatView:: newView($idObject, $banner->id_banner, BannerPlace::CLICK_MONTH, 'm.Y', false);
+            StatView:: newView($idObject, $banner->id_banner, BannerPlace::STAT_CLICK_MONTH, 'm.Y', false);
             // Статистика всего
-            StatView:: newView($idObject, $banner->id_banner, BannerPlace::CLICK_ALL, "", false);
+            StatView:: newView($idObject, $banner->id_banner, BannerPlace::STAT_CLICK_ALL, "", false);
 
             //Вынимаем ссылку
             $link = $banner->link;
-            if (mb_strpos($link, "http://") === false && mb_substr($link, 0, 1) != "/") {
+            if (
+                (mb_strpos($link, "http://") === false) &&
+                (mb_substr($link, 0, 1) != "/")
+            ) {
                 $link = "http://" . $link;
             }
             $this->redirect($link); // TODO: сделать пуни-код
         }
     }
 
-    public function actionShow($unicName)
+    public function actionShow($uniqueName)
     {
         $idObject = Banner::ID_OBJECT;
 
         /**
          * @var Banner $banner
          */
-        $banner = Banner::model()->with('bannerFile')->byUnicName($unicName)->find();
+        $banner = Banner::model()
+            ->with('bannerFile')
+            ->byUniqueName($uniqueName)
+            ->find();
         if ($banner != null) {
             $img = $banner->bannerFile->getUrl();
             header("Location:" . $img);
@@ -124,8 +130,8 @@ class DefaultController extends Controller
 
             //если файл класса найден, то кладем его в массив
             $filteredBannerPlacesInfo[] = array(
-                'id' => $curBannerPlaceId,
-                'widget' => $bannersWidgetsPath . '.' . $curBannerPlaceWidgetClass,
+                'id'        => $curBannerPlaceId,
+                'widget'    => $bannersWidgetsPath . '.' . $curBannerPlaceWidgetClass,
             );
 
             $ids[] = $curBannerPlaceId;
@@ -136,7 +142,9 @@ class DefaultController extends Controller
 
         if (!empty($ids)) {
 
-            $bannerPlaces = BannerPlace::model()->findAllByPk($ids, array('index' => 'id_banner_place'));
+            $bannerPlaces = BannerPlace::model()->findAllByPk($ids, array(
+                'index' => 'id_banner_place'
+            ));
             $countFiltered = count($filteredBannerPlacesInfo);
 
             for ($i = 0; $i < $countFiltered; $i++) {
@@ -152,8 +160,8 @@ class DefaultController extends Controller
                 //получаем все баннеры для данного баннерного места
                 $banners = Banner::model()->with('bannerFile')->findAll(array(
                     'condition' => 't.id_banner_place = :idPlace',
-                    'order' => 'sequence ASC',
-                    'params' => array(':idPlace' => $curBannerPlaceId),
+                    'order'     => 'sequence ASC',
+                    'params'    => array(':idPlace' => $curBannerPlaceId),
                 ));
 
                 //если баннеров нет, то пропускаем это баннерное место

@@ -150,7 +150,7 @@
 
                     <li class="dropdown">
                         <button class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown"><i
-                                class="glyphicon glyphicon-user icon-white"></i> <?php echo $userName; ?> <b
+                                class="glyphicon glyphicon-user icon-white"></i> <?= $userName ?> <b
                                 class="caret"></b></button>
                         <?php $userMenuWidget->run(); ?>
                     </li>

@@ -56,12 +56,18 @@ class YginController extends DaBackendController
                 $instance = $model->findByIdInstance($idInst);
                 if ($instance != null && $instance->$field != (intval($value) + 1)) {
                     $instance->$field = (intval($value) + 1);
-                    $instance->update(array($field));
+                    $instance->update(array(
+                        $field,
+                    ));
                 }
             }
-            echo CJSON::encode(array('message' => 'Порядок сортировки изменён'));
+            echo CJSON::encode(array(
+                'message' => 'Порядок сортировки изменён',
+            ));
         } catch (Exception $e) {
-            echo CJSON::encode(array('error' => $e->getMessage()));
+            echo CJSON::encode(array(
+                'error' => $e->getMessage(),
+            ));
         }
     }
 
@@ -85,7 +91,10 @@ class YginController extends DaBackendController
 
             if ($model->delete()) {
                 HU::log_da("Удален ({$object->getName()}) id={$idInstance}");
-                echo CJSON::encode(array('message' => 'Данные успешно удалены.', 'idInstance' => $idInstance));
+                echo CJSON::encode(array(
+                    'message' => 'Данные успешно удалены.',
+                    'idInstance' => $idInstance,
+                ));
             } else {
                 $childCount = $model->getCountChild();
                 if ($childCount > 0) {
@@ -97,15 +106,21 @@ class YginController extends DaBackendController
                         $msg = "Информация не удалена, т.к. раздел участвует в других объектах:";
                         foreach ($dependentData as $idObj => $count) {
                             $obj = DaObject::getById($idObj);
-                            $msg .= "\\n" . $obj->getName() . " (количество экземпляров: {$count})";
+                            $msg = "{$msg}\n{$obj->getName()} (количество экземпляров: {$count})";
                         }
                         throw new Exception($msg);
                     }
-                    echo CJSON::encode(array('message' => 'Обработано', 'idInstance' => $idInstance));
+                    echo CJSON::encode(array(
+                        'message' => 'Обработано',
+                        'idInstance' => $idInstance,
+                    ));
                 }
             }
         } catch (Exception $e) {
-            echo CJSON::encode(array('error' => $e->getMessage(), 'idInstance' => $idInstance));
+            echo CJSON::encode(array(
+                'error' => $e->getMessage(),
+                'idInstance' => $idInstance,
+            ));
         }
     }
 
@@ -136,20 +151,22 @@ class YginController extends DaBackendController
             $field = $objectParam->getFieldName();
             $value = intval($model->$field);
             $model->$field = ($value === 1 ? 0 : 1);
-            $model->update(array($field));
+            $model->update(array(
+                $field,
+            ));
             $value = $model->$field;
             echo CJSON::encode(array(
                 'message' => 'Данные успешно обновлены',
                 'value' => $value,
                 'idInstance' => $idInstance,
-                'idObjectParameter' => $idObjectParameter
+                'idObjectParameter' => $idObjectParameter,
             ));
         } catch (Exception $e) {
             echo CJSON::encode(array(
                 'error' => $e->getMessage(),
                 'value' => $value,
                 'idInstance' => $idInstance,
-                'idObjectParameter' => $idObjectParameter
+                'idObjectParameter' => $idObjectParameter,
             ));
         }
     }

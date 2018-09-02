@@ -13,7 +13,7 @@ class DaFileLogRoute extends CFileLogRoute
     protected function formatLogMessage($message, $level, $category, $time)
     {
         $user       = Yii::app()->user;
-        $userName   = ($user == null ? 'guest' : $user->name);
+        $userName   = $user == null ? 'guest' : $user->name;
         $userIp     = HU::getUserIp();
         return parent::formatLogMessage("[{$userIp}] {$userName} {$message}", $level, $category, $time);
     }

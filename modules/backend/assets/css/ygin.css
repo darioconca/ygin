@@ -7,13 +7,13 @@
 .digitalAgeTable th i.adr {background-position:0 -43px}
 .digitalAgeTable td {vertical-align:top; width:30%; padding:0 10px}
 
-.opacity-50{
-  opacity: 0.5;
-}
+.opacity-25{ opacity: 0.25; }
+.opacity-50{ opacity: 0.5; }
+.opacity-75{ opacity:0.75; }
 
-.opacity-25{
-  opacity:0.75;
-}
+.m-r-5{ margin-right: 5px; }
+
+
 
 .label-link,
 .label-link:hover,

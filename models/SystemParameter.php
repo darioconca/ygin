@@ -118,7 +118,7 @@ class SystemParameter extends DaActiveRecord
     public function getBackendEventHandler()
     {
         return array(
-            'class' => 'backend.backend.SystemParameterEventHandler'
+            'class' => 'backend.backend.SystemParameterEventHandler',
         );
     }
 }

@@ -117,6 +117,8 @@ class NotifierEventType extends DaActiveRecord
     public function updateLastTime()
     {
         $this->last_time = time();
-        $this->update(array('last_time'));
+        return $this->update(array(
+            'last_time',
+        ));
     }
 }

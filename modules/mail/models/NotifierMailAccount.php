@@ -105,11 +105,14 @@ class NotifierMailAccount extends DaActiveRecord
 		$criteria->compare('smtp_auth',$this->smtp_auth);
 
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria' => $criteria,
 		));
 	}
-	
+
+	/**
+	 * @return bool
+	 */
 	public function getIsNeedAuthorize() {
-	  return (bool)$this->smtp_auth;
+	  	return (bool)$this->smtp_auth;
 	}
 }

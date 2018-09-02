@@ -137,7 +137,9 @@ class EngineController extends DaBackendController
 
         $data = $object->getModel()->findAll(array(
             'condition' => $where,
-            'params' => array(':q' => $query . '%'),
+            'params' => array(
+                ':q' => $query . '%',
+            ),
             'limit' => 10,
         ));
 
@@ -148,7 +150,7 @@ class EngineController extends DaBackendController
              */
             array_push($result, array(
                 "label" => $instance->getInstanceCaption(),
-                "value" => $instance->getIdInstance()
+                "value" => $instance->getIdInstance(),
             ));
         }
         echo json_encode($result);
@@ -209,7 +211,10 @@ class EngineController extends DaBackendController
         // Создаём и наполняем объект по работе с меню.
         $menu = Menu::getAll();
         list($array, $arrayLinks) = $this->getMenu($menu);
-        $result = array('arr' => $array, 'links' => $arrayLinks);
+        $result = array(
+            'arr' => $array,
+            'links' => $arrayLinks,
+        );
         echo CJSON::encode($result);
     }
 

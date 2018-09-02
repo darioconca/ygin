@@ -14,7 +14,7 @@ class AutoPrimaryKeyWidget extends TextFieldWidget
         if ($this->model->isNewRecord) {
             $config = str_replace(array(' ', ','), ';', $this->getObjectParameter()->getSqlParameter());
             $arr = explode(';', $config);
-            foreach ($arr AS $param) {
+            foreach ($arr as $param) {
                 if (trim($param) == '') {
                     continue;
                 }

@@ -75,7 +75,7 @@ class NewsCategory extends DaActiveRecord
     public function getUrl()
     {
         return Yii::app()->createUrl(NewsModule::ROUTE_NEWS_CATEGORY, array(
-            'idCategory' => $this->id_news_category
+            'idCategory' => $this->id_news_category,
         ));
     }
 }

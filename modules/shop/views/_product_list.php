@@ -17,31 +17,37 @@ $productWidth = '4'; // можно ещё span3, span4
         $preview = $product->getImagePreview('_list');
 
         ?>
-        <div class="element_item col-lg-<? echo $productWidth; ?>">
+        <div class="element_item col-lg-<?= $productWidth ?>">
             <div class="line name">
-                <a class="name" href="<?php echo $url; ?>"><h4><?php echo $product->name; ?></h4></a>
+                <a class="name" href="<?= $url; ?>">
+                    <h4><?= $product->name ?></h4>
+                </a>
             </div>
             <?php if ($preview != null): ?>
                 <div class="preview_picture">
-                    <a href="<?php echo $url; ?>"><img title="<?= CHtml::encode($product->name); ?>"
-                                                       alt="<?= CHtml::encode($product->name); ?>"
-                                                       src="<?= $preview->getUrl() ?>"></a>
+                    <a href="<?= $url ?>">
+                        <img title="<?= CHtml::encode($product->name) ?>" alt="<?= CHtml::encode($product->name); ?>" src="<?= $preview->getUrl() ?>">
+                    </a>
                 </div>
             <?php endif; ?>
             <div class="elem">
                 <div class="elem_descr">
                     <div class="property"><?php echo $desc; ?></div>
                 </div>
-                <div class="remain_status"><span
-                        class="glyphicon glyphicon-signal <?php echo $product->getRemainStatus()->icon; ?>"
-                        title="количество товара: <?php echo $product->getRemainStatus()->name; ?>"></span></div>
-                <div class="price_m" style="height: 26px;"><span
-                        class="catalog-price"><?php echo Product::price2str($price); ?> руб.</span></div>
+                <div class="remain_status">
+                    <span class="glyphicon glyphicon-signal <?= $product->getRemainStatus()->icon ?>"
+                          title="количество товара: <?= $product->getRemainStatus()->name ?>"></span>
+                </div>
+                <div class="price_m" style="height: 26px;">
+                    <span class="catalog-price"><?= Product::price2str($price) ?> руб.</span>
+                </div>
                 <div class="line buttons">
-                    <button class="btn btn-success buy" data-price="<?php echo $price; ?>"
-                            data-id="<?php echo $product->id_product; ?>"
-                            data-name="<?php echo CHtml::encode($product->name); ?>"><span
-                            class="glyphicon glyphicon-shopping-cart"></span></button>
+                    <button class="btn btn-success buy"
+                            data-price="<?= $price ?>"
+                            data-id="<?= $product->id_product ?>"
+                            data-name="<?= CHtml::encode($product->name) ?>"><span
+                            class="glyphicon glyphicon-shopping-cart"></span>
+                    </button>
                 </div>
             </div>
         </div>

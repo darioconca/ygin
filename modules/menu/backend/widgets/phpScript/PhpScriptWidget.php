@@ -44,7 +44,9 @@ class PhpScriptWidget extends VisualElementWidget
     public function onPostForm(PostFormEvent $event)
     {
         if ($this->render) {
-            $this->model->attachEventHandler('onBeforeSave', array($this, 'processModel'));
+            $this->model->attachEventHandler('onBeforeSave', array(
+                $this, 'processModel'
+            ));
         }
     }
 
@@ -54,7 +56,7 @@ class PhpScriptWidget extends VisualElementWidget
         $phpScriptType = $phpScript->phpScript;
         $paramsConfig = $phpScriptType->getParametersConfig();
         $key = $this->getElementName();
-        foreach ($paramsConfig AS $name => $config) {
+        foreach ($paramsConfig as $name => $config) {
             $val = HU::post($key . '_' . $name);
             $phpScript->setParameterValue($name, $val);
         }

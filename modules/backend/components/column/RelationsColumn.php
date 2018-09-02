@@ -23,7 +23,9 @@ class RelationsColumn extends CGridColumn
         $availableObjects = array();
         $singleStatus = 0;
         foreach ($this->childData as $param) {
-            if ($param->isRelation() == false) continue;
+            if ($param->isRelation() == false) {
+                continue;
+            }
             $idObject = $param->getIdObjectParameter();
             // Смотрим, может ли пользователь работать с подчинённым объектом
             if (isset($availableObjects[$idObject]) && $availableObjects[$idObject] === null) {
@@ -39,9 +41,13 @@ class RelationsColumn extends CGridColumn
         }
         if ($singleStatus == 2) {
             $this->single = false;
-            $this->htmlOptions = array('class' => 'col-ref action-sub-data');
+            $this->htmlOptions = array(
+                'class' => 'col-ref action-sub-data'
+            );
         } else {
-            $this->htmlOptions = array('class' => 'col-ref-one action-sub-data');
+            $this->htmlOptions = array(
+                'class' => 'col-ref-one action-sub-data'
+            );
         }
         foreach ($availableObjects as $idObject => $params) {
             if ($params === null) {
@@ -56,15 +62,17 @@ class RelationsColumn extends CGridColumn
                 }
             } else {
                 $object = DaObject::getById($idObject, true);
-                foreach ($params AS $idParameter => $caption) {
+                foreach ($params as $idParameter => $caption) {
                     $param = $object->getParameterObjectByIdParameter($idParameter);
-                    $availableObjects[$idObject][$idParameter]['caption'] = $object->name . ' (' . $param->caption . ')';
+                    $availableObjects[$idObject][$idParameter]['caption'] = "{$object->name} ({$param->caption})";
                 }
             }
             $model = $object->getModel();
             foreach ($params as $idParameter => $config) {
                 $cr = new CDbCriteria();
-                $cr->addColumnCondition(array('t.id_object' => $idObject));
+                $cr->addColumnCondition(array(
+                    't.id_object' => $idObject,
+                ));
                 $cr->order = 't.order_no';
                 $objectView = DaObjectView::model()->find($cr);
 
@@ -76,7 +84,11 @@ class RelationsColumn extends CGridColumn
                 if ($where != null) {
                     $whereConfig[] = $where;
                 }
-                $whereConfig[] = array('in', $config['field'], $arrayOfId);
+                $whereConfig[] = array(
+                    'in',
+                    $config['field'],
+                    $arrayOfId,
+                );
 
                 $data = Yii::app()->db->createCommand()
                     ->select($config['field'] . ' AS id, count(*) AS cnt')
@@ -130,10 +142,9 @@ $(document).on("afterGridUpdate", function(e) {  $(".action-sub-data").daSubData
             /* TODO: взять этот тег i, когда будет PopOver
              * <i data-content="данные" rel="popover-sub-data"></i>
              */
-            echo '<div class="popover-container">
-              <i rel="popm' . $idInstance . '"  title="Зависимые данные"></i>
-              <ul id="popm' . $idInstance . '">
-';
+            echo "<div class='popover-container'>";
+            echo "<i rel='popm{$idInstance}' title='Зависимые данные'></i>";
+            echo "<ul id='popm{$idInstance}'>";
         }
         foreach ($this->prepareData as $idObject => $params) {
             foreach ($params as $idParameter => $config) {
@@ -151,13 +162,11 @@ $(document).on("afterGridUpdate", function(e) {  $(".action-sub-data").daSubData
                 $caption = $config['caption'];
                 $count = isset($config['data'][$idInstance]) ? $config['data'][$idInstance] : 0;
                 if ($this->single) {
-                    echo '<table cellpadding="0"><tr><th><i title="Зависимые данные"></i></th>
-  <td>
-    <a href="' . $link . '">' . $caption . '</a>&nbsp;[' . $count . ']' . '
-  </td>
- </tr></table>';
+                    echo '<table cellpadding="0"><tr><th><i title="Зависимые данные"></i></th>';
+                    echo "<td><a href='{$link}'>{$caption}</a>&nbsp;[{$count}]</td>";
+                    echo "</tr></table>";
                 } else {
-                    echo '    <li><a href="' . $link . '">' . $caption . '</a>&nbsp;[' . $count . ']</li>';
+                    echo "<li><a href='{$link}'>{$caption}</a>&nbsp;[{$count}]</li>";
                 }
             }
         }

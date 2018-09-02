@@ -28,28 +28,28 @@ jQuery.fn.datetime = function() {
 	return this.each(function(){
 			 
 				var datepicker_def 	= {
-							changeMonth: true,
-							changeYear: true,
-							dateFormat: 'yy-mm-dd',
-							showButtonPanel: true, 
-							onSelect: writeDate						
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: 'yy-mm-dd',
+                    showButtonPanel: true,
+                    onSelect: writeDate
 				};			
 		
 				var lang = {};
 
 				lang['en'] = {
-								time: 	'',
-								hour:	'Часы',
-								minute:	'Минуты',
-								close:	'×'			
-							};
+                    time: 	'',
+                    hour:	'Часы',
+                    minute:	'Минуты',
+                    close:	'×'
+                };
 							
 				lang['de'] = {
-								time: 	'Zeit',
-								hour:	'Stunde',
-								minute:	'Minute',
-								close:	'Schlie?en'			
-							};				
+                    time: 	'Zeit',
+                    hour:	'Stunde',
+                    minute:	'Minute',
+                    close:	'Schlie?en'
+                };
 				
 				$(this).data('sets',datepicker_def);
 				$(this).data('userLang',userLang);
@@ -72,8 +72,8 @@ jQuery.fn.datetime = function() {
 	        		htmlins = htmlins +'	<span class="selHrs" >00</span>';
 	        		htmlins = htmlins +'	<span class="delim" >:</span>';
 	        		htmlins = htmlins +'	<span class="selMins">00</span>';
-	        		if (!b24Hour_) {
-	        		htmlins = htmlins +'	<span class="dayPeriod">am</span>';
+	        		if ( !b24Hour_ ) {
+	        		    htmlins = htmlins +'	<span class="dayPeriod">am</span>';
 	        		}			
 					htmlins = htmlins +'</h3>';			
 					htmlins = htmlins +'<ul id="sliderContainer">';	
@@ -164,23 +164,23 @@ jQuery.fn.datetime = function() {
 					var top 	= $(this).offset().top+$(this).outerHeight(); 
 					var left 	= $(this).offset().left;
 					
-					if ($(this).data('userLang') 	!= $('#pickerplug').data('userLang') || 
-						$(this).data('b24Hour') 	!= $('#pickerplug').data('userLang') ) {
+					if (
+                        $(this).data('userLang') 	!= $('#pickerplug').data('userLang') ||
+						$(this).data('b24Hour') 	!= $('#pickerplug').data('userLang')
+                    ) {
 						renderPickerPlug($(this).data('b24Hour'),$(this).data('userLang'));
 					}
 					
 					$('#pickerplug').css({
-										left: left+'px',
-										top: top+'px'
-										}).show('normal');						
+                        left: left+'px',
+                        top: top+'px'
+                    }).show('normal');
 					
 					if ($(this).data('userLang')!='en' && lang[$(this).data('userLang')]) {
-						$('#datepicker').datepicker('option', $.extend({},
-												$.datepicker.regional[$(this).data('userLang')]));	
+						$('#datepicker').datepicker('option', $.extend({}, $.datepicker.regional[$(this).data('userLang')]));
 						$('#datepicker').datepicker('option', $.extend($(this).data('sets')));													
 					} else {
-						$('#datepicker').datepicker('option', $.extend({},
-												$.datepicker.regional['']));	
+						$('#datepicker').datepicker('option', $.extend({}, $.datepicker.regional['']));
 						$('#datepicker').datepicker('option', $.extend($(this).data('sets')));												
 					}					
 
@@ -277,9 +277,9 @@ jQuery.fn.datetime = function() {
 							$('#pickerplug').data('lastdate',text);												
 					}
 					
-					$($('#pickerplug').data('inputfield')).val(
-								$('#pickerplug').data('lastdate')+' '+$('#pickerplug').data('lasttime')
-					);
+					$($('#pickerplug')
+						.data('inputfield'))
+						.val( $('#pickerplug').data('lastdate')+' '+$('#pickerplug').data('lasttime') );
 				}
 				
 				function closePickPlug (event) {

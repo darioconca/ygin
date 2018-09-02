@@ -37,8 +37,12 @@ class DaApplicationParameters extends CAttributeCollection
     protected function loadParam($key)
     {
         $param = SystemParameter::model()->findByAttributes(
-            array('name' => $key),
-            array('select' => 't.name, t.value, t.long_text_value, t.id_system_parameter, t.id_parameter_type')
+            array(
+                'name' => $key,
+            ),
+            array(
+                'select' => 't.name, t.value, t.long_text_value, t.id_system_parameter, t.id_parameter_type',
+            )
         );
         if ($param === null) {
             return false;

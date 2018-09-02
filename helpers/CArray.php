@@ -160,7 +160,7 @@ class CArray {
 	 * @param   mixed    sort the array before searching it
 	 * @return  integer
 	 */
-	public static function binary_search($needle, $haystack, $nearest = FALSE, $sort = FALSE)
+	public static function binary_search($needle, $haystack, $nearest = false, $sort = false)
 	{
 		if ($sort === TRUE)
 		{

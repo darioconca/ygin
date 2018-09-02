@@ -142,7 +142,7 @@ class PhpScriptInstance extends BaseActiveRecord
     {
         return array(
             'phpScript' => array(self::BELONGS_TO, 'PhpScript', array(
-                'id_php_script_type' => 'id_php_script_type'
+                'id_php_script_type' => 'id_php_script_type',
             )),
         );
     }

@@ -13,7 +13,14 @@ class DomainEventHandler extends BackendEventHandler
         $param = $event->objectParameter;
         $name = $param->getFieldName();
 
-        if (in_array($name, array('name', 'domain_path', 'path2data_http', 'id_default_page', 'settings')) && !Yii::app()->user->checkAccess(DaWebUser::ROLE_DEV)) {
+        $fields = array(
+            'name',
+            'domain_path',
+            'path2data_http',
+            'id_default_page',
+            'settings',
+        );
+        if ( in_array($name, $fields) && !Yii::app()->user->checkAccess(DaWebUser::ROLE_DEV) ) {
             $event->status = ViewController::ENTITY_STATUS_NOT_VISIBLE;
         }
     }

@@ -14,7 +14,9 @@ class AboutController extends DaBackendController implements IBackendExtension
     public function registerEvent($category, $obj)
     {
         if ($category == BackendModule::CATEGORY_BACKEND_WINDOW) {
-            $obj->attachEventHandler(BackendModule::EVENT_ON_BEFORE_TOP_MENU, array($this, 'onBeforeTopMenu'));
+            $obj->attachEventHandler(BackendModule::EVENT_ON_BEFORE_TOP_MENU, array(
+                $this, 'onBeforeTopMenu'
+            ));
         }
     }
 

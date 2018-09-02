@@ -90,9 +90,11 @@ class Notifier extends CApplicationComponent
                     continue;
                 }
                 //Отмечаем добавленные экземпляры
-                Yii::app()->db->createCommand(
-                    strtr($updateSql, array('<<id_instance>>' => $idInstance))
-                )->execute();
+                Yii::app()->db
+                    ->createCommand(strtr($updateSql, array(
+                        '<<id_instance>>' => $idInstance,
+                    )))
+                    ->execute();
             }
             $dataReader->close();
 
@@ -108,7 +110,7 @@ class Notifier extends CApplicationComponent
         $seconds = 86400 * $this->getDeletingDaysCount();
         $expiredTime = time() - $seconds;
         $notifierEvents = NotifierEvent::model()->findAll('event_create < :TIME', array(
-            ':TIME' => $expiredTime
+            ':TIME' => $expiredTime,
         ));
         foreach ($notifierEvents as $event) {
             $event->delete();
@@ -174,7 +176,9 @@ class Notifier extends CApplicationComponent
 
                 if ($mailMessage->getFrom() == null) { //если не указан отправитель, то берем из настроек аккаунта
                     if (!empty($mailAccount->from_name)) {
-                        $mailMessage->setFrom(array($mailAccount->email_from => $mailAccount->from_name));
+                        $mailMessage->setFrom(array(
+                            $mailAccount->email_from => $mailAccount->from_name,
+                        ));
                     } else {
                         $mailMessage->setFrom($mailAccount->email_from);
                     }

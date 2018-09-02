@@ -177,10 +177,14 @@ class MenuWidget extends CMenu implements IParametersConfig
             if ($this->drawImage && $menuItem->image != null) {
                 $itemOptions['style'] = 'background:url(' . $menuItem->imageFile->getUrl() . ')';
             }
-            if ($menuItem->external_link_type == 1) $linkOptions['target'] = '_blank';
+            if ($menuItem->external_link_type == 1) {
+                $linkOptions['target'] = '_blank';
+            }
             $preparedItem = array(
                 'active' => $this->isMenuItemActive($menuItem),
-                'label' => $labelTemlate ? strtr($labelTemlate, array('{label}' => $menuItem->name)) : $menuItem->name,
+                'label' => $labelTemlate ? strtr($labelTemlate, array(
+                    '{label}' => $menuItem->name,
+                )) : $menuItem->name,
                 'url' => $menuItem->url,
                 'linkOptions' => $linkOptions,
                 'itemOptions' => $itemOptions,

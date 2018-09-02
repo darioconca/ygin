@@ -71,7 +71,7 @@ class SchedulerCommand extends CConsoleCommand
         $this->setIsolationLevel('READ COMMITTED');
 
         $candidateCriteria = new CDbCriteria(array(
-            'order' => 't.priority DESC, RAND()'
+            'order' => 't.priority DESC, RAND()',
         ));
         $db = Yii::app()->db;
         $time = time();
@@ -90,7 +90,7 @@ class SchedulerCommand extends CConsoleCommand
                 //Если запись залочена другой транзакцией, то пропускаем
                 if ($e->getCode() == self::ERROR_CODE_LOCK_WAIT_TIMEOUT) {
                     $transaction->rollback(); //@todo
-                    $candidateCriteria->addCondition('t.id_job != ' . $curJob->id_job);
+                    $candidateCriteria->addCondition("t.id_job != {$curJob->id_job}");
                     continue;
                 }
                 throw $e;

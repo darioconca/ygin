@@ -14,8 +14,8 @@
  * @property integer $id_banner_place
  * @property integer $visible
  * @property integer $sequence
- * @property integer @in_new_window
- * @property File @bannerFile
+ * @property integer $in_new_window
+ * @property File $bannerFile
  */
 class Banner extends DaActiveRecord
 {
@@ -82,11 +82,17 @@ class Banner extends DaActiveRecord
         );
     }
 
+    /**
+     * @return string
+     */
     public function getClickUrl()
     {
         return '/rklm-cl/' . $this->unique_name . '/';
     }
 
+    /**
+     * @return string
+     */
     public function getShowUrl()
     {
         $showUrl = '';
@@ -98,21 +104,28 @@ class Banner extends DaActiveRecord
         return $showUrl;
     }
 
-    public function byUnicName($unicName)
+    /**
+     * @param $uniqueName
+     * @return $this
+     */
+    public function byUniqueName($uniqueName)
     {
         $criteria = new CDbCriteria();
         $criteria->addColumnCondition(array(
-            'unique_name' => $unicName,
+            'unique_name' => $uniqueName,
         ));
         $this->getDbCriteria()->mergeWith($criteria);
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function defaultScope()
     {
         $alias = $this->getTableAlias(true, false);
         return array(
-            'condition' => $alias . ".visible = 1",
+            'condition' =>  "{$alias}.visible = ".self::IS_VISIBLE,
         );
     }
 
@@ -130,7 +143,12 @@ class Banner extends DaActiveRecord
 
     protected function beforeDelete()
     {
-        Yii::app()->db->createCommand('DELETE FROM da_stat_view WHERE id_object=:obj AND id_instance=:inst')->execute(array(':obj' => $this->getIdObject(), ':inst' => $this->id_banner));
+        Yii::app()->db
+            ->createCommand('DELETE FROM da_stat_view WHERE id_object=:obj AND id_instance=:inst')
+            ->execute(array(
+                ':obj'  => $this->getIdObject(),
+                ':inst' => $this->id_banner
+            ));
         return parent::beforeDelete();
     }
 

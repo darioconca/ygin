@@ -31,14 +31,14 @@ $modelName = get_class($model);
         var value = [];
 
         // здесь обязательно указываются значения по умолчанию для полей
-        caption['field_name'] = '<?php echo $fieldParam->getCaption()?>';
-        caption['add_parameter'] = '<?php echo $parameterParam->getCaption()?>';
-        type['add_parameter'] = '<?php echo $parameterParam->getType()?>';
+        caption['field_name'] = '<?= $fieldParam->getCaption()?>';
+        caption['add_parameter'] = '<?= $parameterParam->getCaption()?>';
+        type['add_parameter'] = '<?= $parameterParam->getType()?>';
 
         // далее идёт настроечная часть. В каждом блок для типа указывается поведение других полей формы
         // caption[ПОЛЕ] = 'ЗАГОЛОВОК'  -  это значит, что для такого-то поля надо установить такой-то заголовок
         // type[ПОЛЕ] = 'ТИП ПАРАМЕТРА'  -  это значит, что для такого-то поля надо установить такой-то тип параметра
-        if (parameterType == <?php echo DataType::SEQUENCE; ?>) {
+        if (parameterType == <?= DataType::SEQUENCE ?>) {
             value['not_null'] = '0';
 
             visible['is_additional'] = false;
@@ -57,8 +57,8 @@ $modelName = get_class($model);
             visible['caption'] = false;
             value['caption'] = 'п/п';
         }
-        if (parameterType == <?php echo DataType::ID_PARENT; ?>) {
-            type['add_parameter'] = <?php echo DataType::BOOLEAN; ?>;
+        if (parameterType == <?= DataType::ID_PARENT ?>) {
+            type['add_parameter'] = <?= DataType::BOOLEAN ?>;
             caption['add_parameter'] = 'Отображать для возможности перемещения экземпяров по иерархии';
 
             value['not_null'] = '0';
@@ -71,7 +71,7 @@ $modelName = get_class($model);
             visible['sql_parameter'] = false;
             visible['not_null'] = false;
         }
-        if (parameterType == <?php echo DataType::ABSTRACTIVE; ?>) {
+        if (parameterType == <?= DataType::ABSTRACTIVE ?>) {
             //value['add_parameter'] = '2';
 
             visible['not_null'] = false;
@@ -89,7 +89,7 @@ $modelName = get_class($model);
             visible['group_type'] = false;
 
         }
-        if (parameterType == <?php echo DataType::OBJECT; ?>) {
+        if (parameterType == <?= DataType::OBJECT ?>) {
             caption['add_parameter'] = 'Объект';
             type['add_parameter'] = parameterType;
 
@@ -100,7 +100,7 @@ $modelName = get_class($model);
             visible['is_unique'] = false;
             visible['search'] = false;
         }
-        if (parameterType == <?php echo DataType::REFERENCE; ?>) {
+        if (parameterType == <?= DataType::REFERENCE ?>) {
             caption['add_parameter'] = 'Справочник';
             type['add_parameter'] = parameterType;
 
@@ -113,7 +113,7 @@ $modelName = get_class($model);
             visible['search'] = false;
         }
 
-        if (parameterType == <?php echo DataType::FILE_LIST; ?>) {
+        if (parameterType == <?= DataType::FILE_LIST ?>) {
             caption['add_parameter'] = 'Тип файла';
             type['add_parameter'] = parameterType;
 
@@ -131,7 +131,7 @@ $modelName = get_class($model);
             value['field_name'] = '-';
             value['not_null'] = '0';
         }
-        if (parameterType == <?php echo DataType::FILE; ?>) {
+        if (parameterType == <?= DataType::FILE ?>) {
             caption['add_parameter'] = 'Тип файла';
             type['add_parameter'] = parameterType;
 
@@ -142,14 +142,14 @@ $modelName = get_class($model);
             visible['group_type'] = false;
             visible['search'] = false;
         }
-        if (parameterType == <?php echo DataType::TEXTAREA; ?> || parameterType == <?php echo DataType::EDITOR; ?>) {
+        if (parameterType == <?= DataType::TEXTAREA ?> || parameterType == <?= DataType::EDITOR ?>) {
             visible['sql_parameter'] = false;
             visible['add_parameter'] = false;
             visible['is_unique'] = false;
             visible['group_type'] = false;
         }
-        if (parameterType == <?php echo DataType::BOOLEAN; ?>) {
-            type['default_value'] = <?php echo DataType::BOOLEAN; ?>;
+        if (parameterType == <?= DataType::BOOLEAN ?>) {
+            type['default_value'] = <?= DataType::BOOLEAN ?>;
 
             value['not_null'] = '1';
 
@@ -161,7 +161,7 @@ $modelName = get_class($model);
             visible['search'] = false;
             visible['not_null'] = false;
         }
-        if (parameterType == <?php echo DataType::TIMESTAMP; ?>) {
+        if (parameterType == <?= DataType::TIMESTAMP ?>) {
             visible['sql_parameter'] = false;
             visible['need_locale'] = false;
             visible['is_unique'] = false;
@@ -169,21 +169,21 @@ $modelName = get_class($model);
             visible['search'] = false;
 
             caption['add_parameter'] = 'Без времени';
-            type['add_parameter'] = <?php echo DataType::BOOLEAN; ?>;
+            type['add_parameter'] = <?= DataType::BOOLEAN ?>;
         }
-        if (parameterType == <?php echo DataType::VARCHAR; ?>) {
+        if (parameterType == <?= DataType::VARCHAR ?>) {
             visible['sql_parameter'] = false;
             visible['add_parameter'] = false;
             visible['group_type'] = false;
         }
-        if (parameterType == <?php echo DataType::INT; ?>) {
+        if (parameterType == <?= DataType::INT ?>) {
             visible['sql_parameter'] = false;
             visible['add_parameter'] = false;
             visible['group_type'] = false;
             visible['need_locale'] = false;
             visible['search'] = false;
         }
-        if (parameterType == <?php echo DataType::PRIMARY_KEY; ?>) {
+        if (parameterType == <?= DataType::PRIMARY_KEY ?>) {
             visible['default_value'] = false;
             visible['need_locale'] = false;
             visible['is_unique'] = false;
@@ -193,16 +193,16 @@ $modelName = get_class($model);
             visible['not_null'] = false;
 
 
-            <?php if (YGIN_DEVELOP): ?>
-            type['add_parameter'] = <?php echo DataType::BOOLEAN; ?>;
+            <?php if (YGIN_DEVELOP){ ?>
+            type['add_parameter'] = <?= DataType::BOOLEAN ?>;
             caption['add_parameter'] = 'Разрешить редактировать';
 
-            type['sql_parameter'] = <?php echo DataType::VARCHAR; ?>;
+            type['sql_parameter'] = <?= DataType::VARCHAR ?>;
             caption['sql_parameter'] = 'Настройки (основное поле; поле родитель; префикс)';
-            <?php else: ?>
+            <?php }else{ ?>
             visible['add_parameter'] = false;
             visible['sql_parameter'] = false;
-            <?php endif; ?>
+            <?php } ?>
 
             //caption['sql_parameter'] = 'Имя последовательности (по умолчанию пусто)';
 
@@ -219,10 +219,10 @@ $modelName = get_class($model);
     // РЕАЛИЗАЦИЯ
     //ставим на запуск после загрузки страницы
     $(function () {
-        $("select[name='<?php echo $this->getElementName(); ?>']").change(function () {
+        $("select[name='<?= $this->getElementName() ?>']").change(function () {
             changeParameterField($(this).val());
         });
-        changeParameterField($("select[name='<?php echo $this->getElementName(); ?>']").val());
+        changeParameterField($("select[name='<?= $this->getElementName() ?>']").val());
     });
 
     function changeParameterField(paramType) {
@@ -234,27 +234,25 @@ $modelName = get_class($model);
                 continue;
             }
             var val = null;
-            var element = $("[name='<?php echo $modelName; ?>[" + id + "]']");
+            var element = $("[name='<?= $modelName ?>[" + id + "]']");
             if (id in data.value) {
                 val = data.value[id];
             } else {
                 val = element.val();
             }
             //document.title = 'Здесь будем менять у поля '+id+' тип='+newType;
-            <?php
-              echo CHtml::ajax(array(
+            <?= CHtml::ajax(array(
                 'url'=>Yii::app()->createUrl('backend/engine/getObjectParameterSetting'),
                 'data'=>array(
-                  'newType'=>'js:newType',  // новый тип
-                  'val'=>'js:val',  // значение
-                  'field'=>'js:id', // имя поля
-                  'id' => ($model->isNewRecord ? -1 : $model->getIdInstance()),
+                    'newType'=>'js:newType',  // новый тип
+                    'val'=>'js:val',  // значение
+                    'field'=>'js:id', // имя поля
+                    'id' => $model->isNewRecord ? -1 : $model->getIdInstance(),
                 ),
                 'type'=>'POST',
                 'dataType'=>'json',
                 'success'=>'js:function(data){if (data.error !== undefined) {alert(data.error); return;} element.parent().html(data.html); }',
-              ));
-            ?>
+            )) ?>
         }
 
         // Меняем заголовки у полей
@@ -270,7 +268,7 @@ $modelName = get_class($model);
 
         // Меняем значения у полей
         for (var id in data.value) {
-            var el = $("[name='<?php echo $modelName; ?>[" + id + "]']");
+            var el = $("[name='<?= $modelName ?>[" + id + "]']");
             el.val(data.value[id]);
             el.change();
             el.keyup();
@@ -284,7 +282,7 @@ $modelName = get_class($model);
      */
     function setAnimateFieldCaption(fieldId, caption) {
         //точно не помню, то ли .parents('.b-object-property:first'), то ли  .parents('.b-object-property').first(), надо экспериментировать
-        var cellObject = $("*[name='<?php echo $modelName; ?>[" + fieldId + "]']").parents('.b-object-property');
+        var cellObject = $("*[name='<?= $modelName ?>[" + fieldId + "]']").parents('.b-object-property');
         var cellLabel = cellObject.find('.control-label');
         if ((jQuery.trim(cellLabel.text()) == caption)) {
             return;
@@ -309,7 +307,7 @@ $modelName = get_class($model);
         if (showAll) {
             $('.hiddenParameterField').show();
         } else {
-            var trObject = $("*[name='<?php echo $modelName; ?>[" + fieldId + "]']").parents('.b-object-property');
+            var trObject = $("*[name='<?= $modelName ?>[" + fieldId + "]']").parents('.b-object-property');
             trObject.hide();
             trObject.addClass('hiddenParameterField');
         }
@@ -320,17 +318,16 @@ $modelName = get_class($model);
      * После генерации нового поля на ajax, его тип будет указан в титл, иначе берется значение по умолчанию для типа
      */
     function getCurrentFieldTypeById(id) {
-        var inputObject = $("[name='<?php echo $modelName; ?>[" + id + "]']");
+        var inputObject = $("[name='<?= $modelName ?>[" + id + "]']");
         var currentFieldType = inputObject.attr('title');
         if (currentFieldType == '' || typeof(currentFieldType) == 'undefined') {
             // вот здесь надо знать текущие значения по умолчанию для всех типов
             var p = {};
             <?php
             $params = $object->parameters;
-            foreach ($params as $param) {
-              echo 'p["'.$param->getFieldName().'"]='.$param->getType().'; ';
-            }
-            ?>
+            foreach ($params as $param) { ?>
+              <?= "p['{$param->getFieldName()}'] = {$param->getType()}; " ?>
+            <?php } ?>
             currentFieldType = p[id];
         }
         return currentFieldType;
